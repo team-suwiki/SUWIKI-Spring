@@ -1,0 +1,49 @@
+spring:
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test;MODE=MySQL
+    username: sa
+    password:
+
+  jpa:
+    database: h2
+    generate-ddl: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      dialect: org.hibernate.dialect.MySQL57InnoDBDialect
+      hibernate:
+        format_sql: true
+        # SQL 예약어 예외 방지 (user, year)
+        globally_quoted_identifiers: true
+        globally_quoted_identifiers_skip_column_definitions : true
+
+
+  secret-key: TEST
+
+  mail:
+    host: TEST.gmail.com
+    port: 587
+    username: TEST@gmail.com
+    password: TEST
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+jwt:
+  access-duration: 1000000        # 30분
+  refresh-duration: 100000000   # 9개월
+
+server:
+  port: 8080
+  domain: http://localhost:8080
+
+business:
+  current-semester: 2024-1
+
