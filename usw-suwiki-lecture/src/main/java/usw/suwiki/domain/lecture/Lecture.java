@@ -1,30 +1,26 @@
 package usw.suwiki.domain.lecture;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.domain.lecture.model.Evaluation;
-import usw.suwiki.infra.jpa.BaseTimeEntity;
+import usw.suwiki.infra.jpa.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Lecture extends BaseTimeEntity {
+public class Lecture extends BaseEntity {
   private static final Pattern LECTURE_PATTERN = Pattern.compile("^(2\\d{3})-(1|2)$");
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
   @Column(name = "semester_list")
   private String semester;
@@ -41,30 +37,12 @@ public class Lecture extends BaseTimeEntity {
   private String type;
 
   @Embedded
-  private LectureEvaluationInfo lectureEvaluationInfo;
+  private LectureEvaluationInfo lectureEvaluationInfo = new LectureEvaluationInfo();
 
   @Embedded
   private LectureDetail lectureDetail;
 
   private int postsCount = 0;
-
-  @Builder
-  private Lecture(
-    String semester,
-    String professor,
-    String name,
-    String majorType,
-    String type,
-    LectureDetail lectureDetail
-  ) {
-    this.semester = semester;
-    this.professor = professor;
-    this.name = name;
-    this.majorType = majorType;
-    this.type = type;
-    this.lectureDetail = lectureDetail;
-    this.lectureEvaluationInfo = new LectureEvaluationInfo();
-  }
 
   public void evaluate(Evaluation evaluation) {
     this.lectureEvaluationInfo.apply(evaluation);

@@ -1,25 +1,20 @@
 package usw.suwiki.domain.evaluatepost;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.infra.jpa.BaseTimeEntity;
+import usw.suwiki.infra.jpa.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 @Getter
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EvaluatePost extends BaseTimeEntity {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
+public class EvaluatePost extends BaseEntity {
   @Column(nullable = false)
   private Long userId;
 
@@ -31,13 +26,6 @@ public class EvaluatePost extends BaseTimeEntity {
 
   @Embedded
   private LectureRating lectureRating;
-
-  public EvaluatePost(Long userId, String content, LectureInfo lectureInfo, LectureRating lectureRating) {
-    this.userId = userId;
-    this.content = content;
-    this.lectureInfo = lectureInfo;
-    this.lectureRating = lectureRating;
-  }
 
   public void update(String content, String lectureName, String selectedSemester, String professor, LectureRating lectureRating) {
     this.content = content;

@@ -1,26 +1,22 @@
 package usw.suwiki.domain.exampost;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import usw.suwiki.infra.jpa.BaseTimeEntity;
+import usw.suwiki.infra.jpa.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ExamPost extends BaseTimeEntity {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
+public class ExamPost extends BaseEntity {
   @Column(nullable = false)
   private Long userId;
 
@@ -32,14 +28,6 @@ public class ExamPost extends BaseTimeEntity {
 
   @Embedded
   private ExamDetail examDetail;
-
-  @Builder
-  private ExamPost(Long userId, String content, LectureInfo lectureInfo, ExamDetail examDetail) {
-    this.userId = userId;
-    this.content = content;
-    this.lectureInfo = lectureInfo;
-    this.examDetail = examDetail;
-  }
 
   public void update(String content, String selectedSemester, ExamDetail examDetail) {
     this.content = content;

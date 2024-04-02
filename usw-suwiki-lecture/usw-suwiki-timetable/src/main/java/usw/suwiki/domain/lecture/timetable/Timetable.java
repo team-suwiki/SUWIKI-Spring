@@ -5,17 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.TimetableException;
-import usw.suwiki.infra.jpa.BaseTimeEntity;
+import usw.suwiki.infra.jpa.BaseEntity;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
 import java.util.ArrayList;
@@ -24,12 +22,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Timetable extends BaseTimeEntity {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "timetable_id")
-  private Long id;
-
+@AttributeOverride(name = "id", column = @Column(name = "timetable_id"))
+public class Timetable extends BaseEntity {
   @Column(nullable = false)
   private Long userId;
 

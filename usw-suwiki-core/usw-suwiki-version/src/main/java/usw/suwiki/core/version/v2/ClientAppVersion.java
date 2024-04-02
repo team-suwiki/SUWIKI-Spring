@@ -6,15 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.VersionException;
-import usw.suwiki.infra.jpa.BaseTimeEntity;
+import usw.suwiki.infra.jpa.BaseEntity;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -27,12 +25,8 @@ import javax.persistence.UniqueConstraint;
     columnNames = {"os", "version_code"}
   )
 })
-public class ClientAppVersion extends BaseTimeEntity {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "client_app_version_id")
-  private Long id;
-
+@AttributeOverride(name = "id", column = @Column(name = "client_app_version_id"))
+public class ClientAppVersion extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private ClientOS os;
 

@@ -9,7 +9,7 @@ import usw.suwiki.auth.token.ConfirmationToken;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.PasswordRandomizer;
-import usw.suwiki.infra.jpa.BaseTimeEntity;
+import usw.suwiki.infra.jpa.BaseEntity;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -17,9 +17,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -35,14 +32,10 @@ import static usw.suwiki.core.exception.ExceptionType.USER_POINT_LACK;
   @AttributeOverride(name = "createDate", column = @Column(name = "created_at")),
   @AttributeOverride(name = "modifiedDate", column = @Column(name = "updated_at"))
 })
-public class User extends BaseTimeEntity {
+public class User extends BaseEntity {
   private static final int DELETE_POINT_LIMIT = 30;
   private static final int PURCHASE_POINT_LIMIT = 20;
   private static final int WROTE_EVALUATION_BONUS = 10;
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
   @Column
   private String loginId;
