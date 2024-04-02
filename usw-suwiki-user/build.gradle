@@ -1,22 +1,24 @@
 allprojects {
-    dependencies {
-        implementation project(':usw-suwiki-core:usw-suwiki-exception')
-        implementation project(':usw-suwiki-core:usw-suwiki-secure')
-        implementation project(':usw-suwiki-infra:usw-suwiki-db')
-        implementation project(':usw-suwiki-common')
-    }
+  dependencies {
+    implementation project(':usw-suwiki-core:usw-suwiki-exception')
+    implementation project(':usw-suwiki-core:usw-suwiki-secure')
+    implementation project(':usw-suwiki-infra:usw-suwiki-db')
+    implementation project(':usw-suwiki-common')
+  }
 }
 
 subprojects {
-    dependencies {
-        implementation project(':usw-suwiki-user')
-    }
+  dependencies {
+    implementation project(':usw-suwiki-user')
+  }
 }
 
 project(':usw-suwiki-user') {
-    dependencies {
-        implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
+  dependencies {
+    implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
 
-        implementation project(':usw-suwiki-core:usw-suwiki-mail-starter')
-    }
+    implementation project(':usw-suwiki-core:usw-suwiki-mail-starter')
+
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
+  }
 }

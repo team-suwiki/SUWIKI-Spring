@@ -1,36 +1,31 @@
 plugins {
-    id 'java-library'
-    id 'org.springframework.boot' apply false
-    id 'io.spring.dependency-management'
-    id 'com.ewerk.gradle.plugins.querydsl' apply false
+  id 'java-library'
+  id 'org.springframework.boot' apply false
+  id 'io.spring.dependency-management'
+  id 'com.ewerk.gradle.plugins.querydsl' apply false
 }
 
 allprojects {
-    group = "${projectGroup}"
-    version = "${applicationVersion}"
-    sourceCompatibility = "${javaVersion}"
+  group = "${projectGroup}"
+  version = "${applicationVersion}"
+  sourceCompatibility = "${javaVersion}"
 
-    repositories {
-        mavenCentral()
-    }
+  repositories {
+    mavenCentral()
+  }
 }
 
 apply from: 'gradle/spring.gradle'
 apply from: 'gradle/lombok.gradle'
+apply from: 'gradle/querydsl.gradle'
 
 subprojects {
-    test {
-        useJUnitPlatform()
-    }
+  test {
+    useJUnitPlatform()
+  }
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-    options.release = 17 // Java 17을 사용할 경우 release 17로 설정
+  options.encoding = 'UTF-8'
+  options.release = 17 // Java 17을 사용할 경우 release 17로 설정
 }
-
-dependencies {
-    // Utils
-    implementation 'org.modelmapper:modelmapper:3.1.1'
-}
-

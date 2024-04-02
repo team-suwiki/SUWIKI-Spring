@@ -3,9 +3,13 @@ package usw.suwiki.domain.viewexam;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import usw.suwiki.domain.viewexam.dto.QViewExamResponse_PurchaseHistory;
 import usw.suwiki.domain.viewexam.dto.ViewExamResponse;
 
 import java.util.List;
+
+import static usw.suwiki.domain.lecture.QLecture.lecture;
+import static usw.suwiki.domain.viewexam.QViewExam.viewExam;
 
 @Repository
 @RequiredArgsConstructor

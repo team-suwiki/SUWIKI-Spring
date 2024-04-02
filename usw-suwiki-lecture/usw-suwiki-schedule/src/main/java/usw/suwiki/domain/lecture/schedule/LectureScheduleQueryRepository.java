@@ -5,8 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.lecture.schedule.model.LectureInfo;
+import usw.suwiki.domain.lecture.schedule.model.QLectureInfo;
 
 import java.util.List;
+
+import static usw.suwiki.domain.lecture.QLecture.lecture;
+import static usw.suwiki.domain.lecture.schedule.QLectureSchedule.lectureSchedule;
 
 @Repository
 @Transactional(readOnly = true)
@@ -45,7 +49,7 @@ public class LectureScheduleQueryRepository {
       .leftJoin(lecture).on(lecture.id.eq(lectureSchedule.lectureId))
       .fetch();
   }
-  
+
 //  검증 이후 삭제
 //  public List<LectureSchedule> findAllSchedulesBySemesterContains(String semester) {
 //    return queryFactory.selectFrom(lectureSchedule)

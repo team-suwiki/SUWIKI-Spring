@@ -1,19 +1,17 @@
 project(':usw-suwiki-infra:usw-suwiki-caffeine') {
-    dependencies {
-        implementation project(':usw-suwiki-statistics')
+  dependencies {
+    implementation project(':usw-suwiki-statistics')
 
-        implementation 'com.github.ben-manes.caffeine:caffeine'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.boot:spring-boot-starter-cache'
-    }
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+  }
 }
 
 project(':usw-suwiki-infra:usw-suwiki-db') {
-    apply from: "$rootDir/gradle/querydsl.gradle"
-
-    dependencies {
-        api 'org.springframework.boot:spring-boot-starter-data-jpa'
-        api 'mysql:mysql-connector-java:8.0.32'
-        testImplementation 'com.h2database:h2'
-    }
+  dependencies {
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    api 'mysql:mysql-connector-java:8.0.32'
+    testImplementation 'com.h2database:h2'
+  }
 }

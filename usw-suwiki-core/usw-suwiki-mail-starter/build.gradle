@@ -1,18 +1,18 @@
 project(':usw-suwiki-core:usw-suwiki-mail-starter') {
-    dependencies {
-        api project(':usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-core')
-        implementation project(':usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-engine')
-    }
+  dependencies {
+    api project(':usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-core')
+    implementation project(':usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-engine')
+  }
 }
 
 project(':usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-engine') {
-    dependencies {
-        implementation project(':usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-core')
+  dependencies {
+    implementation project(':usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-core')
 
-        implementation project(':usw-suwiki-core:usw-suwiki-exception')
+    implementation project(':usw-suwiki-core:usw-suwiki-exception')
 
-        implementation 'org.thymeleaf:thymeleaf'
-        implementation 'org.thymeleaf:thymeleaf-spring6'
-        implementation 'org.springframework.boot:spring-boot-starter-mail'
-    }
+    implementation 'org.thymeleaf:thymeleaf'
+    implementation 'org.thymeleaf:thymeleaf-spring5'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+  }
 }

@@ -5,8 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.exampost.dto.ExamPostResponse;
+import usw.suwiki.domain.exampost.dto.QExamPostResponse_MyPost;
 
 import java.util.List;
+
+import static usw.suwiki.domain.exampost.QExamPost.examPost;
+import static usw.suwiki.domain.lecture.QLecture.lecture;
 
 @Repository
 @Transactional(readOnly = true)
@@ -20,16 +24,17 @@ public class ExamPostQueryRepository {
     return queryFactory.select(new QExamPostResponse_MyPost(
         examPost.id,
         examPost.content,
-        examPost.lectureName,
-        examPost.selectedSemester,
+        examPost.lectureInfo.lectureName,
+        examPost.lectureInfo.selectedSemester,
+        lecture.professor,
         lecture.majorType,
-        lecture.semesterList,
-        examPost.examType,
-        examPost.examInfo,
-        examPost.examDifficulty))
+        lecture.semester,
+        examPost.examDetail.examType,
+        examPost.examDetail.examInfo,
+        examPost.examDetail.examDifficulty))
       .from(examPost)
       .where(examPost.userId.eq(userId))
-      .join(lecture).on(examPost.lectureId.eq(lecture.id))
+      .join(lecture).on(examPost.lectureInfo.lectureId.eq(lecture.id))
       .limit(LIMIT_PAGE_SIZE)
       .offset(page)
       .fetch();

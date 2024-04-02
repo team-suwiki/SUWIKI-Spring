@@ -5,8 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponse;
+import usw.suwiki.domain.evaluatepost.dto.QEvaluatePostResponse_Detail;
+import usw.suwiki.domain.evaluatepost.dto.QEvaluatePostResponse_MyPost;
 
 import java.util.List;
+
+import static usw.suwiki.domain.evaluatepost.QEvaluatePost.evaluatePost;
+import static usw.suwiki.domain.lecture.QLecture.lecture;
 
 @Repository
 @Transactional(readOnly = true)
@@ -17,42 +22,42 @@ public class EvaluatePostQueryRepository {
   private final JPAQueryFactory queryFactory;
 
   public List<EvaluatePostResponse.Detail> findAllByLectureIdAndPageOption(Long lectureId, int page) {
-    return queryFactory.select(new QEvaludatePostResponse_Detail(
+    return queryFactory.select(new QEvaluatePostResponse_Detail(
         evaluatePost.id,
         evaluatePost.content,
-        evaluatePost.selectedSemester,
-        evaluatePost.totalAvg,
-        evaluatePost.satisfaction,
-        evaluatePost.learning,
-        evaluatePost.honey,
-        evaluatePost.team,
-        evaluatePost.difficulty,
-        evaluatePost.homework))
+        evaluatePost.lectureInfo.selectedSemester,
+        evaluatePost.lectureRating.totalAvg,
+        evaluatePost.lectureRating.satisfaction,
+        evaluatePost.lectureRating.learning,
+        evaluatePost.lectureRating.honey,
+        evaluatePost.lectureRating.team,
+        evaluatePost.lectureRating.difficulty,
+        evaluatePost.lectureRating.homework))
       .from(evaluatePost)
-      .where(evaluatePost.lectureId.eq(lectureId))
+      .where(evaluatePost.lectureInfo.lectureId.eq(lectureId))
       .limit(LIMIT_PAGE_SIZE)
       .offset(page)
       .fetch();
   }
 
   public List<EvaluatePostResponse.MyPost> findAllByUserIdAndPageOption(Long userId, int page) {
-    return queryFactory.select(new QEvaludatePostResponse_MyPost(
+    return queryFactory.select(new QEvaluatePostResponse_MyPost(
         evaluatePost.id,
         evaluatePost.content,
-        evaluatePost.lectureName,
-        evaluatePost.selectedSemester,
-        evaluatePost.professor,
+        evaluatePost.lectureInfo.lectureName,
+        evaluatePost.lectureInfo.professor,
         lecture.majorType,
-        lecture.semesterList,
-        evaluatePost.totalAvg,
-        evaluatePost.satisfaction,
-        evaluatePost.learning,
-        evaluatePost.honey,
-        evaluatePost.team,
-        evaluatePost.difficulty,
-        evaluatePost.homework))
+        evaluatePost.lectureInfo.selectedSemester,
+        lecture.semester,
+        evaluatePost.lectureRating.totalAvg,
+        evaluatePost.lectureRating.satisfaction,
+        evaluatePost.lectureRating.learning,
+        evaluatePost.lectureRating.honey,
+        evaluatePost.lectureRating.team,
+        evaluatePost.lectureRating.difficulty,
+        evaluatePost.lectureRating.homework))
       .from(evaluatePost)
-      .join(lecture).on(evaluatePost.lectureId.eq(lecture.id))
+      .join(lecture).on(evaluatePost.lectureInfo.lectureId.eq(lecture.id))
       .where(evaluatePost.userId.eq(userId))
       .limit(LIMIT_PAGE_SIZE)
       .offset(page)

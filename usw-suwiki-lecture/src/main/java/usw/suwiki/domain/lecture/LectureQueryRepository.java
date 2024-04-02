@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static usw.suwiki.domain.lecture.QLecture.lecture;
+
 @Repository
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
