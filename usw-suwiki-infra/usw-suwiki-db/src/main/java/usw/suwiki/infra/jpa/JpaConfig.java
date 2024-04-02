@@ -1,4 +1,4 @@
-package usw.suwiki.infra.jpa.config;
+package usw.suwiki.infra.jpa;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

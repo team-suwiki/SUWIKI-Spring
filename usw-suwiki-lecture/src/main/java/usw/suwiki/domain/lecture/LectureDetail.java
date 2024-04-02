@@ -18,18 +18,18 @@ public class LectureDetail {
   @Column(name = "lecture_code")
   private String code;
 
-  @Column(name = "point")
+  @Column
   private double point;
 
-  @Column(name = "cappr_type")
+  @Column
   private String capprType;
 
-  @Column(name = "dicl_no")
+  @Column
   private String diclNo;
 
-  @Column(name = "grade")
+  @Column
   private int grade;
 
-  @Column(name = "evaluate_type")
+  @Column
   private String evaluateType;
 }

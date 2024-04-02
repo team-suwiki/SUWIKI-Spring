@@ -109,7 +109,7 @@ public class UserBusinessService {
     User user = User.init(loginId, passwordEncoder.encode(password), email);
     userCRUDService.saveUser(user);
 
-    ConfirmationToken confirmationToken = ConfirmationToken.makeToken(user.getId());
+    ConfirmationToken confirmationToken = ConfirmationToken.from(user.getId());
     confirmationTokenCRUDService.saveConfirmationToken(confirmationToken);
 
     emailSender.send(email, EMAIL_AUTH, confirmationToken.getToken());
@@ -234,7 +234,7 @@ public class UserBusinessService {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
     Long userId = tokenAgent.getId(Authorization);
-    
+
     favoriteMajorService.save(userId, favoriteSaveDto.getMajorType());
   }
 

@@ -13,24 +13,24 @@ import static usw.suwiki.auth.token.response.ConfirmResponse.SUCCESS;
 @Transactional
 @RequiredArgsConstructor
 public class ConfirmationTokenBusinessService {
-    private final ConfirmUserService confirmUserService;
-    private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
+  private final ConfirmUserService confirmUserService;
+  private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 
-    public String confirmToken(String token) {
-        return confirmationTokenCRUDService.loadConfirmationTokenFromPayload(token)
-                 .map(this::confirm)
-                 .orElseGet(ERROR::getContent);
+  public String confirmToken(String token) {
+    return confirmationTokenCRUDService.loadConfirmationTokenFromPayload(token)
+      .map(this::confirm)
+      .orElseGet(ERROR::getContent);
+  }
+
+  private String confirm(ConfirmationToken token) {
+    if (token.isTokenExpired()) {
+      confirmationTokenCRUDService.deleteFromId(token.getId());
+      confirmUserService.delete(token.getUserIdx());
+      return EXPIRED.getContent();
     }
 
-    private String confirm(ConfirmationToken token) {
-        if (token.isTokenExpired()) {
-            confirmationTokenCRUDService.deleteFromId(token.getId());
-            confirmUserService.delete(token.getUserIdx());
-            return EXPIRED.getContent();
-        }
-
-        token.updateConfirmedAt();
-        confirmUserService.activated(token.getUserIdx());
-        return SUCCESS.getContent();
-    }
+    token.confirmed();
+    confirmUserService.activated(token.getUserIdx());
+    return SUCCESS.getContent();
+  }
 }

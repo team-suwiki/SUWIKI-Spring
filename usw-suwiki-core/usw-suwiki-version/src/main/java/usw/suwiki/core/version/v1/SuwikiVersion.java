@@ -4,10 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class SuwikiVersion {
+  public static final float VERSION = 1.01f;
 
-    public static final float version = 1.01f;
-
-    private SuwikiVersion() {
-        throw new IllegalStateException("never instantiated");
-    }
+  private SuwikiVersion() {
+    throw new IllegalStateException("never instantiated");
+  }
 }

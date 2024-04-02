@@ -23,7 +23,7 @@ public class VersionController {
   @GetMapping("/version")
   public ResponseEntity<VersionResponseDto> findVersionSuwiki() {
     HttpHeaders header = new HttpHeaders();
-    float version = SuwikiVersion.version;
+    float version = SuwikiVersion.VERSION;
     VersionResponseDto dto = new VersionResponseDto(version);
     return new ResponseEntity<>(dto, header, HttpStatus.valueOf(200));
   }

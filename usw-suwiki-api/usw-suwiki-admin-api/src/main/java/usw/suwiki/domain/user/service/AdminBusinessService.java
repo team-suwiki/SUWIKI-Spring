@@ -70,10 +70,7 @@ public class AdminBusinessService {
     List<EvaluatePostReport> evaluatePostReports = reportService.loadAllEvaluateReports();
     List<ExamPostReport> examPostReports = reportService.loadAllExamReports();
 
-    return LoadAllReportedPostForm.builder()
-      .evaluatePostReports(evaluatePostReports)
-      .examPostReports(examPostReports)
-      .build();
+    return new LoadAllReportedPostForm(examPostReports, evaluatePostReports);
   }
 
   public EvaluatePostReport executeLoadDetailReportedEvaluatePost(Long evaluatePostReportId) {

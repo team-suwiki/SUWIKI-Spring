@@ -21,43 +21,42 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConfirmationToken {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column
-    private Long userIdx;
+  @Column
+  private Long userIdx;
 
-    @Column(nullable = false)
-    private String token;
+  @Column(nullable = false)
+  private String token;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+  @Column(nullable = false)
+  private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private LocalDateTime expiresAt;
+  @Column(nullable = false)
+  private LocalDateTime expiresAt;
 
-    private LocalDateTime confirmedAt;
+  private LocalDateTime confirmedAt;
 
-    public static ConfirmationToken makeToken(Long userIdx) {
-        return builder()
-            .token(UUID.randomUUID().toString())
-            .createdAt(LocalDateTime.now())
-            .expiresAt(LocalDateTime.now().plusMinutes(15))
-            .userIdx(userIdx)
-            .build();
-    }
+  public static ConfirmationToken from(Long userIdx) {
+    return builder()
+      .token(UUID.randomUUID().toString())
+      .createdAt(LocalDateTime.now())
+      .expiresAt(LocalDateTime.now().plusMinutes(15))
+      .userIdx(userIdx)
+      .build();
+  }
 
-    public void updateConfirmedAt() {
-        this.confirmedAt = LocalDateTime.now();
-    }
+  public void confirmed() {
+    this.confirmedAt = LocalDateTime.now();
+  }
 
-    public boolean isTokenExpired() {
-        LocalDateTime expiredAt = this.getExpiresAt();
-        return expiredAt.isBefore(LocalDateTime.now());
-    }
+  public boolean isTokenExpired() {
+    return this.expiresAt.isBefore(LocalDateTime.now());
+  }
 
-    public boolean isVerified() {
-        return this.confirmedAt != null;
-    }
+  public boolean isVerified() {
+    return this.confirmedAt != null;
+  }
 }

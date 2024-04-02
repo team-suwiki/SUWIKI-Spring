@@ -10,18 +10,16 @@ import usw.suwiki.core.exception.VersionException;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ClientAppVersionService {
+  private final ClientAppVersionRepository clientAppVersionRepository;
 
-    private final ClientAppVersionRepository clientAppVersionRepository;
+  public CheckUpdateMandatoryResponse checkIsUpdateMandatory(String os, int versionCode) {
+    ClientOS clientOS = ClientOS.ofString(os);
 
-    public CheckUpdateMandatoryResponse checkIsUpdateMandatory(String os, int versionCode) {
-        ClientOS clientOS = ClientOS.ofString(os);
+    ClientAppVersion clientAppVersion = clientAppVersionRepository.findFirstByOsAndIsVitalTrueOrderByVersionCodeDesc(clientOS)
+      .orElseThrow(() -> new VersionException(ExceptionType.SERVER_ERROR));
 
-        ClientAppVersion clientAppVersion = clientAppVersionRepository
-            .findFirstByOsAndIsVitalTrueOrderByVersionCodeDesc(clientOS)
-            .orElseThrow(() -> new VersionException(ExceptionType.SERVER_ERROR));
+    boolean isUpdateMandatory = clientAppVersion.isUpdateMandatory(clientOS, versionCode);
 
-        boolean isUpdateMandatory = clientAppVersion.judgeIsUpdateMandatory(clientOS, versionCode);
-
-        return CheckUpdateMandatoryResponse.from(isUpdateMandatory);
-    }
+    return new CheckUpdateMandatoryResponse(isUpdateMandatory);
+  }
 }

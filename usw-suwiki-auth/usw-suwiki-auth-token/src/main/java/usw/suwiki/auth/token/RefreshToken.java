@@ -19,24 +19,24 @@ import javax.persistence.Id;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column
-    private String payload;
+  @Column
+  private String payload;
 
-    @Column
-    private Long userIdx;
+  @Column
+  private Long userIdx;
 
-    public void updatePayload(String payload) {
-        this.payload = payload;
-    }
+  public void updatePayload(String payload) {
+    this.payload = payload;
+  }
 
-    public static RefreshToken buildRefreshToken(Long userIdx, String payload) {
-        return builder()
-            .userIdx(userIdx)
-            .payload(payload)
-            .build();
-    }
+  public static RefreshToken of(Long userIdx, String payload) {
+    return builder()
+      .userIdx(userIdx)
+      .payload(payload)
+      .build();
+  }
 }

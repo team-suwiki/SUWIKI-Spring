@@ -49,7 +49,7 @@ public class Lecture extends BaseTimeEntity {
   private int postsCount = 0;
 
   @Builder
-  public Lecture(
+  private Lecture(
     String semester,
     String professor,
     String name,
