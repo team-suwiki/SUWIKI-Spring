@@ -21,6 +21,8 @@ import usw.suwiki.domain.lecture.schedule.LectureScheduleQueryRepository;
 import usw.suwiki.domain.lecture.schedule.LectureScheduleRepository;
 import usw.suwiki.domain.lecture.schedule.data.JsonLecture;
 import usw.suwiki.domain.lecture.schedule.data.LectureStringConverter;
+import usw.suwiki.domain.lecture.schedule.data.USWTermResolver;
+import usw.suwiki.domain.lecture.schedule.model.LectureInfo;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -72,7 +74,7 @@ public class LectureScheduleService {
   @Transactional(propagation = Propagation.MANDATORY)
   public void bulkApplyJsonLectures(String filePath) {
     List<JsonLecture> jsonLectures = deserializeJsonFromPath(filePath).stream()
-      .map(rawObject -> JsonLecture.from((JSONObject) rawObject))
+      .map(rawObject -> USWTermResolver.resolve((JSONObject) rawObject))
       .toList();
 
     deleteAllRemovedLectures(jsonLectures);
@@ -93,7 +95,12 @@ public class LectureScheduleService {
 
   private void deleteAllRemovedLectures(List<JsonLecture> jsonLectures) {
     lectureRepository.findAllBySemesterContains(semesterProvider.semester()).stream()
-      .filter(it -> jsonLectures.stream().noneMatch(jsonLecture -> jsonLecture.isLectureEqual(it)))
+      .filter(lecture -> jsonLectures.stream().noneMatch(json -> lecture.isEquals(
+        json.getLectureName(),
+        json.getProfessor(),
+        json.getMajorType(),
+        json.getDividedClassNumber()
+      )))
       .forEach(lecture -> {
         if (lecture.isOld()) {
           lecture.removeSemester(semesterProvider.semester());
@@ -104,12 +111,19 @@ public class LectureScheduleService {
   }
 
   private void deleteAllRemovedLectureSchedules(List<JsonLecture> jsonLectures) {
-    List<LectureSchedule> schedulesToDelete =
-      lectureScheduleQueryRepository.findAllSchedulesBySemesterContains(semesterProvider.semester()).stream() // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
-        .filter(it -> jsonLectures.stream().noneMatch(jsonLecture -> jsonLecture.isLectureAndPlaceScheduleEqual(it)))
-        .toList();
+    List<Long> scheduleIds = lectureScheduleQueryRepository.findAllLectureInfosBySemester(semesterProvider.semester()).stream()
+      .filter(info -> jsonLectures.stream().noneMatch(jsonLecture -> jsonLecture.isInfoEquals(info)))
+      .map(LectureInfo::scheduleId)
+      .toList();
 
-    lectureScheduleRepository.deleteAllInBatch(schedulesToDelete);
+    lectureScheduleRepository.deleteAllByIdInBatch(scheduleIds);
+
+//    검증 이후 삭제
+//    List<LectureSchedule> schedules =
+//      lectureScheduleQueryRepository.findAllSchedulesBySemesterContains(semesterProvider.semester()).stream() // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
+//        .filter(schedule -> jsonLectures.stream().noneMatch(jsonLecture -> jsonLecture.isLectureAndPlaceScheduleEqual(schedule)))
+//        .toList();
+//    lectureScheduleRepository.deleteAllInBatch(schedules);
   }
 
   private void insertJsonLectureOrLectureSchedule(JsonLecture jsonLecture) {
@@ -123,21 +137,23 @@ public class LectureScheduleService {
     if (optionalLecture.isPresent()) {
       extendSemesterOfLecture(optionalLecture.get(), jsonLecture);
     } else {
-      insertNewLecture(jsonLecture);
+      Lecture saved = lectureRepository.save(LectureScheduleMapper.toLecture(jsonLecture));
+      saveLectureSchedule(saved.getId(), jsonLecture);
     }
   }
 
   private void extendSemesterOfLecture(Lecture lecture, JsonLecture jsonLecture) {
     lecture.addSemester(jsonLecture.getSelectedSemester());
-    List<LectureSchedule> schedules = lectureScheduleQueryRepository.findAllByLectureId(lecture.getId());
-    if (schedules.stream().noneMatch(jsonLecture::isLectureAndPlaceScheduleEqual)) {
+
+    List<LectureInfo> infos = lectureScheduleQueryRepository.findAllLectureInfosById(lecture.getId());
+    if (infos.stream().noneMatch(jsonLecture::isInfoEquals)) {
       saveLectureSchedule(lecture.getId(), jsonLecture);
     }
-  }
-
-  private void insertNewLecture(JsonLecture jsonLecture) {
-    Lecture saved = lectureRepository.save(jsonLecture.toEntity());
-    saveLectureSchedule(saved.getId(), jsonLecture);
+//    검증 이후 삭제
+//    List<LectureSchedule> schedules = lectureScheduleQueryRepository.findAllByLectureId(lecture.getId());
+//    if (schedules.stream().noneMatch(jsonLecture::isLectureAndPlaceScheduleEqual)) {
+//      saveLectureSchedule(lecture.getId(), jsonLecture);
+//    }
   }
 
   private void saveLectureSchedule(Long lectureId, JsonLecture jsonLecture) {
@@ -147,12 +163,12 @@ public class LectureScheduleService {
     }
   }
 
-  private List<LectureSchedule> resolveDeletedLectureScheduleList(
-    List<JsonLecture> jsonLectures,
-    List<LectureSchedule> currentSemeterLectureScheduleList
-  ) {
-    return currentSemeterLectureScheduleList.stream() // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
-      .filter(it -> jsonLectures.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it))) // todo: flatmap
-      .toList();
-  }
+//  private List<LectureSchedule> resolveDeletedLectureScheduleList(
+//    List<JsonLecture> jsonLectures,
+//    List<LectureSchedule> currentSemesterLectureSchedules
+//  ) {
+//    return currentSemesterLectureSchedules.stream() // 기존의 스케줄이 삭제된 케이스 필터링 : O(N^2) 비교
+//      .filter(it -> jsonLectures.stream().noneMatch(vo -> vo.isLectureAndPlaceScheduleEqual(it)))
+//      .toList();
+//  }
 }

@@ -13,12 +13,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Lecture extends BaseTimeEntity {
+  private static final Pattern LECTURE_PATTERN = Pattern.compile("^(2\\d{3})-(1|2)$");
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -84,37 +87,32 @@ public class Lecture extends BaseTimeEntity {
     return this.semester.length() > 9;
   }
 
-  /**
-   * 이하 로직들은 Lecture가 가져야할 비지니스 로직이 아니다. 도메인 서비스로 분리할 것.
-   */
+  public boolean isEquals(String name, String professor, String majorType, String diclNo) {
+    return Objects.equals(this.name, name) &&
+           Objects.equals(this.professor, professor) &&
+           Objects.equals(this.majorType, majorType) &&
+           Objects.equals(this.lectureDetail.getDiclNo(), diclNo);
+  }
+
   public void addSemester(String singleSemester) {
     validateSingleSemester(singleSemester);
     if (this.semester.isEmpty() || this.semester.contains(singleSemester)) {
       return;
     }
 
-    this.semester = extendSemester(this.semester, singleSemester);
+    this.semester = this.semester + ", " + singleSemester;
   }
 
   public void removeSemester(String singleSemester) {
     validateSingleSemester(singleSemester);
     if (this.semester.contains(singleSemester)) {
-      this.semester = this.semester.replace(buildAddedSingleSemester(singleSemester), "");
+      this.semester = this.semester.replace(", " + singleSemester, "");
     }
   }
 
   private void validateSingleSemester(String candidate) {
-    boolean matches = Pattern.matches("^(2\\d{3})-(1|2)$", candidate); // todo: 패턴 객체는 너무 비싸서 caching해서 사용해야함.
-    if (!matches) {
+    if (!LECTURE_PATTERN.matcher(candidate).matches()) {
       throw new IllegalArgumentException("invalid semester");
     }
-  }
-
-  private static String extendSemester(String originalSemesters, String semester) {
-    return originalSemesters + buildAddedSingleSemester(semester);
-  }
-
-  private static String buildAddedSingleSemester(String semester) {
-    return ", " + semester;
   }
 }

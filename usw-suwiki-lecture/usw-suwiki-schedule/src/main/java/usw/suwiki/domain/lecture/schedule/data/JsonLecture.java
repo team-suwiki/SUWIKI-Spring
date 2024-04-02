@@ -4,13 +4,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
-import usw.suwiki.domain.lecture.Lecture;
-import usw.suwiki.domain.lecture.LectureDetail;
-import usw.suwiki.domain.lecture.schedule.LectureSchedule;
+import usw.suwiki.domain.lecture.schedule.model.LectureInfo;
+
+import java.util.Objects;
 
 @Getter
-@Builder
+@Builder(access = AccessLevel.PACKAGE)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class JsonLecture {
   private final String selectedSemester;
@@ -26,55 +25,15 @@ public class JsonLecture {
   private final double point;
   private final String capacityPresentationType;
 
-  public static JsonLecture from(JSONObject jsonObject) {
-    return builder()
-      .selectedSemester(USWTermResolver.getSemester(jsonObject))
-      .placeSchedule(USWTermResolver.extractPlaceSchedule(jsonObject))
-      .professor(USWTermResolver.getOptionalProfessorName(jsonObject))
-      .lectureType(USWTermResolver.extractLectureFacultyType(jsonObject))
-      .lectureCode(USWTermResolver.extractLectureCode(jsonObject))
-      .lectureName(USWTermResolver.getLectureName(jsonObject))
-      .evaluateType(USWTermResolver.extractEvaluationType(jsonObject))
-      .dividedClassNumber(USWTermResolver.extractDivideClassNumber(jsonObject))
-      .majorType(USWTermResolver.getMajorType(jsonObject))
-      .point(USWTermResolver.extractLecturePoint(jsonObject))
-      .capacityPresentationType(USWTermResolver.extractCapacityType(jsonObject))
-      .grade(USWTermResolver.extractTargetGrade(jsonObject))
-      .build();
-  }
-
-  public Lecture toEntity() {
-    return Lecture.builder()
-      .name(lectureName)
-      .type(lectureType)
-      .professor(professor)
-      .semester(selectedSemester)
-      .majorType(majorType)
-      .lectureDetail(
-        LectureDetail.builder()
-          .code(lectureCode)
-          .grade(grade)
-          .point(point)
-          .diclNo(dividedClassNumber)
-          .evaluateType(evaluateType)
-          .capprType(capacityPresentationType)
-          .build())
-      .build();
-  }
-
-
   public boolean isValidPlaceSchedule() {
-    return !(placeSchedule.equals("null") || placeSchedule.isEmpty());
+    return !("null".equals(placeSchedule) || placeSchedule.isEmpty());
   }
 
-  public boolean isLectureEqual(Lecture lecture) { // todo: 주객전도
-    return lecture.getName().equals(lectureName)
-           && lecture.getProfessor().equals(professor)
-           && lecture.getMajorType().equals(majorType)
-           && lecture.getLectureDetail().getDiclNo().equals(dividedClassNumber);
-  }
-
-  public boolean isLectureAndPlaceScheduleEqual(LectureSchedule lectureSchedule) {
-    return isLectureEqual(lectureSchedule.getLecture()) && lectureSchedule.getPlaceSchedule().contains(placeSchedule); // todo: 디미터의 법칙
+  public boolean isInfoEquals(LectureInfo info) {
+    return Objects.equals(info.name(), lectureName) &&
+           Objects.equals(info.professor(), professor) &&
+           Objects.equals(info.majorType(), majorType) &&
+           Objects.equals(info.diclNo(), dividedClassNumber) &&
+           info.placeSchedule().contains(placeSchedule);
   }
 }
