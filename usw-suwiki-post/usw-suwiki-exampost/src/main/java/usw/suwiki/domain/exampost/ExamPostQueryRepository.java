@@ -33,7 +33,7 @@ public class ExamPostQueryRepository {
         examPost.examDetail.examInfo,
         examPost.examDetail.examDifficulty))
       .from(examPost)
-      .where(examPost.userId.eq(userId))
+      .where(examPost.userIdx.eq(userId))
       .join(lecture).on(examPost.lectureInfo.lectureId.eq(lecture.id))
       .limit(LIMIT_PAGE_SIZE)
       .offset(page)

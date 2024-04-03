@@ -58,7 +58,7 @@ public class EvaluatePostQueryRepository {
         evaluatePost.lectureRating.homework))
       .from(evaluatePost)
       .join(lecture).on(evaluatePost.lectureInfo.lectureId.eq(lecture.id))
-      .where(evaluatePost.userId.eq(userId))
+      .where(evaluatePost.userIdx.eq(userId))
       .limit(LIMIT_PAGE_SIZE)
       .offset(page)
       .fetch();

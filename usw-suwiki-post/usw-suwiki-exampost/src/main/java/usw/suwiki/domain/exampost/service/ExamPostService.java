@@ -50,7 +50,7 @@ public class ExamPostService {
   }
 
   public boolean isAlreadyWritten(Long userId, Long lectureId) {
-    return examPostRepository.existsByUserIdAndLectureInfo_LectureId(userId, lectureId);
+    return examPostRepository.existsByUserIdxAndLectureInfo_LectureId(userId, lectureId);
   }
 
   public List<ViewExamResponse.PurchaseHistory> loadPurchasedHistories(Long userId) {
@@ -79,7 +79,7 @@ public class ExamPostService {
 
   public void report(Long reportingUserId, Long examId) {
     ExamPost examPost = loadExamPostOrThrow(examId);
-    Long reportedUserId = examPost.getUserId();
+    Long reportedUserId = examPost.getUserIdx();
 
     Report report = Report.exam(examId, reportedUserId, reportingUserId, examPost.getContent(), examPost.getLectureName(), examPost.getProfessor());
     reportService.reportExamPost(report);

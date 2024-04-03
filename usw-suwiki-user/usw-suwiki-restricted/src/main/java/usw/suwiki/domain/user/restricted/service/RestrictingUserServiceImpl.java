@@ -62,8 +62,6 @@ class RestrictingUserServiceImpl implements RestrictingUserService {
           .restrictingDate(LocalDateTime.now().plusDays(evaluatePostRestrictForm.restrictingDate()))
           .restrictingReason(evaluatePostRestrictForm.restrictingReason())
           .judgement(evaluatePostRestrictForm.judgement())
-          .createdAt(LocalDateTime.now())
-          .updatedAt(LocalDateTime.now())
           .build()
       );
     }
@@ -88,8 +86,7 @@ class RestrictingUserServiceImpl implements RestrictingUserService {
           .restrictingDate(LocalDateTime.now().plusDays(examPostRestrictForm.restrictingDate()))
           .restrictingReason(examPostRestrictForm.restrictingReason())
           .judgement(examPostRestrictForm.judgement())
-          .createdAt(LocalDateTime.now())
-          .updatedAt(LocalDateTime.now()).build()
+          .build()
       );
     }
   }

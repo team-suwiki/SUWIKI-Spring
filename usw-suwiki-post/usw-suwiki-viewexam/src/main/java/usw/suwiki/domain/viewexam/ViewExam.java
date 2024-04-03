@@ -15,7 +15,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ViewExam extends BaseEntity {
   @Column(nullable = false)
-  private Long userId;
+  private Long userIdx;
 
   @Column(nullable = false)
   private Long lectureId;

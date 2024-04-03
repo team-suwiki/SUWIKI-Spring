@@ -1,8 +1,6 @@
 package usw.suwiki.auth.token;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,8 +12,6 @@ import javax.persistence.Id;
 
 @Entity
 @Getter
-@Builder(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
 
@@ -24,19 +20,17 @@ public class RefreshToken {
   private Long id;
 
   @Column
-  private String payload;
-
-  @Column
   private Long userIdx;
 
-  public void updatePayload(String payload) {
+  @Column
+  private String payload;
+
+  public RefreshToken(Long userIdx, String payload) {
+    this.userIdx = userIdx;
     this.payload = payload;
   }
 
-  public static RefreshToken of(Long userIdx, String payload) {
-    return builder()
-      .userIdx(userIdx)
-      .payload(payload)
-      .build();
+  public void updatePayload(String payload) {
+    this.payload = payload;
   }
 }

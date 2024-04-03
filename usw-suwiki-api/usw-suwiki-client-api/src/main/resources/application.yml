@@ -16,6 +16,10 @@ spring:
         format_sql: true
         use-new-id-generator-mappings: false
 
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
   mvc:
     path-match:
       matching-strategy: ant_path_matcher

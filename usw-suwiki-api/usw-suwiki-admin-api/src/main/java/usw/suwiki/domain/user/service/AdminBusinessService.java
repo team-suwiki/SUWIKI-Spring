@@ -116,7 +116,7 @@ public class AdminBusinessService {
   }
 
   public Map<String, Boolean> executeBlackListEvaluatePost(EvaluatePostBlacklistForm evaluatePostBlacklistForm) {
-    Long userIdx = evaluatePostService.loadEvaluatePostById(evaluatePostBlacklistForm.evaluateIdx()).getUserId();
+    Long userIdx = evaluatePostService.loadEvaluatePostById(evaluatePostBlacklistForm.evaluateIdx()).getUserIdx();
 
     deleteReportedEvaluatePostFromEvaluateIdx(evaluatePostBlacklistForm.evaluateIdx());
 
@@ -132,7 +132,7 @@ public class AdminBusinessService {
   }
 
   public Map<String, Boolean> executeBlackListExamPost(ExamPostBlacklistForm examPostBlacklistForm) {
-    Long userIdx = examPostCRUDService.loadExamPostFromExamPostIdx(examPostBlacklistForm.examIdx()).getUserId();
+    Long userIdx = examPostCRUDService.loadExamPostFromExamPostIdx(examPostBlacklistForm.examIdx()).getUserIdx();
 
     deleteReportedExamPostFromEvaluateIdx(examPostBlacklistForm.examIdx());
     blacklistDomainCRUDService.saveBlackListDomain(

@@ -1,6 +1,7 @@
 package usw.suwiki.core.version.v2;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,14 +19,11 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = {
-  @UniqueConstraint(
-    name = "UNIQUE_OS_AND_VERSION_CODE",
-    columnNames = {"os", "version_code"}
-  )
-})
 @AttributeOverride(name = "id", column = @Column(name = "client_app_version_id"))
+@Table(uniqueConstraints = @UniqueConstraint(name = "UNIQUE_OS_AND_VERSION_CODE", columnNames = {"os", "version_code"}))
 public class ClientAppVersion extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private ClientOS os;
@@ -33,18 +31,10 @@ public class ClientAppVersion extends BaseEntity {
   @Column(name = "version_code")
   private Integer versionCode;
 
-  private boolean isVital;
-
   @Column(length = 2000)
   private String description;
 
-  @Builder
-  private ClientAppVersion(ClientOS os, Integer versionCode, boolean isVital, String description) {
-    this.os = os;
-    this.versionCode = versionCode;
-    this.isVital = isVital;
-    this.description = description;
-  }
+  private boolean isVital;
 
   public boolean isUpdateMandatory(ClientOS os, Integer versionCode) {
     if (this.os != os) {

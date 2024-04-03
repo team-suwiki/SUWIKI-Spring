@@ -109,7 +109,7 @@ public class UserBusinessService {
     User user = User.init(loginId, passwordEncoder.encode(password), email);
     userCRUDService.saveUser(user);
 
-    ConfirmationToken confirmationToken = ConfirmationToken.from(user.getId());
+    ConfirmationToken confirmationToken = new ConfirmationToken(user.getId());
     confirmationTokenCRUDService.saveConfirmationToken(confirmationToken);
 
     emailSender.send(email, EMAIL_AUTH, confirmationToken.getToken());

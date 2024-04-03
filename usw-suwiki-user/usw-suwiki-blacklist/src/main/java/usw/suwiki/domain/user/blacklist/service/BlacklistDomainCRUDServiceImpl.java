@@ -37,7 +37,7 @@ class BlacklistDomainCRUDServiceImpl implements BlacklistDomainCRUDService {
         LoadMyBlackListReasonResponseForm.builder()
           .blackListReason(loadedDomain.get().getBannedReason())
           .judgement(loadedDomain.get().getJudgement())
-          .createdAt(loadedDomain.get().getCreatedAt())
+          .createdAt(loadedDomain.get().getCreateDate())
           .expiredAt(loadedDomain.get().getExpiredAt())
           .build();
       finalResultForm.add(loadMyBlackListReasonResponseForm);
@@ -49,7 +49,7 @@ class BlacklistDomainCRUDServiceImpl implements BlacklistDomainCRUDService {
   public void saveBlackListDomain(Long userIdx, Long bannedPeriod, String bannedReason, String judgement) {
     User user = userCRUDService.loadUserFromUserIdx(userIdx);
     user.restricted();
-    
+
     String hashTargetEmail = passwordEncoder.encode(user.getEmail());
     if (user.getRestrictedCount() >= NESTED_RESTRICTED_TIME) {
       bannedPeriod += BANNED_PERIOD;
@@ -61,8 +61,6 @@ class BlacklistDomainCRUDServiceImpl implements BlacklistDomainCRUDService {
       .hashedEmail(hashTargetEmail)
       .judgement(judgement)
       .expiredAt(LocalDateTime.now().plusDays(bannedPeriod))
-      .createdAt(LocalDateTime.now())
-      .updatedAt(LocalDateTime.now())
       .build();
 
     blacklistRepository.save(blacklistDomain);

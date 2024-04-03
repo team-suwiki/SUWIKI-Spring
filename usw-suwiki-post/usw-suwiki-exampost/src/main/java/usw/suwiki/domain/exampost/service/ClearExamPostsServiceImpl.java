@@ -17,7 +17,7 @@ class ClearExamPostsServiceImpl implements ClearExamPostsService {
 
   @Override
   public void clear(Long userId) {
-    List<ExamPost> examPosts = examPostRepository.findAllByUserId(userId);
+    List<ExamPost> examPosts = examPostRepository.findAllByUserIdx(userId);
     examPostRepository.deleteAllInBatch(examPosts);
   }
 }

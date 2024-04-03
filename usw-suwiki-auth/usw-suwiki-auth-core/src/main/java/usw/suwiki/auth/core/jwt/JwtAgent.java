@@ -100,9 +100,9 @@ public class JwtAgent implements TokenAgent {
 
   @Override
   public String createRefreshToken(Long userId) {
-    String buildRefreshToken = buildRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime));
-    refreshTokenCRUDService.save(RefreshToken.of(userId, buildRefreshToken));
-    return buildRefreshToken;
+    String refreshToken = buildRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime));
+    refreshTokenCRUDService.save(new RefreshToken(userId, refreshToken));
+    return refreshToken;
   }
 
   @Override

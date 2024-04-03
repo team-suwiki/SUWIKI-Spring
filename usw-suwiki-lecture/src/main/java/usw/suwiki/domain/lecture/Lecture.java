@@ -37,10 +37,10 @@ public class Lecture extends BaseEntity {
   private String type;
 
   @Embedded
-  private LectureEvaluationInfo lectureEvaluationInfo = new LectureEvaluationInfo();
+  private LectureDetail lectureDetail;
 
   @Embedded
-  private LectureDetail lectureDetail;
+  private LectureEvaluationInfo lectureEvaluationInfo = new LectureEvaluationInfo();
 
   private int postsCount = 0;
 

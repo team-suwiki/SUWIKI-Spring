@@ -18,25 +18,25 @@ import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonR
 @RequiredArgsConstructor
 class RestrictingUserCRUDServiceImpl implements RestrictingUserCRUDService {
 
-    private final RestrictingUserRepository restrictingUserRepository;
+  private final RestrictingUserRepository restrictingUserRepository;
 
-    @Override
-    public List<LoadMyRestrictedReasonResponseForm> loadRestrictedLog(Long userIdx) {
-        Optional<RestrictingUser> wrappedRestrictingUser = restrictingUserRepository.findByUserIdx(userIdx);
-        List<LoadMyRestrictedReasonResponseForm> finalResultForm = new ArrayList<>();
+  @Override
+  public List<LoadMyRestrictedReasonResponseForm> loadRestrictedLog(Long userIdx) {
+    Optional<RestrictingUser> wrappedRestrictingUser = restrictingUserRepository.findByUserIdx(userIdx);
+    List<LoadMyRestrictedReasonResponseForm> finalResultForm = new ArrayList<>();
 
-        if (wrappedRestrictingUser.isPresent()) {
-            RestrictingUser RestrictingUser = wrappedRestrictingUser.get();
-            LoadMyRestrictedReasonResponseForm resultForm = LoadMyRestrictedReasonResponseForm
-                .builder()
-                .restrictedReason(RestrictingUser.getRestrictingReason())
-                .judgement(RestrictingUser.getJudgement())
-                .createdAt(RestrictingUser.getCreatedAt())
-                .restrictingDate(RestrictingUser.getRestrictingDate())
-                .build();
-            finalResultForm.add(resultForm);
-        }
-
-        return finalResultForm;
+    if (wrappedRestrictingUser.isPresent()) {
+      RestrictingUser RestrictingUser = wrappedRestrictingUser.get();
+      LoadMyRestrictedReasonResponseForm resultForm = LoadMyRestrictedReasonResponseForm
+        .builder()
+        .restrictedReason(RestrictingUser.getRestrictingReason())
+        .judgement(RestrictingUser.getJudgement())
+        .createdAt(RestrictingUser.getCreateDate())
+        .restrictingDate(RestrictingUser.getRestrictingDate())
+        .build();
+      finalResultForm.add(resultForm);
     }
+
+    return finalResultForm;
+  }
 }

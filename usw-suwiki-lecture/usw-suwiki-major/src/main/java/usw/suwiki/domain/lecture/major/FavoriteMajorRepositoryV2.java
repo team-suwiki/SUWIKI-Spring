@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FavoriteMajorRepositoryV2 extends JpaRepository<FavoriteMajor, Long> {
-  List<FavoriteMajor> findAllByUserId(Long userId);
+  List<FavoriteMajor> findAllByUserIdx(Long userId);
 
-  boolean existsByUserIdAndMajorType(Long userId, String majorType);
+  boolean existsByUserIdxAndMajorType(Long userId, String majorType);
 
-  Optional<FavoriteMajor> findByUserIdAndMajorType(Long userId, String majorType);
+  Optional<FavoriteMajor> findByUserIdxAndMajorType(Long userId, String majorType);
 }

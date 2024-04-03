@@ -1,8 +1,6 @@
 package usw.suwiki.auth.token;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,11 +14,8 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConfirmationToken {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -37,15 +32,14 @@ public class ConfirmationToken {
   @Column(nullable = false)
   private LocalDateTime expiresAt;
 
+  @Column
   private LocalDateTime confirmedAt;
 
-  public static ConfirmationToken from(Long userIdx) {
-    return builder()
-      .token(UUID.randomUUID().toString())
-      .createdAt(LocalDateTime.now())
-      .expiresAt(LocalDateTime.now().plusMinutes(15))
-      .userIdx(userIdx)
-      .build();
+  public ConfirmationToken(Long userIdx) {
+    this.userIdx = userIdx;
+    this.token = UUID.randomUUID().toString();
+    this.createdAt = LocalDateTime.now();
+    this.expiresAt = LocalDateTime.now().plusMinutes(15);
   }
 
   public void confirmed() {

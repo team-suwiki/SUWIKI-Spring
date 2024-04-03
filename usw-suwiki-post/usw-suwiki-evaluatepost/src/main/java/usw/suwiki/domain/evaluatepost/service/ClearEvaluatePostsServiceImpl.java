@@ -17,7 +17,7 @@ class ClearEvaluatePostsServiceImpl implements ClearEvaluatePostsService {
 
   @Override
   public void clear(Long userId) {
-    List<EvaluatePost> evaluatePosts = evaluatePostRepository.findAllByUserId(userId);
+    List<EvaluatePost> evaluatePosts = evaluatePostRepository.findAllByUserIdx(userId);
     evaluatePostRepository.deleteAllInBatch(evaluatePosts);
   }
 }

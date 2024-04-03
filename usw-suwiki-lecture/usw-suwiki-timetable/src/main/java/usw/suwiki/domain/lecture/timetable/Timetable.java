@@ -37,7 +37,7 @@ public class Timetable extends BaseEntity {
   private Semester semester;
 
   @ElementCollection
-  @CollectionTable(name = "timetable_cell", joinColumns = @JoinColumn(name = "timetable_id"))
+  @CollectionTable(name = "timetable_cells", joinColumns = @JoinColumn(name = "timetable_id"))
   @OrderColumn(name = "cell_idx")
   private final List<TimetableCell> cells = new ArrayList<>(); // todo: 반드시 테스트할 것
 

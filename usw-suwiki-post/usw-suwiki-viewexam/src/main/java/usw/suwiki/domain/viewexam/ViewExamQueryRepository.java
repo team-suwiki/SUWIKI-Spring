@@ -25,7 +25,7 @@ public class ViewExamQueryRepository {
         viewExam.createDate
       ))
       .from(viewExam)
-      .where(viewExam.userId.eq(userId))
+      .where(viewExam.userIdx.eq(userId))
       .join(lecture).on(viewExam.lectureId.eq(lecture.id))
       .fetch();
   }

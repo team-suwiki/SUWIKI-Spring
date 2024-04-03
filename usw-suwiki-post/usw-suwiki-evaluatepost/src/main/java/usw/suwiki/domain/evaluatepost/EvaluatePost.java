@@ -16,7 +16,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EvaluatePost extends BaseEntity {
   @Column(nullable = false)
-  private Long userId;
+  private Long userIdx;
 
   @Column(columnDefinition = "TEXT", nullable = false)
   private String content;
@@ -34,7 +34,7 @@ public class EvaluatePost extends BaseEntity {
   }
 
   public void validateAuthor(Long userId) {
-    if (!this.userId.equals(userId)) {
+    if (!this.userIdx.equals(userId)) {
       throw new IllegalArgumentException("not an author"); // todo: 알맞는 예외 던지기
     }
   }

@@ -12,7 +12,6 @@ import usw.suwiki.core.secure.PasswordRandomizer;
 import usw.suwiki.infra.jpa.BaseEntity;
 
 import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -28,10 +27,8 @@ import static usw.suwiki.core.exception.ExceptionType.USER_POINT_LACK;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AttributeOverrides({
-  @AttributeOverride(name = "createDate", column = @Column(name = "created_at")),
-  @AttributeOverride(name = "modifiedDate", column = @Column(name = "updated_at"))
-})
+@AttributeOverride(name = "createDate", column = @Column(name = "created_at"))
+@AttributeOverride(name = "modifiedDate", column = @Column(name = "updated_at"))
 public class User extends BaseEntity {
   private static final int DELETE_POINT_LIMIT = 30;
   private static final int PURCHASE_POINT_LIMIT = 20;
@@ -53,6 +50,7 @@ public class User extends BaseEntity {
   private Integer restrictedCount;
 
   @Enumerated(EnumType.STRING)
+  @Column(columnDefinition = "enum") // todo: flyway 수정 후 삭제
   private Role role;
 
   @Column

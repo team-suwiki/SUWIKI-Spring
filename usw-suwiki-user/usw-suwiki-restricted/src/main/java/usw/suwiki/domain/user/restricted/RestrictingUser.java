@@ -1,45 +1,35 @@
 package usw.suwiki.domain.user.restricted;
 
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import usw.suwiki.infra.jpa.BaseEntity;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class RestrictingUser {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AttributeOverride(name = "createDate", column = @Column(name = "created_at"))
+@AttributeOverride(name = "modifiedDate", column = @Column(name = "updated_at"))
+public class RestrictingUser extends BaseEntity {
+  @Column
+  private Long userIdx;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Column
+  private LocalDateTime restrictingDate;
 
-    @Column
-    private Long userIdx;
+  @Column
+  private String restrictingReason;
 
-    @Column
-    private LocalDateTime restrictingDate;
-
-    @Column
-    private String restrictingReason;
-
-    @Column
-    private String judgement;
-
-    @Column
-    private LocalDateTime createdAt;
-
-    @Column
-    private LocalDateTime updatedAt;
-
+  @Column
+  private String judgement;
 }

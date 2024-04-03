@@ -23,7 +23,7 @@ public class ExamPostCRUDService {
 
   @Transactional
   public void deleteFromUserIdx(Long userIdx) {
-    List<ExamPost> examPosts = examPostRepository.findAllByUserId(userIdx);
+    List<ExamPost> examPosts = examPostRepository.findAllByUserIdx(userIdx);
     examPostRepository.deleteAllInBatch(examPosts);
   }
 

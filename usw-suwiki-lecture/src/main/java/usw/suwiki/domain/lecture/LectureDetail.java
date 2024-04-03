@@ -18,10 +18,10 @@ public class LectureDetail {
   @Column(name = "lecture_code")
   private String code;
 
-  @Column
+  @Column(columnDefinition = "text")
   private double point;
 
-  @Column
+  @Column(columnDefinition = "text") // 추후에 수정할 것
   private String capprType;
 
   @Column

@@ -46,7 +46,7 @@ public class EvaluatePostService {
 
   public void report(Long reportingUserId, Long evaluateId) {
     EvaluatePost evaluatePost = loadEvaluatePostById(evaluateId);
-    Long reportedUserId = evaluatePost.getUserId();
+    Long reportedUserId = evaluatePost.getUserIdx();
 
     Report report = Report.evaluate(evaluateId, reportedUserId, reportingUserId, evaluatePost.getContent(), evaluatePost.getLectureName(), evaluatePost.getProfessor());
     reportService.reportEvaluatePost(report);
@@ -66,7 +66,7 @@ public class EvaluatePostService {
   }
 
   private boolean isAlreadyWritten(Long userId, Long lectureId) {
-    return evaluatePostRepository.existsByUserIdAndLectureInfo_LectureId(userId, lectureId);
+    return evaluatePostRepository.existsByUserIdxAndLectureInfo_LectureId(userId, lectureId);
   }
 
   public void update(Long evaluateId, EvaluatePostRequest.Update request) {
@@ -98,7 +98,7 @@ public class EvaluatePostService {
   }
 
   public void deleteAllByUserId(Long userId) {
-    List<EvaluatePost> evaluatePosts = evaluatePostRepository.findAllByUserId(userId);
+    List<EvaluatePost> evaluatePosts = evaluatePostRepository.findAllByUserIdx(userId);
     evaluatePostRepository.deleteAllInBatch(evaluatePosts);
   }
 

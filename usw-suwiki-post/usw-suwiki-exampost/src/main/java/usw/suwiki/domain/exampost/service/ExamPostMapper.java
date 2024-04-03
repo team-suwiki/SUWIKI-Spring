@@ -13,7 +13,7 @@ class ExamPostMapper {
 
   public static ExamPost toEntity(Long userId, Long lectureId, ExamPostRequest.Create request) {
     return ExamPost.builder()
-      .userId(userId)
+      .userIdx(userId)
       .content(request.getContent())
       .lectureInfo(new LectureInfo(lectureId, request.getLectureName(), request.getSelectedSemester(), request.getProfessor()))
       .examDetail(new ExamDetail(request.getExamType(), request.getExamInfo(), request.getExamDifficulty()))

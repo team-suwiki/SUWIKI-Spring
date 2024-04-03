@@ -18,7 +18,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExamPost extends BaseEntity {
   @Column(nullable = false)
-  private Long userId;
+  private Long userIdx;
 
   @Column(columnDefinition = "TEXT", nullable = false)
   private String content;
