@@ -19,6 +19,5 @@ public interface ExamPostRepository extends JpaRepository<ExamPost, Long> {
     @Param("defaultLimit") int defaultLimit
   );
 
-  // todo: must test
-  boolean existsByUserIdAndLectureId(Long userId, Long lectureId);
+  boolean existsByUserIdAndLectureInfo_LectureId(Long userId, Long lectureId);
 }

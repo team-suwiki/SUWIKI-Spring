@@ -122,10 +122,10 @@ public class AdminController {
   @JWTVerify(option = "ADMIN")
   @ApiLogger(option = "admin")
   @GetMapping("/report/evaluate/")
-  @ResponseStatus(OK)
-  public EvaluatePostReport loadDetailReportedEvaluatePost( // todo: domain dependency
-                                                            @Valid @RequestHeader String Authorization,
-                                                            @Valid @RequestParam Long target
+  @ResponseStatus(OK)  // todo: domain dependency
+  public EvaluatePostReport loadDetailReportedEvaluatePost(
+    @Valid @RequestHeader String Authorization,
+    @Valid @RequestParam Long target
   ) {
     return adminBusinessService.executeLoadDetailReportedEvaluatePost(target);
   }

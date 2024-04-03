@@ -9,7 +9,6 @@ import usw.suwiki.domain.user.UserRepository;
 
 import static usw.suwiki.core.exception.ExceptionType.USER_NOT_FOUND;
 
-// todo: 토큰 모듈 의존성 역전용 서비스 (삭제 예정)
 @Service
 @Transactional
 @RequiredArgsConstructor

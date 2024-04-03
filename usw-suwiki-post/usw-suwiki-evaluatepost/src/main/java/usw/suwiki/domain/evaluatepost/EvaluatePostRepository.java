@@ -8,6 +8,5 @@ public interface EvaluatePostRepository extends JpaRepository<EvaluatePost, Long
 
   List<EvaluatePost> findAllByUserId(Long userId);
 
-  // todo: must test
-  boolean existsByUserIdAndLectureInfoLectureId(Long userId, Long lectureId);
+  boolean existsByUserIdAndLectureInfo_LectureId(Long userId, Long lectureId);
 }

@@ -15,6 +15,7 @@ import usw.suwiki.core.exception.LectureException;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.LectureQueryRepository;
 import usw.suwiki.domain.lecture.LectureRepository;
+import usw.suwiki.domain.lecture.SemesterProvider;
 import usw.suwiki.domain.lecture.dto.LectureResponse;
 import usw.suwiki.domain.lecture.schedule.LectureSchedule;
 import usw.suwiki.domain.lecture.schedule.LectureScheduleQueryRepository;
@@ -94,7 +95,7 @@ public class LectureScheduleService {
   }
 
   private void deleteAllRemovedLectures(List<JsonLecture> jsonLectures) {
-    lectureRepository.findAllBySemesterContains(semesterProvider.semester()).stream()
+    lectureRepository.findAllBySemesterContains(semesterProvider.current()).stream()
       .filter(lecture -> jsonLectures.stream().noneMatch(json -> lecture.isEquals(
         json.getLectureName(),
         json.getProfessor(),
@@ -103,7 +104,7 @@ public class LectureScheduleService {
       )))
       .forEach(lecture -> {
         if (lecture.isOld()) {
-          lecture.removeSemester(semesterProvider.semester());
+          lecture.removeSemester(semesterProvider.current());
         } else {
           lectureRepository.delete(lecture);
         }
@@ -111,7 +112,7 @@ public class LectureScheduleService {
   }
 
   private void deleteAllRemovedLectureSchedules(List<JsonLecture> jsonLectures) {
-    List<Long> scheduleIds = lectureScheduleQueryRepository.findAllLectureInfosBySemester(semesterProvider.semester()).stream()
+    List<Long> scheduleIds = lectureScheduleQueryRepository.findAllLectureInfosBySemester(semesterProvider.current()).stream()
       .filter(info -> jsonLectures.stream().noneMatch(jsonLecture -> jsonLecture.isInfoEquals(info)))
       .map(LectureInfo::scheduleId)
       .toList();
@@ -158,7 +159,7 @@ public class LectureScheduleService {
 
   private void saveLectureSchedule(Long lectureId, JsonLecture jsonLecture) {
     if (jsonLecture.isValidPlaceSchedule()) {
-      LectureSchedule schedule = new LectureSchedule(lectureId, jsonLecture.getPlaceSchedule(), semesterProvider.semester());
+      LectureSchedule schedule = new LectureSchedule(lectureId, jsonLecture.getPlaceSchedule(), semesterProvider.current());
       lectureScheduleRepository.save(schedule);
     }
   }

@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -32,9 +31,7 @@ public class LectureQueryRepository {
   private static final Integer DEFAULT_PAGE = 1;
 
   private final JPAQueryFactory queryFactory;
-
-  @Value("${business.current-semester}")
-  private String currentSemester;
+  private final SemesterProvider semesterProvider;
 
   public Slice<Lecture> findCurrentSemesterLectures(
     final Long cursorId,
@@ -48,7 +45,7 @@ public class LectureQueryRepository {
       .where(containsKeywordInNameOrProfessor(keyword))
       .where(eqMajorType(majorType))
       .where(eqGrade(grade))
-      .where(lecture.semester.endsWith(currentSemester))
+      .where(lecture.semester.endsWith(semesterProvider.current()))
       .orderBy(lecture.id.asc())
       .limit(SlicePaginationUtils.increaseSliceLimit(limit));
 

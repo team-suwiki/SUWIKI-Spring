@@ -53,7 +53,7 @@ public class FavoriteMajorServiceV2 {
     favoriteMajorRepositoryV2.delete(favoriteMajor);
   }
 
-  public void deleteAllFromUserIdx(Long userId) {
+  public void deleteAllFromUserId(Long userId) {
     List<FavoriteMajor> favoriteMajors = favoriteMajorRepositoryV2.findAllByUserId(userId);
     favoriteMajorRepositoryV2.deleteAll(favoriteMajors);
   }

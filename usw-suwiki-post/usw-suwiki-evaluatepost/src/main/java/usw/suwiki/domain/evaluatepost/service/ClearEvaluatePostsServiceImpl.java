@@ -3,16 +3,21 @@ package usw.suwiki.domain.evaluatepost.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.domain.evaluatepost.EvaluatePost;
+import usw.suwiki.domain.evaluatepost.EvaluatePostRepository;
 import usw.suwiki.domain.user.service.ClearEvaluatePostsService;
+
+import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 class ClearEvaluatePostsServiceImpl implements ClearEvaluatePostsService {
-  private final EvaluatePostService evaluatePostService;
+  private final EvaluatePostRepository evaluatePostRepository;
 
   @Override
   public void clear(Long userId) {
-    evaluatePostService.deleteAllByUserId(userId);
+    List<EvaluatePost> evaluatePosts = evaluatePostRepository.findAllByUserId(userId);
+    evaluatePostRepository.deleteAllInBatch(evaluatePosts);
   }
 }

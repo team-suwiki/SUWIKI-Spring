@@ -5,6 +5,10 @@ plugins {
   id 'com.ewerk.gradle.plugins.querydsl' apply false
 }
 
+apply from: 'gradle/spring.gradle'
+apply from: 'gradle/lombok.gradle'
+apply from: 'gradle/querydsl.gradle'
+
 allprojects {
   group = "${projectGroup}"
   version = "${applicationVersion}"
@@ -14,10 +18,6 @@ allprojects {
     mavenCentral()
   }
 }
-
-apply from: 'gradle/spring.gradle'
-apply from: 'gradle/lombok.gradle'
-apply from: 'gradle/querydsl.gradle'
 
 subprojects {
   test {

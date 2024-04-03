@@ -19,13 +19,13 @@ public class FavoriteMajor {
   private Long id;
 
   @Column(nullable = false)
-  private Long userIdx;
+  private Long userId;
 
   @Column
   private String majorType;
 
-  public FavoriteMajor(Long userIdx, String majorType) {
-    this.userIdx = userIdx;
+  public FavoriteMajor(Long userId, String majorType) {
+    this.userId = userId;
     this.majorType = majorType;
   }
 }

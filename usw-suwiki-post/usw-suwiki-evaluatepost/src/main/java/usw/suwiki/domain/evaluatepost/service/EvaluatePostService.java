@@ -66,7 +66,7 @@ public class EvaluatePostService {
   }
 
   private boolean isAlreadyWritten(Long userId, Long lectureId) {
-    return evaluatePostRepository.existsByUserIdAndLectureInfoLectureId(userId, lectureId);
+    return evaluatePostRepository.existsByUserIdAndLectureInfo_LectureId(userId, lectureId);
   }
 
   public void update(Long evaluateId, EvaluatePostRequest.Update request) {

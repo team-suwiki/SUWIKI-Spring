@@ -1,19 +1,24 @@
 spring:
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
+  config:
+    import:
+      - classpath:application-smtp.yml
+      - classpath:application-secrets.yml
+      - classpath:application-datasource.yml
+      - classpath:application-statistics.yml
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     properties:
       hibernate:
-        default_batch_fetch_size: 100
+        default_batch_size: 999
+        show_sql: true
+        format_sql: true
+        use-new-id-generator-mappings: false
 
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  mvc:
+    path-match:
+      matching-strategy: ant_path_matcher
 
-business:
-  current-semester: 2024-1
+semester:
+  current: 2024-1

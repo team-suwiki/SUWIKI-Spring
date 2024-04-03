@@ -50,7 +50,7 @@ public class ExamPostService {
   }
 
   public boolean isAlreadyWritten(Long userId, Long lectureId) {
-    return examPostRepository.existsByUserIdAndLectureId(userId, lectureId);
+    return examPostRepository.existsByUserIdAndLectureInfo_LectureId(userId, lectureId);
   }
 
   public List<ViewExamResponse.PurchaseHistory> loadPurchasedHistories(Long userId) {
