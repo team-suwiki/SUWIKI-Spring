@@ -1,11 +1,10 @@
 subprojects {
   dependencies {
+    // domain modules
     implementation project(':usw-suwiki-user')
     implementation project(':usw-suwiki-user:usw-suwiki-blacklist')
     implementation project(':usw-suwiki-user:usw-suwiki-restricted')
     implementation project(':usw-suwiki-user:usw-suwiki-isolated-user')
-
-    implementation project(':usw-suwiki-report')
 
     implementation project(':usw-suwiki-lecture')
     implementation project(':usw-suwiki-lecture:usw-suwiki-major')
@@ -17,24 +16,24 @@ subprojects {
     implementation project(':usw-suwiki-post:usw-suwiki-exampost')
     implementation project(':usw-suwiki-post:usw-suwiki-evaluatepost')
 
-    implementation project(':usw-suwiki-auth:usw-suwiki-auth-core')
-    implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
-
-    implementation project(':usw-suwiki-common')
-
+    implementation project(':usw-suwiki-report')
     implementation project(':usw-suwiki-scheduler')
     implementation project(':usw-suwiki-statistics')
+
+    // support modules
+    implementation project(':usw-suwiki-common')
+
+    implementation project(':usw-suwiki-auth:usw-suwiki-auth-core')
+    implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
 
     implementation project(':usw-suwiki-core:usw-suwiki-secure')
     implementation project(':usw-suwiki-core:usw-suwiki-version')
     implementation project(':usw-suwiki-core:usw-suwiki-exception')
 
     implementation project(':usw-suwiki-infra:usw-suwiki-db')
+    implementation project(':usw-suwiki-infra:usw-suwiki-flyway')
     implementation project(':usw-suwiki-infra:usw-suwiki-caffeine')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    implementation 'org.flywaydb:flyway-core'
-    implementation 'org.flywaydb:flyway-mysql'
   }
 }

@@ -1,9 +1,9 @@
 pluginManagement {
-    plugins {
-        id 'org.springframework.boot' version "${springBootVersion}"
-        id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-        id 'com.ewerk.gradle.plugins.querydsl' version "${gradlePluginsQuerydslVersion}"
-    }
+  plugins {
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+    id 'com.ewerk.gradle.plugins.querydsl' version "${gradlePluginsQuerydslVersion}"
+  }
 }
 
 rootProject.name = 'suwiki'
@@ -51,4 +51,5 @@ include 'usw-suwiki-scheduler'
 
 include 'usw-suwiki-infra'
 include 'usw-suwiki-infra:usw-suwiki-db'
+include 'usw-suwiki-infra:usw-suwiki-flyway'
 include 'usw-suwiki-infra:usw-suwiki-caffeine'

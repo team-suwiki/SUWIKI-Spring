@@ -15,3 +15,10 @@ project(':usw-suwiki-infra:usw-suwiki-db') {
     testImplementation 'com.h2database:h2'
   }
 }
+
+project(':usw-suwiki-infra:usw-suwiki-flyway') {
+  dependencies {
+    api 'org.flywaydb:flyway-core'
+    api 'org.flywaydb:flyway-mysql'
+  }
+}
