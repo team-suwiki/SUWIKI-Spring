@@ -1,3 +1,7 @@
+.env
+*.json
+*.DS_Store
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -7,12 +11,6 @@ build/
 !src/test/test/**/build/
 .idea/workspace.xml
 /logs
-
-### YML ###
-*.yml
-
-*.json
-*.DS_Store
 
 ### STS ###
 .apt_generated

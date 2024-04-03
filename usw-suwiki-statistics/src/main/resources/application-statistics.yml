@@ -1,0 +1,25 @@
+management:
+  server:
+    port: 10009
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    jmx:
+      exposure:
+        exclude: "*"
+  info:
+    java:
+      enabled: true
+  os:
+    enabled: true
+
+info:
+  app:
+    name: SUWIKI-ACTUATOR
+    company: SUWIKI
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

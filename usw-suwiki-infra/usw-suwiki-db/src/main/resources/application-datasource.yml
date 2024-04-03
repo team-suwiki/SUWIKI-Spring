@@ -1,0 +1,48 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(zXSG4UQSImGJO43kfByhu1puU+EJCvOuNuHKDmfmS+igKL5UFduySInn4zAsQInKVSUBOKtI8zbXGARYxBU4qzap07SNz2M9Hx9AKChL9AokGj4L4AEdy5WHJx3uTCEojDbiXf8eFIOUtNPpX5r7hxfHbgQJcOpBZbLs+cXrYdYKmCuWJIgXOg==)
+    username: ENC(vK26Q95U2gok8SniTtcRJw==)
+    password: ENC(TdeTq+JiuNzk82zm4LlhoeTvWidVQfLPAEVhopseT/s=)
+
+server:
+  port: 8080
+  domain: ENC(0mRFnCrUEeChBPYQxQzxhS7wGsqeTHQgij8ihMSZxps=)
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(6efWN1cjJeIKNMcuOHpkv6O/WMTwJAdYKtPUjVedkuBV4RhYELgJYNQ6yOPfI3U40WML38a75Uo0J+UD19p71RmF2+BOkbMx4H2pQSOxRjaXTWr6ZQi6RkWQWZ9bZHam9Hl1yc6RmJBn9c7obQbwJJSzAujjcWTqFi3fZ93wdWcLQIwir27W5b6BEiGTjoOd)
+    username: ENC(vK26Q95U2gok8SniTtcRJw==)
+    password: ENC(rAOJqzq+OtNaSc3ldWKv+1OZvnIJ4oJpaYB0/dZCZ4Q=)
+
+server:
+  port: 8090
+  domain: ENC(nWjqzyqSvWGy4zsGHk/mjEy9QlmqQ20OpBmTqqmaKPI2f7HurQxmRg==)
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/suwiki
+    username: ${db.username:root}
+    password: ${db.password:password}
+
+server:
+  port: 8080
+  domain: http://localhost:8080

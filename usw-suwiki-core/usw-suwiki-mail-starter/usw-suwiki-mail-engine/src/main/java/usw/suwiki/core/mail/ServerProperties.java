@@ -7,8 +7,8 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 
 @Getter
 @ConstructorBinding
-@ConfigurationProperties(prefix = "server")
 @RequiredArgsConstructor
+@ConfigurationProperties(prefix = "server")
 class ServerProperties {
   private static final String CONFIRMATION_TOKEN_URL = "/v2/confirmation-token/verify/?token=";
 

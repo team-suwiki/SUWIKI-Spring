@@ -11,15 +11,14 @@ import java.util.concurrent.Executor;
 @EnableAsync(proxyTargetClass = true)
 public class AsyncConfig implements AsyncConfigurer {
 
-    @Override
-    public Executor getAsyncExecutor() {
-        final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(3);
-        executor.setMaxPoolSize(30);
-        executor.setQueueCapacity(90);
-        executor.setThreadNamePrefix("ASYNC-");
-        executor.initialize();
-
-        return executor;
-    }
+  @Override
+  public Executor getAsyncExecutor() {
+    final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    executor.setCorePoolSize(3);
+    executor.setMaxPoolSize(30);
+    executor.setQueueCapacity(90);
+    executor.setThreadNamePrefix("ASYNC-");
+    executor.initialize();
+    return executor;
+  }
 }
