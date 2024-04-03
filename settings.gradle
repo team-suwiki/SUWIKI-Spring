@@ -3,6 +3,8 @@ pluginManagement {
     id 'org.springframework.boot' version "${springBootVersion}"
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
     id 'com.ewerk.gradle.plugins.querydsl' version "${gradlePluginsQuerydslVersion}"
+    id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
+    id 'org.hidetake.swagger.generator' version "${swaggerGeneratorVersion}"
   }
 }
 

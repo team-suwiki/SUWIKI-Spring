@@ -1,4 +1,8 @@
 subprojects {
+  apply plugin: 'com.epages.restdocs-api-spec'
+  apply plugin: 'org.hidetake.swagger.generator'
+  apply from: "$rootDir/gradle/rest-api-spec.gradle"
+
   dependencies {
     // domain modules
     implementation project(':usw-suwiki-user')
@@ -35,5 +39,8 @@ subprojects {
     implementation project(':usw-suwiki-infra:usw-suwiki-caffeine')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // test
+    testImplementation(testFixtures(project(':usw-suwiki-common')))
   }
 }

@@ -3,6 +3,8 @@ plugins {
   id 'org.springframework.boot' apply false
   id 'io.spring.dependency-management'
   id 'com.ewerk.gradle.plugins.querydsl' apply false
+  id 'org.hidetake.swagger.generator'
+  id 'com.epages.restdocs-api-spec' apply false
 }
 
 apply from: 'gradle/spring.gradle'
