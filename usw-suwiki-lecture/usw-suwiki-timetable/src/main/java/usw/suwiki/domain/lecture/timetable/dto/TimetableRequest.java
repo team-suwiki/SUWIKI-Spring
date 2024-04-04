@@ -1,16 +1,17 @@
 package usw.suwiki.domain.lecture.timetable.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TimetableRequest {

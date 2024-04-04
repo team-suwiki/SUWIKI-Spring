@@ -35,6 +35,7 @@ public class User extends BaseEntity {
   private static final int DELETE_POINT_LIMIT = 30;
   private static final int PURCHASE_POINT_LIMIT = 20;
   private static final int WROTE_EVALUATION_BONUS = 10;
+  private static final int ARREST_LIMIT = 2;
 
   @Column
   private String loginId;
@@ -87,7 +88,7 @@ public class User extends BaseEntity {
       .build();
   }
 
-  public void restricted() {
+  public void restrict() {
     this.restricted = true;
   }
 
@@ -104,7 +105,7 @@ public class User extends BaseEntity {
     this.point = null;
     this.lastLogin = null;
     this.requestedQuitDate = LocalDateTime.now();
-    restricted();
+    restrict();
   }
 
   public void sleep() {
@@ -200,5 +201,9 @@ public class User extends BaseEntity {
 
   public void increasePointByReporting() {
     this.point += 1;
+  }
+
+  public boolean isCloseToArrest() {
+    return this.restrictedCount == ARREST_LIMIT;
   }
 }

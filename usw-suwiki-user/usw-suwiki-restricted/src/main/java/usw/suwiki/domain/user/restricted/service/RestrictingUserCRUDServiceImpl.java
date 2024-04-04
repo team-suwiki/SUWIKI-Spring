@@ -1,17 +1,16 @@
 package usw.suwiki.domain.user.restricted.service;
 
+import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.user.restricted.RestrictingUser;
 import usw.suwiki.domain.user.restricted.RestrictingUserRepository;
 import usw.suwiki.domain.user.service.RestrictingUserCRUDService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 
 @Service
 @Transactional(readOnly = true)

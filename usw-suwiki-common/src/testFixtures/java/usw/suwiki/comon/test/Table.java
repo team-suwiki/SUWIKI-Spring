@@ -1,4 +1,4 @@
-package usw.suwiki.comon.test.db;
+package usw.suwiki.comon.test;
 
 public enum Table {
   // user
