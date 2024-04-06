@@ -1,33 +1,35 @@
 allprojects {
-    dependencies {
-        implementation project(':usw-suwiki-core:usw-suwiki-exception')
-        implementation project(':usw-suwiki-infra:usw-suwiki-db')
-        implementation project(':usw-suwiki-common')
-    }
+  dependencies {
+    implementation project(':usw-suwiki-core:usw-suwiki-exception')
+    implementation project(':usw-suwiki-infra:usw-suwiki-db')
+    implementation project(':usw-suwiki-common')
+  }
 }
 
 project(':usw-suwiki-lecture') {
-    dependencies {
-        implementation project(':usw-suwiki-user')
-    }
+  dependencies {
+    implementation project(':usw-suwiki-user')
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+  }
 }
 
 project(':usw-suwiki-lecture:usw-suwiki-schedule') {
-    dependencies {
-        implementation project(':usw-suwiki-lecture')
-        implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-    }
+  dependencies {
+    implementation project(':usw-suwiki-lecture')
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+  }
 }
 
 project(':usw-suwiki-lecture:usw-suwiki-timetable') {
-    dependencies {
-        implementation project(':usw-suwiki-lecture')
-    }
+  dependencies {
+    implementation project(':usw-suwiki-lecture')
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+  }
 }
 
 project(':usw-suwiki-lecture:usw-suwiki-major') {
-    dependencies {
-        implementation project(':usw-suwiki-user')
-        implementation project(':usw-suwiki-core:usw-suwiki-secure') // todo: 코드 개선하면 삭제가능할듯
-    }
+  dependencies {
+    implementation project(':usw-suwiki-user')
+    implementation project(':usw-suwiki-core:usw-suwiki-secure') // todo: 코드 개선하면 삭제가능할듯
+  }
 }

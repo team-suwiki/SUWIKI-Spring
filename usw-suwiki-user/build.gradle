@@ -16,9 +16,10 @@ subprojects {
 project(':usw-suwiki-user') {
   dependencies {
     implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
-
     implementation project(':usw-suwiki-core:usw-suwiki-mail-starter')
 
     implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
   }
 }
