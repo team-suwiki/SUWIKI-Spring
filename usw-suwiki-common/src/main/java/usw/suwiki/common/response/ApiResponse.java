@@ -3,48 +3,24 @@ package usw.suwiki.common.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @JsonInclude(Include.NON_NULL)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiResponse<T> {
+  private final String code;
+  private final T data;
+  private final String message;
 
-    private String code;
-    private T data;
-    private String message;
+  public static <T> ApiResponse<T> ok(T data) {
+    return new ApiResponse<>(null, data, null);
+  }
 
-    @Builder
-    private ApiResponse(String code, T data, String message) {
-        this.code = code;
-        this.data = data;
-        this.message = message;
-    }
-
-    public static <T> ApiResponse<T> success(T data) {
-        return ApiResponse.<T>builder()
-            .data(data)
-            .build();
-    }
-
-    public static ApiResponse error(String code, String message) {
-        HashMap<String, String> empty = new HashMap<>();
-        return builder()
-            .code(code)
-            .data(empty)
-            .message(message)
-            .build();
-    }
-
-    public static <T> ApiResponse<T> error(String code, T data, String message) {
-        return ApiResponse.<T>builder()
-            .code(code)
-            .data(data)
-            .message(message)
-            .build();
-    }
+  public static ApiResponse<?> success() {
+    return new ApiResponse<>(null, Map.of("success", true), null);
+  }
 }

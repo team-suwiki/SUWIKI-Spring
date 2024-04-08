@@ -9,27 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ResponseForm {
 
-    private Object data;
-    private Integer statusCode;
-    private String message;
+  private Object data;
+  private Integer statusCode;
+  private String message;
 
-    public ResponseForm(Object data) {
-        this.data = data;
-    }
+  public ResponseForm(Object data) {
+    this.data = data;
+  }
 
-    public static ResponseForm success(Object data) {
-        return new ResponseForm(data, 200, "Success");
-    }
-
-    public static ResponseForm buildDataStatusCodeForm(Object data, Integer statusCode) {
-        return new ResponseForm(data, statusCode, "");
-    }
-
-    public ResponseForm buildDataStatusCodeMessageForm(
-        Object data,
-        Integer statusCode,
-        String message
-    ) {
-        return new ResponseForm(data, statusCode, message);
-    }
+  public static ResponseForm success(Object data) {
+    return new ResponseForm(data, 200, "Success");
+  }
 }

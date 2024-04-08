@@ -55,7 +55,7 @@ public class LectureController {
   ) {
     LectureResponse.Lectures response =
       lectureScheduleService.findPagedLecturesBySchedule(cursorId, size, keyword, major, grade);
-    return ApiResponse.success(response);
+    return ApiResponse.ok(response);
   }
 
   @CacheStatics
