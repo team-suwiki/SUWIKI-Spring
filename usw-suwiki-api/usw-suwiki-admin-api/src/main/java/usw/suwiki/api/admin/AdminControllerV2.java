@@ -2,7 +2,6 @@ package usw.suwiki.api.admin;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +29,6 @@ import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostNoProblemFo
 import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/v2/admin")
 @RequiredArgsConstructor

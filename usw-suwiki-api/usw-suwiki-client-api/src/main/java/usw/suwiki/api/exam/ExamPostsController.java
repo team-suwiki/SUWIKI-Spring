@@ -2,7 +2,6 @@ package usw.suwiki.api.exam;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +27,6 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(value = "/exam-posts")
 @RequiredArgsConstructor

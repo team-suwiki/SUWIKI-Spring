@@ -1,7 +1,6 @@
 package usw.suwiki.api.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +20,6 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping("/v2/favorite-major")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FavoriteMajorController {
   private final FavoriteMajorServiceV2 favoriteMajorServiceV2;
 

@@ -2,7 +2,6 @@ package usw.suwiki.api.report;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,7 +21,6 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.OK;
 import static usw.suwiki.common.response.ApiResponseFactory.successFlag;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/user/report")
 @RequiredArgsConstructor
