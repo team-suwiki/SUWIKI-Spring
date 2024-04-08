@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.core.secure.PasswordEncoder;
-import usw.suwiki.core.secure.PasswordRandomizer;
+import usw.suwiki.core.secure.RandomPasswordGenerator;
 
 import java.time.LocalDateTime;
 
@@ -48,8 +48,8 @@ public class UserIsolation {
   }
 
   public String updateRandomPassword(PasswordEncoder passwordEncoder) {
-    String generatedPassword = PasswordRandomizer.randomizePassword();
-    this.password = passwordEncoder.encode(generatedPassword);
-    return generatedPassword;
+    String newPassword = RandomPasswordGenerator.generate();
+    this.password = passwordEncoder.encode(newPassword);
+    return newPassword;
   }
 }
