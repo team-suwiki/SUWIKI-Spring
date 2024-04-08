@@ -1,31 +1,34 @@
 subprojects {
-    dependencies {
-        implementation project(':usw-suwiki-common')
-        implementation project(':usw-suwiki-infra:usw-suwiki-db')
-        implementation project(':usw-suwiki-core:usw-suwiki-exception')
-    }
+  dependencies {
+    implementation project(':usw-suwiki-common')
+    implementation project(':usw-suwiki-infra:usw-suwiki-db')
+    implementation project(':usw-suwiki-core:usw-suwiki-exception')
+
+    implementation 'com.fasterxml.jackson.core:jackson-annotations' // todo: querydsl api 모듈 이동 후 삭제
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // todo: querydsl api 모듈 이동 후 삭제
+  }
 }
 
 project(':usw-suwiki-post:usw-suwiki-evaluatepost') {
-    dependencies {
-        implementation project(':usw-suwiki-user')
-        implementation project(':usw-suwiki-report')
-        implementation project(':usw-suwiki-lecture')
-    }
+  dependencies {
+    implementation project(':usw-suwiki-user')
+    implementation project(':usw-suwiki-report')
+    implementation project(':usw-suwiki-lecture')
+  }
 }
 
 project(':usw-suwiki-post:usw-suwiki-exampost') {
-    dependencies {
-        implementation project(':usw-suwiki-user')
-        implementation project(':usw-suwiki-report')
-        implementation project(':usw-suwiki-lecture')
-        implementation project(':usw-suwiki-post:usw-suwiki-viewexam')
-    }
+  dependencies {
+    implementation project(':usw-suwiki-user')
+    implementation project(':usw-suwiki-report')
+    implementation project(':usw-suwiki-lecture')
+    implementation project(':usw-suwiki-post:usw-suwiki-viewexam')
+  }
 }
 
 project(':usw-suwiki-post:usw-suwiki-viewexam') {
-    dependencies {
-        implementation project(':usw-suwiki-user')
-        implementation project(':usw-suwiki-lecture')
-    }
+  dependencies {
+    implementation project(':usw-suwiki-user')
+    implementation project(':usw-suwiki-lecture')
+  }
 }

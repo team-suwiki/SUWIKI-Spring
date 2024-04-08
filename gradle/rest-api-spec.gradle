@@ -33,9 +33,9 @@ tasks.register("duplicateSwaggerUiIntoJar", Copy) {
   tasks.resolveMainClassName.mustRunAfter ':duplicateSwaggerUiIntoJar'
 }
 
-bootJar {
-  dependsOn ':duplicateSwaggerUiIntoJar'
-}
+//bootJar {
+//  dependsOn ':duplicateSwaggerUiIntoJar'
+//}
 
 def toDir(String path) {
   return layout.buildDirectory.dir(path).get()

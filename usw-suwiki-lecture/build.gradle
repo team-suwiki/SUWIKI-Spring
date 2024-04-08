@@ -3,27 +3,30 @@ allprojects {
     implementation project(':usw-suwiki-core:usw-suwiki-exception')
     implementation project(':usw-suwiki-infra:usw-suwiki-db')
     implementation project(':usw-suwiki-common')
+
+    implementation 'com.fasterxml.jackson.core:jackson-annotations' // todo: querydsl api 모듈 이동 후 삭제
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // todo: querydsl api 모듈 이동 후 삭제
   }
 }
 
 project(':usw-suwiki-lecture') {
   dependencies {
     implementation project(':usw-suwiki-user')
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
   }
 }
 
 project(':usw-suwiki-lecture:usw-suwiki-schedule') {
   dependencies {
     implementation project(':usw-suwiki-lecture')
+
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
   }
 }
 
 project(':usw-suwiki-lecture:usw-suwiki-timetable') {
   dependencies {
     implementation project(':usw-suwiki-lecture')
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
   }
 }
 
