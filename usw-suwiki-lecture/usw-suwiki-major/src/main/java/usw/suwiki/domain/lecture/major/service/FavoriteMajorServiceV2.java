@@ -1,5 +1,6 @@
 package usw.suwiki.domain.lecture.major.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import usw.suwiki.core.exception.AccountException;
@@ -9,7 +10,6 @@ import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.lecture.major.FavoriteMajor;
 import usw.suwiki.domain.lecture.major.FavoriteMajorRepositoryV2;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service

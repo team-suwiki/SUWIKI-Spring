@@ -1,10 +1,9 @@
 plugins {
-  id 'java-library'
-  id 'org.springframework.boot' apply false
-  id 'io.spring.dependency-management'
-  id 'com.ewerk.gradle.plugins.querydsl' apply false
-  id 'org.hidetake.swagger.generator'
-  id 'com.epages.restdocs-api-spec' apply false
+  id("java-library")
+  id("org.springframework.boot") apply false
+  id("io.spring.dependency-management")
+  id("com.epages.restdocs-api-spec") apply false
+  id("org.hidetake.swagger.generator")
 }
 
 apply from: 'gradle/spring.gradle'
@@ -29,5 +28,4 @@ subprojects {
 
 tasks.withType(JavaCompile).configureEach {
   options.encoding = 'UTF-8'
-  options.release = 17 // Java 17을 사용할 경우 release 17로 설정
 }

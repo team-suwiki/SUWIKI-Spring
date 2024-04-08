@@ -1,23 +1,23 @@
 apply plugin: 'java-test-fixtures'
 
 dependencies {
-  implementation 'org.springframework.data:spring-data-commons'
-  implementation 'org.springframework.boot:spring-boot-starter-validation' // todo: BulkRequest 확인 (24.03.06)
+  implementation('org.springframework.data:spring-data-commons')
+  implementation('org.springframework.boot:spring-boot-starter-validation') // todo: BulkRequest 확인 (24.03.06)
 
-  implementation 'org.apache.commons:commons-text:1.10.0'
-  implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
-  implementation 'com.fasterxml.jackson.core:jackson-annotations'
+  implementation('org.apache.commons:commons-text:1.10.0')
+  implementation('com.fasterxml.jackson.core:jackson-annotations')
+  implementation('com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4')
 
   // test supports
   testFixturesImplementation project(':usw-suwiki-core:usw-suwiki-exception')
-  testFixturesImplementation 'org.springframework.boot:spring-boot-starter'
-  testFixturesImplementation 'org.springframework.boot:spring-boot-starter-web'
-  testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testFixturesImplementation('org.springframework.boot:spring-boot-starter')
+  testFixturesImplementation('org.springframework.boot:spring-boot-starter-web')
+  testFixturesImplementation('org.springframework.boot:spring-boot-starter-test')
 
-  testFixturesApi "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
-  testFixturesApi 'org.springframework.restdocs:spring-restdocs-mockmvc'
-  testFixturesApi 'org.springframework.security:spring-security-test'
-  testFixturesApi 'io.github.hejow:easy-restdocs-generator:0.0.3'
+  testFixturesApi("com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}")
+  testFixturesApi('org.springframework.restdocs:spring-restdocs-mockmvc')
+  testFixturesApi('org.springframework.security:spring-security-test')
+  testFixturesApi('io.github.hejow:easy-restdocs-generator:0.0.3')
 
-  testFixturesRuntimeOnly 'com.h2database:h2'
+  testFixturesRuntimeOnly('com.h2database:h2')
 }

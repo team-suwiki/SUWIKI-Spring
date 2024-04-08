@@ -8,11 +8,9 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.NoIvGenerator;
 import org.jasypt.salt.RandomSaltGenerator;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.context.annotation.Bean;
 
 @Slf4j
-@ConstructorBinding
 @RequiredArgsConstructor
 @EnableEncryptableProperties
 @ConfigurationProperties(prefix = "jasypt")

@@ -1,10 +1,9 @@
 package usw.suwiki.domain.report.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReportRequest {

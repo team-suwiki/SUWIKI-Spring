@@ -1,5 +1,6 @@
 package usw.suwiki.domain.user.service;
 
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,6 @@ import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.model.UserClaim;
 
-import javax.servlet.http.Cookie;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

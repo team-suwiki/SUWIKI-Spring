@@ -1,12 +1,12 @@
 package usw.suwiki.domain.notice.persist;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.domain.notice.Notice;
 import usw.suwiki.domain.notice.NoticeRepository;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 

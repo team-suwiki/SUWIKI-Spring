@@ -13,13 +13,11 @@ public class ClientAppVersionService {
   private final ClientAppVersionRepository clientAppVersionRepository;
 
   public CheckUpdateMandatoryResponse checkIsUpdateMandatory(String os, int versionCode) {
-    ClientOS clientOS = ClientOS.ofString(os);
+    ClientOS clientOS = ClientOS.from(os);
 
-    ClientAppVersion clientAppVersion = clientAppVersionRepository.findFirstByOsAndIsVitalTrueOrderByVersionCodeDesc(clientOS)
+    ClientAppVersion clientAppVersion = clientAppVersionRepository.findFirstByOsAndVitalTrueOrderByVersionCodeDesc(clientOS)
       .orElseThrow(() -> new VersionException(ExceptionType.SERVER_ERROR));
 
-    boolean isUpdateMandatory = clientAppVersion.isUpdateMandatory(clientOS, versionCode);
-
-    return new CheckUpdateMandatoryResponse(isUpdateMandatory);
+    return new CheckUpdateMandatoryResponse(clientAppVersion.isUpdateMandatory(clientOS, versionCode));
   }
 }

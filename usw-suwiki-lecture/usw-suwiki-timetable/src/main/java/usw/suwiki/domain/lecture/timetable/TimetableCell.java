@@ -1,15 +1,14 @@
 package usw.suwiki.domain.lecture.timetable;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.TimetableException;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 @Getter
 @Embeddable

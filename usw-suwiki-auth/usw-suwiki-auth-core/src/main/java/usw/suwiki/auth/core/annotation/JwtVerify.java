@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JWTVerify {
+public @interface JwtVerify {
 
-    String option() default "";
+  String option() default "";
 }

@@ -1,10 +1,9 @@
 package usw.suwiki.domain.notice.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class NoticeRequest {

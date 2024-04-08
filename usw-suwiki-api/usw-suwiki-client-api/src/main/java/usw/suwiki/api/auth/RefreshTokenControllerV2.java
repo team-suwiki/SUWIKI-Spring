@@ -1,5 +1,7 @@
 package usw.suwiki.api.auth;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,8 +14,6 @@ import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.user.service.UserBusinessService;
 import usw.suwiki.statistics.annotation.ApiLogger;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,9 +33,7 @@ public class RefreshTokenControllerV2 {
     @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
     HttpServletResponse response
   ) {
-    Map<String, String> tokenPair = userBusinessService.executeJWTRefreshForWebClient(
-      requestRefreshCookie
-    );
+    Map<String, String> tokenPair = userBusinessService.executeJWTRefreshForWebClient(requestRefreshCookie);
 
     Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
     refreshCookie.setMaxAge(14 * 24 * 60 * 60);

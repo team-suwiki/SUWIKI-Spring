@@ -1,5 +1,6 @@
 package usw.suwiki.api.admin;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,14 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.auth.core.annotation.JWTVerify;
+import usw.suwiki.auth.core.annotation.JwtVerify;
 import usw.suwiki.domain.report.EvaluatePostReport;
 import usw.suwiki.domain.report.ExamPostReport;
 import usw.suwiki.domain.user.dto.UserAdminResponseDto;
 import usw.suwiki.domain.user.service.AdminBusinessService;
 import usw.suwiki.statistics.annotation.ApiLogger;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -44,7 +44,7 @@ public class AdminController {
     return adminBusinessService.executeAdminLogin(loginForm);
   }
 
-  @JWTVerify(option = "ADMIN")
+  @JwtVerify(option = "ADMIN")
   @ApiLogger(option = "admin")
   @PostMapping("/restrict/evaluate-posts")
   @ResponseStatus(OK)
@@ -55,7 +55,7 @@ public class AdminController {
     return adminBusinessService.executeRestrictEvaluatePost(evaluatePostRestrictForm);
   }
 
-  @JWTVerify(option = "ADMIN")
+  @JwtVerify(option = "ADMIN")
   @ApiLogger(option = "admin")
   @PostMapping("/restrict/exam-post")
   @ResponseStatus(OK)
@@ -67,7 +67,7 @@ public class AdminController {
   }
 
 
-  @JWTVerify(option = "ADMIN")
+  @JwtVerify(option = "ADMIN")
   @ApiLogger(option = "admin")
   @PostMapping("/blacklist/evaluate-post")
   @ResponseStatus(OK)
@@ -78,7 +78,7 @@ public class AdminController {
     return adminBusinessService.executeBlackListEvaluatePost(evaluatePostBlacklistForm);
   }
 
-  @JWTVerify(option = "ADMIN")
+  @JwtVerify(option = "ADMIN")
   @ApiLogger(option = "admin")
   @PostMapping("/blacklist/exam-post")
   @ResponseStatus(OK)
@@ -89,7 +89,7 @@ public class AdminController {
     return adminBusinessService.executeBlackListExamPost(examPostBlacklistForm);
   }
 
-  @JWTVerify(option = "ADMIN")
+  @JwtVerify(option = "ADMIN")
   @ApiLogger(option = "admin")
   @DeleteMapping("/no-problem/evaluate-post")
   @ResponseStatus(OK)
@@ -100,7 +100,7 @@ public class AdminController {
     return adminBusinessService.executeNoProblemEvaluatePost(evaluatePostNoProblemForm);
   }
 
-  @JWTVerify(option = "ADMIN") // todo: 통일
+  @JwtVerify(option = "ADMIN") // todo: 통일
   @ApiLogger(option = "admin")
   @DeleteMapping("/no-problem/exam-post")
   @ResponseStatus(OK)
@@ -111,7 +111,7 @@ public class AdminController {
     return adminBusinessService.executeNoProblemExamPost(examPostNoProblemForm);
   }
 
-  @JWTVerify(option = "ADMIN")
+  @JwtVerify(option = "ADMIN")
   @ApiLogger(option = "admin")
   @GetMapping("/report/list")
   @ResponseStatus(OK)
@@ -119,7 +119,7 @@ public class AdminController {
     return adminBusinessService.executeLoadAllReportedPosts();
   }
 
-  @JWTVerify(option = "ADMIN")
+  @JwtVerify(option = "ADMIN")
   @ApiLogger(option = "admin")
   @GetMapping("/report/evaluate/")
   @ResponseStatus(OK)  // todo: domain dependency

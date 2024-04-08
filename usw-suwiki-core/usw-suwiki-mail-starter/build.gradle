@@ -11,8 +11,8 @@ project(':usw-suwiki-core:usw-suwiki-mail-starter:usw-suwiki-mail-engine') {
 
     implementation project(':usw-suwiki-core:usw-suwiki-exception')
 
-    implementation 'org.thymeleaf:thymeleaf'
-    implementation 'org.thymeleaf:thymeleaf-spring5'
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation("org.thymeleaf:thymeleaf")
+    implementation("org.thymeleaf:thymeleaf-spring6")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
   }
 }

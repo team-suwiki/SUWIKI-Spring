@@ -1,5 +1,10 @@
 package usw.suwiki.domain.user;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,11 +16,6 @@ import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.PasswordRandomizer;
 import usw.suwiki.infra.jpa.BaseEntity;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 import java.util.Optional;
 

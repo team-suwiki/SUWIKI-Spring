@@ -1,5 +1,6 @@
 package usw.suwiki.api.timetable;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,7 +21,6 @@ import usw.suwiki.domain.lecture.timetable.dto.TimetableRequest;
 import usw.suwiki.domain.lecture.timetable.dto.TimetableResponse;
 import usw.suwiki.domain.lecture.timetable.service.TimetableService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")

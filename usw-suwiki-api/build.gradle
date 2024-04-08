@@ -38,8 +38,8 @@ subprojects {
     implementation project(':usw-suwiki-infra:usw-suwiki-flyway')
     implementation project(':usw-suwiki-infra:usw-suwiki-caffeine')
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-validation')
 
     // test
     testImplementation(testFixtures(project(':usw-suwiki-common')))

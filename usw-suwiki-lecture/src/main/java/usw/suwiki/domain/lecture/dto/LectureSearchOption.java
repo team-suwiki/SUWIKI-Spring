@@ -1,10 +1,9 @@
 package usw.suwiki.domain.lecture.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
 
 @Getter
 @RequiredArgsConstructor

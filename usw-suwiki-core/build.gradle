@@ -1,19 +1,18 @@
 project(':usw-suwiki-core:usw-suwiki-exception') {
-    dependencies {
-        implementation 'org.hibernate:hibernate-core'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
-    }
+  dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+  }
 }
 
 project(':usw-suwiki-core:usw-suwiki-version') {
-    dependencies {
-        implementation project(':usw-suwiki-common')
-        implementation project(':usw-suwiki-lecture')
-        implementation project(':usw-suwiki-infra:usw-suwiki-db')
-        implementation project(':usw-suwiki-core:usw-suwiki-exception')
+  dependencies {
+    implementation project(':usw-suwiki-common')
+    implementation project(':usw-suwiki-lecture')
+    implementation project(':usw-suwiki-infra:usw-suwiki-db')
+    implementation project(':usw-suwiki-core:usw-suwiki-exception')
 
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
-    }
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+  }
 }

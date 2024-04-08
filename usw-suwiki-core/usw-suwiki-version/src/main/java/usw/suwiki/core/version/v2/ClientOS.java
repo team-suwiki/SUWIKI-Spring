@@ -10,11 +10,11 @@ public enum ClientOS {
   IOS,
   WEB;
 
-  public static ClientOS ofString(String param) {
-    checkNotNull(param);
+  public static ClientOS from(String stringOs) {
+    checkNotNull(stringOs);
 
     try {
-      return ClientOS.valueOf(param.toUpperCase());
+      return ClientOS.valueOf(stringOs.toUpperCase());
     } catch (IllegalArgumentException e) {
       throw new VersionException(ExceptionType.COMMON_CLIENT_ERROR);
     }

@@ -1,13 +1,12 @@
 package usw.suwiki.domain.lecture.schedule;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.infra.jpa.BaseEntity;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
 
 @Entity
 @Getter

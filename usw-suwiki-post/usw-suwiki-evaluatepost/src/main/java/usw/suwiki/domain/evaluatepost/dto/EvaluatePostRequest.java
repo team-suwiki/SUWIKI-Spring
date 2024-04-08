@@ -1,11 +1,10 @@
 package usw.suwiki.domain.evaluatepost.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvaluatePostRequest {

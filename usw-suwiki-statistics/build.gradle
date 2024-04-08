@@ -1,6 +1,6 @@
 dependencies {
-    implementation project(':usw-suwiki-infra:usw-suwiki-db')
+  implementation project(':usw-suwiki-infra:usw-suwiki-db')
 
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'javax.servlet:javax.servlet-api'
+  implementation('jakarta.servlet:jakarta.servlet-api')
+  implementation('org.springframework.boot:spring-boot-starter-actuator')
 }

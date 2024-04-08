@@ -1,5 +1,6 @@
 package usw.suwiki.api.report;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,6 @@ import usw.suwiki.domain.exampost.service.ExamPostService;
 import usw.suwiki.domain.report.dto.ReportRequest;
 import usw.suwiki.statistics.annotation.ApiLogger;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;

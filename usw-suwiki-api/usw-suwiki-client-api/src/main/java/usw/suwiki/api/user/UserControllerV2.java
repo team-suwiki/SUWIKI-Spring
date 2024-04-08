@@ -1,5 +1,8 @@
 package usw.suwiki.api.user;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,14 +14,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.auth.core.annotation.JWTVerify;
+import usw.suwiki.auth.core.annotation.JwtVerify;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.user.service.UserBusinessService;
 import usw.suwiki.statistics.annotation.ApiLogger;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,7 +125,7 @@ public class UserControllerV2 {
     }});
   }
 
-  @JWTVerify
+  @JwtVerify
   @ApiLogger(option = "user")
   @PostMapping("client-logout")
   @ResponseStatus(OK)
@@ -138,7 +138,7 @@ public class UserControllerV2 {
     }});
   }
 
-  @JWTVerify
+  @JwtVerify
   @ApiLogger(option = "user")
   @GetMapping
   @ResponseStatus(OK)
@@ -146,7 +146,7 @@ public class UserControllerV2 {
     return ResponseForm.success(userBusinessService.executeLoadMyPage(Authorization));
   }
 
-  @JWTVerify
+  @JwtVerify
   @ApiLogger(option = "user")
   @DeleteMapping
   @ResponseStatus(OK)

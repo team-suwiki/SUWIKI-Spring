@@ -1,5 +1,14 @@
 package usw.suwiki.domain.lecture.timetable;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OrderColumn;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,15 +16,6 @@ import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.TimetableException;
 import usw.suwiki.infra.jpa.BaseEntity;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.OrderColumn;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,6 +1,9 @@
 package usw.suwiki.domain.user.restricted;
 
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,9 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import usw.suwiki.infra.jpa.BaseEntity;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 @Entity

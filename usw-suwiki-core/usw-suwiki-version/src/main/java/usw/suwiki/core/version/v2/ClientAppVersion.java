@@ -1,5 +1,12 @@
 package usw.suwiki.core.version.v2;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,14 +15,6 @@ import lombok.NoArgsConstructor;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.VersionException;
 import usw.suwiki.infra.jpa.BaseEntity;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 @Entity
 @Getter
