@@ -1,6 +1,5 @@
 package usw.suwiki.api.auth;
 
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,36 +24,34 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/v2/refreshtoken")
 @RequiredArgsConstructor
 public class RefreshTokenControllerV2 {
-    private final UserBusinessService userBusinessService;
+  private final UserBusinessService userBusinessService;
 
-    @ApiLogger(option = "user")
-    @Operation(summary = "Web Client 토큰 갱신")
-    @PostMapping("/web-client/refresh")
-    @ResponseStatus(OK)
-    public ResponseForm clientTokenRefresh(
-        @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
-        HttpServletResponse response
-    ) {
-        Map<String, String> tokenPair = userBusinessService.executeJWTRefreshForWebClient(
-            requestRefreshCookie
-        );
+  @ApiLogger(option = "user")
+  @PostMapping("/web-client/refresh")
+  @ResponseStatus(OK)
+  public ResponseForm clientTokenRefresh(
+    @CookieValue(value = "refreshToken") Cookie requestRefreshCookie,
+    HttpServletResponse response
+  ) {
+    Map<String, String> tokenPair = userBusinessService.executeJWTRefreshForWebClient(
+      requestRefreshCookie
+    );
 
-        Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
-        refreshCookie.setMaxAge(14 * 24 * 60 * 60);
-        refreshCookie.setSecure(true);
-        refreshCookie.setHttpOnly(true);
-        response.addCookie(refreshCookie);
+    Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
+    refreshCookie.setMaxAge(14 * 24 * 60 * 60);
+    refreshCookie.setSecure(true);
+    refreshCookie.setHttpOnly(true);
+    response.addCookie(refreshCookie);
 
-        return ResponseForm.success(new HashMap<>() {{
-            put("AccessToken", tokenPair.get("AccessToken"));
-        }});
-    }
+    return ResponseForm.success(new HashMap<>() {{
+      put("AccessToken", tokenPair.get("AccessToken"));
+    }});
+  }
 
-    @ApiLogger(option = "user")
-    @Operation(summary = "Mobile Client 토큰 갱신")
-    @PostMapping("/mobile-client/refresh")
-    @ResponseStatus(OK)
-    public ResponseForm tokenRefresh(@RequestHeader String Authorization) {
-        return ResponseForm.success(userBusinessService.executeJWTRefreshForMobileClient(Authorization));
-    }
+  @ApiLogger(option = "user")
+  @PostMapping("/mobile-client/refresh")
+  @ResponseStatus(OK)
+  public ResponseForm tokenRefresh(@RequestHeader String Authorization) {
+    return ResponseForm.success(userBusinessService.executeJWTRefreshForMobileClient(Authorization));
+  }
 }

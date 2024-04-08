@@ -1,6 +1,5 @@
 package usw.suwiki.api.user;
 
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -20,12 +19,11 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/v2/user/restricted-reason")
 @RequiredArgsConstructor
 public class RestrictingUserControllerV2 {
-    private final UserBusinessService userBusinessService;
+  private final UserBusinessService userBusinessService;
 
-    @Operation(summary = "정지 사유 불러오기")
-    @ApiLogger(option = "user")
-    @ResponseStatus(OK)
-    public ResponseForm loadRestrictedReason(@Valid @RequestHeader String Authorization) {
-        return ResponseForm.success(userBusinessService.executeLoadRestrictedReason(Authorization));
-    }
+  @ApiLogger(option = "user")
+  @ResponseStatus(OK)
+  public ResponseForm loadRestrictedReason(@Valid @RequestHeader String Authorization) {
+    return ResponseForm.success(userBusinessService.executeLoadRestrictedReason(Authorization));
+  }
 }

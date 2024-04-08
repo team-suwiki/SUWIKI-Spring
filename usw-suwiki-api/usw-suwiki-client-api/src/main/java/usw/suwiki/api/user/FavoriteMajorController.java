@@ -1,6 +1,5 @@
 package usw.suwiki.api.user;
 
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,31 +23,28 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FavoriteMajorController {
-    private final FavoriteMajorServiceV2 favoriteMajorServiceV2;
+  private final FavoriteMajorServiceV2 favoriteMajorServiceV2;
 
-    @ApiLogger(option = "user")
-    @Operation(summary = "전공 즐겨찾기 등록")
-    @PostMapping
-    @ResponseStatus(OK)
-    public String create(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto favoriteSaveDto) {
-        favoriteMajorServiceV2.save(Authorization, favoriteSaveDto.getMajorType());
-        return "success";
-    }
+  @ApiLogger(option = "user")
+  @PostMapping
+  @ResponseStatus(OK)
+  public String create(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto favoriteSaveDto) {
+    favoriteMajorServiceV2.save(Authorization, favoriteSaveDto.getMajorType());
+    return "success";
+  }
 
-    @ApiLogger(option = "user")
-    @Operation(summary = "전공 즐겨찾기 삭제")
-    @DeleteMapping
-    @ResponseStatus(OK)
-    public String delete(@RequestHeader String Authorization, @RequestParam String majorType) {
-        favoriteMajorServiceV2.delete(Authorization, majorType);
-        return "success";
-    }
+  @ApiLogger(option = "user")
+  @DeleteMapping
+  @ResponseStatus(OK)
+  public String delete(@RequestHeader String Authorization, @RequestParam String majorType) {
+    favoriteMajorServiceV2.delete(Authorization, majorType);
+    return "success";
+  }
 
-    @ApiLogger(option = "user")
-    @Operation(summary = "전공 즐겨찾기 불러오기")
-    @GetMapping
-    @ResponseStatus(OK)
-    public ResponseForm retrieve(@RequestHeader String Authorization) {
-        return new ResponseForm(favoriteMajorServiceV2.findAllMajorTypeByUser(Authorization));
-    }
+  @ApiLogger(option = "user")
+  @GetMapping
+  @ResponseStatus(OK)
+  public ResponseForm retrieve(@RequestHeader String Authorization) {
+    return new ResponseForm(favoriteMajorServiceV2.findAllMajorTypeByUser(Authorization));
+  }
 }
