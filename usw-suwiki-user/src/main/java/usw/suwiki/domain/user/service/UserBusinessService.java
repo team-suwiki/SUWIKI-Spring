@@ -172,7 +172,7 @@ public class UserBusinessService {
 
 
   public Map<String, Boolean> executeEditPassword(String Authorization, String prePassword, String newPassword) {
-    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
+    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.parseId(Authorization));
 
     if (!passwordEncoder.matches(prePassword, user.getPassword())) {
       throw new AccountException(ExceptionType.PASSWORD_ERROR);
@@ -184,7 +184,7 @@ public class UserBusinessService {
   }
 
   public UserInformationResponseForm executeLoadMyPage(String Authorization) {
-    Long userIdx = tokenAgent.getId(Authorization);
+    Long userIdx = tokenAgent.parseId(Authorization);
     User user = userCRUDService.loadUserFromUserIdx(userIdx);
     return UserInformationResponseForm.buildMyPageResponseForm(user);
   }
@@ -203,7 +203,7 @@ public class UserBusinessService {
   }
 
   public Map<String, Boolean> executeQuit(String authorization, String inputPassword) {
-    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(authorization));
+    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.parseId(authorization));
 
     if (!user.validatePassword(passwordEncoder, inputPassword)) {
       throw new AccountException(ExceptionType.PASSWORD_ERROR);
@@ -220,37 +220,37 @@ public class UserBusinessService {
   }
 
   public List<LoadMyBlackListReasonResponseForm> executeLoadBlackListReason(String Authorization) {
-    User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
+    User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.parseId(Authorization));
     return blacklistDomainCRUDService.loadAllBlacklistLog(requestUser.getId());
   }
 
   public List<LoadMyRestrictedReasonResponseForm> executeLoadRestrictedReason(String Authorization) {
-    User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.getId(Authorization));
+    User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.parseId(Authorization));
     return restrictingUserCRUDService.loadRestrictedLog(requestUser.getId());
   }
 
   public void executeFavoriteMajorSave(String Authorization, FavoriteSaveDto favoriteSaveDto) {
-    if (tokenAgent.getUserIsRestricted(Authorization)) {
+    if (tokenAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
-    Long userId = tokenAgent.getId(Authorization);
+    Long userId = tokenAgent.parseId(Authorization);
 
     favoriteMajorService.save(userId, favoriteSaveDto.getMajorType());
   }
 
   public void executeFavoriteMajorDelete(String Authorization, String majorType) {
-    if (tokenAgent.getUserIsRestricted(Authorization)) {
+    if (tokenAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
-    Long userIdx = tokenAgent.getId(Authorization);
+    Long userIdx = tokenAgent.parseId(Authorization);
     favoriteMajorService.delete(userIdx, majorType);
   }
 
   public ResponseForm executeFavoriteMajorLoad(String Authorization) {
-    if (tokenAgent.getUserIsRestricted(Authorization)) {
+    if (tokenAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
-    Long userIdx = tokenAgent.getId(Authorization);
+    Long userIdx = tokenAgent.parseId(Authorization);
     List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
     return new ResponseForm(list);
   }

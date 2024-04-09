@@ -8,6 +8,10 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import usw.suwiki.core.exception.AccountException;
+import usw.suwiki.core.exception.ExceptionType;
+
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -29,7 +33,13 @@ public class RefreshToken {
     this.payload = payload;
   }
 
-  public void updatePayload(String payload) {
+  public void reissue(String payload) {
     this.payload = payload;
+  }
+
+  public void validatePayload(String payload) {
+    if (!Objects.equals(this.payload, payload)) {
+      throw new AccountException(ExceptionType.TOKEN_IS_BROKEN);
+    }
   }
 }

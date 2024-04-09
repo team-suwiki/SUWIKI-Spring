@@ -93,7 +93,7 @@ public class NoticeController {
   }
 
   private void validateAdmin(String authorization) {
-    if (!(jwtAgent.getUserRole(authorization).equals("ADMIN"))) {
+    if (!(jwtAgent.parseRole(authorization).equals("ADMIN"))) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
   }

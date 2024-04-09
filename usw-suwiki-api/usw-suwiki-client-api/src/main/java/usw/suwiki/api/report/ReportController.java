@@ -36,10 +36,10 @@ public class ReportController {
     @RequestHeader String Authorization,
     @Valid @RequestBody ReportRequest.Evaluate request
   ) {
-    if (jwtAgent.getUserIsRestricted(Authorization)) {
+    if (jwtAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
-    Long reportingUserId = jwtAgent.getId(Authorization);
+    Long reportingUserId = jwtAgent.parseId(Authorization);
     evaluatePostService.report(reportingUserId, request.getEvaluateIdx());
     return successFlag();
   }
@@ -51,10 +51,10 @@ public class ReportController {
     @RequestHeader String Authorization,
     @Valid @RequestBody ReportRequest.Exam request
   ) {
-    if (jwtAgent.getUserIsRestricted(Authorization)) {
+    if (jwtAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
-    Long reportingUserId = jwtAgent.getId(Authorization);
+    Long reportingUserId = jwtAgent.parseId(Authorization);
     examPostService.report(reportingUserId, request.getExamIdx());
     return successFlag();
   }

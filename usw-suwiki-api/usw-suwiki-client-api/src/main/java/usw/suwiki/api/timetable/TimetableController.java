@@ -35,8 +35,7 @@ public class TimetableController {
     @RequestHeader String authorization,
     @Valid @RequestBody TimetableRequest.Description request
   ) {
-    jwtAgent.validateJwt(authorization);
-    Long userId = jwtAgent.getId(authorization);
+    Long userId = jwtAgent.parseId(authorization);
     timetableService.create(userId, request);
     return ApiResponse.success();
   }
@@ -46,8 +45,7 @@ public class TimetableController {
     @RequestHeader String authorization,
     @Valid @RequestBody BulkRequest<TimetableRequest.Bulk> request
   ) {
-    jwtAgent.validateJwt(authorization);
-    Long userId = jwtAgent.getId(authorization);
+    Long userId = jwtAgent.parseId(authorization);
     timetableService.bulkCreate(userId, request.getBulk());
     return ApiResponse.success();
   }
@@ -59,8 +57,7 @@ public class TimetableController {
     @RequestHeader String authorization,
     @Valid @RequestBody TimetableRequest.Description request
   ) {
-    jwtAgent.validateJwt(authorization);
-    Long userId = jwtAgent.getId(authorization);
+    Long userId = jwtAgent.parseId(authorization);
 
     timetableService.update(userId, timetableId, request);
     return ApiResponse.success();
@@ -72,8 +69,7 @@ public class TimetableController {
     @PathVariable Long timetableId,
     @RequestHeader String authorization
   ) {
-    jwtAgent.validateJwt(authorization);
-    Long userId = jwtAgent.getId(authorization);
+    Long userId = jwtAgent.parseId(authorization);
 
     timetableService.delete(userId, timetableId);
     return ApiResponse.success();
@@ -82,8 +78,7 @@ public class TimetableController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public ApiResponse<List<TimetableResponse.Simple>> getMyAllTimetables(@RequestHeader String authorization) {
-    jwtAgent.validateJwt(authorization);
-    Long userId = jwtAgent.getId(authorization);
+    Long userId = jwtAgent.parseId(authorization);
     return ApiResponse.ok(timetableService.getMyAllTimetables(userId));
   }
 
@@ -104,8 +99,7 @@ public class TimetableController {
     @PathVariable Long timetableId,
     @Valid @RequestBody TimetableRequest.Cell request
   ) {
-    jwtAgent.validateJwt(authorization);
-    Long userId = jwtAgent.getId(authorization);
+    Long userId = jwtAgent.parseId(authorization);
     timetableService.addCell(userId, timetableId, request);
     return ApiResponse.success();
   }
@@ -117,8 +111,7 @@ public class TimetableController {
     @PathVariable Long timetableId,
     @Valid @RequestBody TimetableRequest.UpdateCell request
   ) {
-    jwtAgent.validateJwt(authorization);
-    Long userId = jwtAgent.getId(authorization);
+    Long userId = jwtAgent.parseId(authorization);
     timetableService.updateCell(userId, timetableId, request);
     return ApiResponse.success();
   }
@@ -130,8 +123,7 @@ public class TimetableController {
     @PathVariable Long timetableId,
     @PathVariable int cellIdx
   ) {
-    jwtAgent.validateJwt(authorization);
-    Long userId = jwtAgent.getId(authorization);
+    Long userId = jwtAgent.parseId(authorization);
     timetableService.deleteCell(userId, timetableId, cellIdx);
     return ApiResponse.success();
   }

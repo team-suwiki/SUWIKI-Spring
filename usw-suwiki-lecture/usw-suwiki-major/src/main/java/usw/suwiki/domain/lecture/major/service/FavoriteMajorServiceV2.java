@@ -22,7 +22,7 @@ public class FavoriteMajorServiceV2 {
 
   public void save(String authorization, String majorType) {
     validateRestrictedUser(authorization);
-    Long userId = tokenAgent.getId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
 
     validateDuplicateFavoriteMajor(userId, majorType);
 
@@ -37,7 +37,7 @@ public class FavoriteMajorServiceV2 {
 
   public List<String> findAllMajorTypeByUser(String authorization) {
     validateRestrictedUser(authorization);
-    Long userId = tokenAgent.getId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
 
     List<FavoriteMajor> favoriteMajors = favoriteMajorRepositoryV2.findAllByUserIdx(userId);
     return favoriteMajors.stream().map(FavoriteMajor::getMajorType).toList();
@@ -45,7 +45,7 @@ public class FavoriteMajorServiceV2 {
 
   public void delete(String authorization, String majorType) {
     validateRestrictedUser(authorization);
-    Long userId = tokenAgent.getId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
 
     FavoriteMajor favoriteMajor = favoriteMajorRepositoryV2.findByUserIdxAndMajorType(userId, majorType)
       .orElseThrow(() -> new FavoriteMajorException(ExceptionType.FAVORITE_MAJOR_NOT_FOUND));
@@ -59,7 +59,7 @@ public class FavoriteMajorServiceV2 {
   }
 
   private void validateRestrictedUser(String authorization) {
-    if (tokenAgent.getUserIsRestricted(authorization)) {
+    if (tokenAgent.isRestrictedUser(authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
   }

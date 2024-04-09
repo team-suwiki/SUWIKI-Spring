@@ -43,7 +43,7 @@ public class ExamPostsController {
     @RequestParam(required = false) Optional<Integer> page
   ) {
     validateAuth(Authorization);
-    Long userId = jwtAgent.getId(Authorization);
+    Long userId = jwtAgent.parseId(Authorization);
     return examPostService.loadAllExamPosts(userId, lectureId, new PageOption(page));
   }
 
@@ -52,7 +52,7 @@ public class ExamPostsController {
   @ResponseStatus(OK)
   public String purchaseExamPost(@RequestHeader String Authorization, @RequestParam Long lectureId) {
     validateAuth(Authorization);
-    Long userId = jwtAgent.getId(Authorization);
+    Long userId = jwtAgent.parseId(Authorization);
     examPostService.purchaseExamPost(userId, lectureId);
     return "success";
   }
@@ -66,7 +66,7 @@ public class ExamPostsController {
     @Valid @RequestBody ExamPostRequest.Create request
   ) {
     validateAuth(Authorization);
-    Long userIdx = jwtAgent.getId(Authorization);
+    Long userIdx = jwtAgent.parseId(Authorization);
     examPostService.write(userIdx, lectureId, request);
     return "success";
   }
@@ -80,7 +80,7 @@ public class ExamPostsController {
   ) {
     jwtAgent.validateJwt(Authorization);
 
-    if (jwtAgent.getUserIsRestricted(Authorization)) {
+    if (jwtAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
 
@@ -96,7 +96,7 @@ public class ExamPostsController {
     @RequestHeader String Authorization,
     @RequestParam(required = false) Optional<Integer> page
   ) {
-    Long userIdx = jwtAgent.getId(Authorization);
+    Long userIdx = jwtAgent.parseId(Authorization);
     return new ResponseForm(examPostService.loadAllMyExamPosts(new PageOption(page), userIdx));
   }
 
@@ -105,7 +105,7 @@ public class ExamPostsController {
   @ResponseStatus(OK)
   public String deleteExamPosts(@RequestHeader String Authorization, @RequestParam Long examIdx) {
     validateAuth(Authorization);
-    Long userIdx = jwtAgent.getId(Authorization);
+    Long userIdx = jwtAgent.parseId(Authorization);
     examPostService.deleteExamPost(userIdx, examIdx);
     return "success";
   }
@@ -115,13 +115,13 @@ public class ExamPostsController {
   @ResponseStatus(OK)
   public ResponseForm readPurchaseHistoryApi(@RequestHeader String Authorization) {
     jwtAgent.validateJwt(Authorization);
-    Long userId = jwtAgent.getId(Authorization);
+    Long userId = jwtAgent.parseId(Authorization);
     return new ResponseForm(examPostService.loadPurchasedHistories(userId));
   }
 
   private void validateAuth(String authorization) {
     jwtAgent.validateJwt(authorization);
-    if (jwtAgent.getUserIsRestricted(authorization)) {
+    if (jwtAgent.isRestrictedUser(authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
   }

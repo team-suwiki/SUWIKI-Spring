@@ -42,11 +42,11 @@ public class EvaluatePostController {
     @RequestParam(required = false) Optional<Integer> page) {
 
     jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.getUserIsRestricted(Authorization)) {
+    if (jwtAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
 
-    Long userId = jwtAgent.getId(Authorization);
+    Long userId = jwtAgent.parseId(Authorization);
     return evaluatePostService.loadAllEvaluatePostsByLectureId(new PageOption(page), userId, lectureId);
   }
 
@@ -59,11 +59,11 @@ public class EvaluatePostController {
     @Valid @RequestBody EvaluatePostRequest.Create request
   ) {
     jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.getUserIsRestricted(Authorization)) {
+    if (jwtAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
 
-    Long userId = jwtAgent.getId(Authorization);
+    Long userId = jwtAgent.parseId(Authorization);
     evaluatePostService.write(userId, lectureId, request);
 
     return "success";
@@ -78,7 +78,7 @@ public class EvaluatePostController {
     @Valid @RequestBody EvaluatePostRequest.Update request
   ) {
     jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.getUserIsRestricted(Authorization)) {
+    if (jwtAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
 
@@ -94,11 +94,11 @@ public class EvaluatePostController {
     @RequestParam(required = false) Optional<Integer> page
   ) {
     jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.getUserIsRestricted(Authorization)) {
+    if (jwtAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
 
-    Long userId = jwtAgent.getId(Authorization);
+    Long userId = jwtAgent.parseId(Authorization);
     return new ResponseForm(evaluatePostService.loadAllEvaluatePostsByUserId(new PageOption(page), userId));
   }
 
@@ -107,11 +107,11 @@ public class EvaluatePostController {
   @ResponseStatus(OK)
   public String deleteEvaluation(@RequestParam Long evaluateIdx, @RequestHeader String Authorization) {
     jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.getUserIsRestricted(Authorization)) {
+    if (jwtAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
 
-    Long userId = jwtAgent.getId(Authorization);
+    Long userId = jwtAgent.parseId(Authorization);
     evaluatePostService.deleteEvaluatePost(evaluateIdx, userId);
     return "success";
   }

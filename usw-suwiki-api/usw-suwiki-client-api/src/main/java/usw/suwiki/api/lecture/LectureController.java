@@ -77,7 +77,7 @@ public class LectureController {
     @RequestHeader String Authorization,
     @RequestParam Long lectureId
   ) {
-    if (jwtAgent.getUserIsRestricted(Authorization)) {
+    if (jwtAgent.isRestrictedUser(Authorization)) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
 

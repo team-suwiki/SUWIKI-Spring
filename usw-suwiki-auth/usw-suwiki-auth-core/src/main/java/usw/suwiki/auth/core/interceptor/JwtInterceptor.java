@@ -66,7 +66,7 @@ public class JwtInterceptor implements HandlerInterceptor {
    */
   private String validateTokenAndExtractRole(HttpServletRequest request) {
     String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
-    return jwtAgent.getUserRole(jwt); // validate
+    return jwtAgent.parseRole(jwt); // validate
   }
 
   private void startCount() {

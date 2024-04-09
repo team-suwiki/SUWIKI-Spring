@@ -13,9 +13,9 @@ public interface TokenAgent {
 
   String createRefreshToken(Long userId);
 
-  Long getId(String token);
+  Long parseId(String token);
 
-  String getUserRole(String token);
+  String parseRole(String token);
 
-  Boolean getUserIsRestricted(String token);
+  boolean isRestrictedUser(String token);
 }
