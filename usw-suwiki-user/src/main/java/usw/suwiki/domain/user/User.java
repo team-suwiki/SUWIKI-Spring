@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,7 @@ import static usw.suwiki.core.exception.ExceptionType.USER_POINT_LACK;
 @Entity
 @Getter
 @Builder
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AttributeOverride(name = "createDate", column = @Column(name = "created_at"))
@@ -50,7 +52,6 @@ public class User extends BaseEntity {
   private Integer restrictedCount;
 
   @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "enum") // todo: flyway 수정 후 삭제
   private Role role;
 
   @Column
@@ -76,6 +77,7 @@ public class User extends BaseEntity {
       .loginId(loginId)
       .password(password)
       .email(email)
+      .role(Role.USER)
       .restricted(true)
       .restrictedCount(0)
       .writtenEvaluation(0)

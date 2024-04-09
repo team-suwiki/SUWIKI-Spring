@@ -1,23 +1,22 @@
 spring:
   datasource:
+    url: jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test;MODE=MySQL
     username: sa
     password:
 
   jpa:
-    database: h2
-    open-in-view: false
     hibernate:
       ddl-auto: create-drop
     properties:
-      dialect: org.hibernate.dialect.H2Dialect
       hibernate:
         show_sql: true
         format_sql: true
-        # SQL 예약어 예외 방지 (user, year)
+        dialect: org.hibernate.dialect.H2Dialect
+        # todo: 예약어 수정 후 삭제
         globally_quoted_identifiers: true
         globally_quoted_identifiers_skip_column_definitions: true
+    open-in-view: false
 
   flyway:
     enabled: false

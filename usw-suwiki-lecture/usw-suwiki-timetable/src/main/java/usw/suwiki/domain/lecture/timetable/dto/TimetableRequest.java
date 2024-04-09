@@ -29,10 +29,10 @@ public class TimetableRequest {
     @Min(2020)
     private final Integer year;
     @NotNull
-    @Size(max = 50)
+    @Size(max = 10)
     private final String semester;
     @NotNull
-    @Size(max = 150)
+    @Size(max = 30)
     private final String name;
   }
 
