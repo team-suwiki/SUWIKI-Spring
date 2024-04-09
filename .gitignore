@@ -10,7 +10,7 @@ build/
 ./java/usw/suwiki/config/MailAuthConfig.java
 !src/test/test/**/build/
 .idea/workspace.xml
-/logs
+**/logs
 
 ### STS ###
 .apt_generated
