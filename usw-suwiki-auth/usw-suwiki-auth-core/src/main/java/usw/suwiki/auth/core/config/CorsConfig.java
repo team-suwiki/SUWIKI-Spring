@@ -12,18 +12,42 @@ import java.util.List;
 public class CorsConfig {
   private static final String ADMIN_URL = "https://suwikiman.netlify.app";
   private static final String PROD_URL = "https://www.suwiki.kr";
+  private static final String DEV_ENV = "http://54.180.72.97";
+  private static final String LOCAL_ENV = "http://localhost";
+
+  private static final List<String> ALLOW_METHODS = List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH");
 
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
     var corsConfigurationSource = new UrlBasedCorsConfigurationSource();
-    corsConfigurationSource.registerCorsConfiguration("/**", defaultCorsConfiguration());
+    corsConfigurationSource.registerCorsConfiguration("/**", prodCorsConfiguration());
+    corsConfigurationSource.registerCorsConfiguration("/**", devCorsConfiguration());
+    corsConfigurationSource.registerCorsConfiguration("/**", localCorsConfiguration());
     return corsConfigurationSource;
   }
 
-  private CorsConfiguration defaultCorsConfiguration() {
+  private CorsConfiguration prodCorsConfiguration() {
     var corsConfiguration = new CorsConfiguration();
-    corsConfiguration.setAllowedOrigins(List.of(ADMIN_URL, PROD_URL));
-    corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+    corsConfiguration.setAllowedOrigins(List.of(ADMIN_URL, PROD_URL, LOCAL_ENV));
+    corsConfiguration.setAllowedMethods(ALLOW_METHODS);
+    corsConfiguration.addAllowedHeader("*");
+    corsConfiguration.setAllowCredentials(true);
+    return corsConfiguration;
+  }
+
+  private CorsConfiguration devCorsConfiguration() {
+    var corsConfiguration = new CorsConfiguration();
+    corsConfiguration.setAllowedOrigins(List.of(DEV_ENV, LOCAL_ENV));
+    corsConfiguration.setAllowedMethods(ALLOW_METHODS);
+    corsConfiguration.addAllowedHeader("*");
+    corsConfiguration.setAllowCredentials(true);
+    return corsConfiguration;
+  }
+
+  private CorsConfiguration localCorsConfiguration() {
+    var corsConfiguration = new CorsConfiguration();
+    corsConfiguration.setAllowedOrigins(List.of(LOCAL_ENV));
+    corsConfiguration.setAllowedMethods(ALLOW_METHODS);
     corsConfiguration.addAllowedHeader("*");
     corsConfiguration.setAllowCredentials(true);
     return corsConfiguration;
