@@ -15,7 +15,7 @@ public class ClientAppVersionService {
   public CheckUpdateMandatoryResponse checkIsUpdateMandatory(String os, int versionCode) {
     ClientOS clientOS = ClientOS.from(os);
 
-    ClientAppVersion clientAppVersion = clientAppVersionRepository.findFirstByOsAndVitalTrueOrderByVersionCodeDesc(clientOS)
+    ClientAppVersion clientAppVersion = clientAppVersionRepository.findFirstByOsAndIsVitalTrueOrderByVersionCodeDesc(clientOS)
       .orElseThrow(() -> new VersionException(ExceptionType.SERVER_ERROR));
 
     return new CheckUpdateMandatoryResponse(clientAppVersion.isUpdateMandatory(clientOS, versionCode));
