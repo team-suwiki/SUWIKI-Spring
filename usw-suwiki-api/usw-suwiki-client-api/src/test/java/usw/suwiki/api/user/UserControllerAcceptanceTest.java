@@ -11,6 +11,7 @@ import usw.suwiki.comon.test.Tag;
 import usw.suwiki.comon.test.support.AcceptanceTestSupport;
 import usw.suwiki.comon.test.support.detail.ResponseValidator;
 import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.PasswordEncoder;
 import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.core.secure.model.Claim;
 import usw.suwiki.domain.user.User;
@@ -20,8 +21,12 @@ import usw.suwiki.domain.user.model.UserClaim;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static usw.suwiki.comon.test.RequestType.POST;
 import static usw.suwiki.comon.test.Table.USERS;
@@ -34,6 +39,8 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
   private UserRepository userRepository;
   @Autowired
   private TokenAgent tokenAgent;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   private User user;
   private Claim claim;
@@ -216,6 +223,101 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
 
       // result validation
       ResponseValidator.validate(result, status().isBadRequest(), ExceptionType.PARAMETER_VALIDATION_FAIL);
+    }
+  }
+
+  @Nested
+  @DisplayName("유저 회원가입 테스트")
+  class JoinTest {
+
+    final String endpoint = "/user/join";
+
+    @Test
+    void 회원가입_성공() throws Exception {
+      // expected
+      final String identifier = "join";
+      final String summary = "회원가입 API";
+      final String description = "회원가입 API입니다. Body에는 String 타입의 \"LoginId\", \"Password\", \"Email\"을 입력해야하며 모든 필드가 Blank 제약조건이 있습니다.";
+      final Tag tag = Tag.USER_TABLE;
+      final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
+        add(Pair.of("$.success", true));
+      }};
+
+      // setup
+      var requestBody = new UserRequestDto.JoinForm("diger", "digerPassword123!","diger@suwon.ac.kr");
+
+      // execution
+      var result = perform(endpoint, POST, null, null, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isOk(), expectedResults);
+
+      // db validation
+      Optional<User> diger = userRepository.findByLoginId("diger");
+
+      assertAll(
+          () -> assertThat(diger.get()).isNotNull(),
+          () -> assertThat(diger.get().getEmail()).isEqualTo(requestBody.email()),
+          () -> assertTrue(passwordEncoder.matches(requestBody.password(), diger.get().getPassword()))
+      );
+
+      // docs
+      result.andDo(RestDocument.builder()
+          .identifier(identifier)
+          .summary(summary)
+          .description(description)
+          .tag(tag)
+          .result(result)
+          .generateDocs()
+      );
+    }
+
+    @Test
+    void 회원가입_실패_아이디_중복() throws Exception {
+      // setup
+      var requestBody = new UserRequestDto.JoinForm("loginId", "digerPassword123!","diger@gmail.com");
+
+      // execution
+      var result = perform(endpoint, POST, null, null, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isBadRequest(), ExceptionType.LOGIN_ID_OR_EMAIL_OVERLAP);
+    }
+
+    @Test
+    void 회원가입_실패_이메일_중복() throws Exception {
+      // setup
+      var requestBody = new UserRequestDto.JoinForm("diger", "digerPassword123!","test@suwiki.kr");
+
+      // execution
+      var result = perform(endpoint, POST, null, null, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isBadRequest(), ExceptionType.LOGIN_ID_OR_EMAIL_OVERLAP);
+    }
+
+    @Test
+    void 회원가입_실패_값_누락() throws Exception {
+      // setup
+      var requestBody = new UserRequestDto.JoinForm("diger", "","test@suwiki.kr");
+
+      // execution
+      var result = perform(endpoint, POST, null, null, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isBadRequest(), ExceptionType.PARAMETER_VALIDATION_FAIL);
+    }
+
+    @Test
+    void 회원가입_실패_교내이메일이아닌경우() throws Exception {
+      // setup
+      var requestBody = new UserRequestDto.JoinForm("diger", "digerPassword123!","diger@gmail.com");
+
+      // execution
+      var result = perform(endpoint, POST, null, null, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isBadRequest(), ExceptionType.IS_NOT_EMAIL_FORM);
     }
   }
 }
