@@ -11,10 +11,10 @@ import usw.suwiki.comon.test.support.DatabaseCleaner;
 import java.util.Set;
 
 @Component
-@Qualifier("H2DatabaseCleaner")
-class H2DatabaseCleaner implements DatabaseCleaner {
-  private static final String OFF_REFERENTIAL_INTEGRITY = "SET REFERENTIAL_INTEGRITY FALSE";
-  private static final String ON_REFERENTIAL_INTEGRITY = "SET REFERENTIAL_INTEGRITY TRUE";
+@Qualifier("MySqlDatabaseCleaner")
+class MySqlDatabaseCleaner implements DatabaseCleaner {
+  private static final String OFF_REFERENTIAL_INTEGRITY = "SET FOREIGN_KEY_CHECKS = 0;";
+  private static final String ON_REFERENTIAL_INTEGRITY = "SET FOREIGN_KEY_CHECKS = 1;";
   private static final String TRUNCATE = "TRUNCATE TABLE ";
 
   @PersistenceContext
