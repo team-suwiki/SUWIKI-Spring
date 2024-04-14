@@ -137,4 +137,85 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       ResponseValidator.validate(result, status().isBadRequest(), ExceptionType.PARAMETER_VALIDATION_FAIL);
     }
   }
+
+  @Nested
+  @DisplayName("유저 이메일 중복 확인 테스트")
+  class CheckEmailTest {
+
+    final String endpoint = "/user/check-email";
+
+    @Test
+    void 아이디_중복확인_성공_중복일_시() throws Exception {
+      // expected
+      final String identifier = "check-email";
+      final String summary = "이메일 중복 확인 (중복일 시) API";
+      final String description = "이메일 중복 확인 (중복일 시) API입니다. Body에는 String 타입을 입력해야하며 Blank 제약조건이 있습니다.";
+      final Tag tag = Tag.USER_TABLE;
+      final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
+        add(Pair.of("$.overlap", true));
+      }};
+
+      // setup
+      var requestBody = new UserRequestDto.CheckEmailForm("test@suwiki.kr");
+
+      // execution
+      var result = perform(endpoint, POST, null, null, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isOk(), expectedResults);
+
+      // docs
+      result.andDo(RestDocument.builder()
+          .identifier(identifier)
+          .summary(summary)
+          .description(description)
+          .tag(tag)
+          .result(result)
+          .generateDocs()
+      );
+    }
+
+    @Test
+    void 아이디_중복확인_성공_중복_아닐_시() throws Exception {
+      // expected
+      final String identifier = "check-email";
+      final String summary = "이메일 중복 확인 (중복일 시) API";
+      final String description = "이메일 중복 확인 (중복일 시) API입니다. Body에는 String 타입을 입력해야하며 Blank 제약조건이 있습니다.";
+      final Tag tag = Tag.USER_TABLE;
+      final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
+        add(Pair.of("$.overlap", false));
+      }};
+
+      // setup
+      var requestBody = new UserRequestDto.CheckEmailForm("diger@suwiki.kr");
+
+      // execution
+      var result = perform(endpoint, POST, null, null, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isOk(), expectedResults);
+
+      // docs
+      result.andDo(RestDocument.builder()
+          .identifier(identifier)
+          .summary(summary)
+          .description(description)
+          .tag(tag)
+          .result(result)
+          .generateDocs()
+      );
+    }
+
+    @Test
+    void 아이디_중복확인_실패_잘못된_요청값() throws Exception {
+      // setup
+      var requestBody = new UserRequestDto.CheckEmailForm("");
+
+      // execution
+      var result = perform(endpoint, POST, null, null, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isBadRequest(), ExceptionType.PARAMETER_VALIDATION_FAIL);
+    }
+  }
 }
