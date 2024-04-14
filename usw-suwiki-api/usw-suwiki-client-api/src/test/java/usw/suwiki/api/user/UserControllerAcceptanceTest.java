@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.util.Pair;
+import org.springframework.test.context.ActiveProfiles;
 import usw.suwiki.comon.test.Table;
 import usw.suwiki.comon.test.Tag;
 import usw.suwiki.comon.test.support.AcceptanceTestSupport;
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static usw.suwiki.comon.test.RequestType.POST;
 import static usw.suwiki.comon.test.Table.USERS;
 
+@ActiveProfiles("mysql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerAcceptanceTest extends AcceptanceTestSupport {
 

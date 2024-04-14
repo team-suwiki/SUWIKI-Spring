@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/suwiki-test
+    username: root
+    password: 112233
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -12,9 +12,6 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-        # todo: 예약어 수정 후 삭제
-        globally_quoted_identifiers: true
-        globally_quoted_identifiers_skip_column_definitions: true
     open-in-view: false
 
   flyway:
