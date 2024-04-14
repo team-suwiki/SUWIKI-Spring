@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
@@ -40,6 +41,7 @@ public abstract class AcceptanceTestSupport {
   protected ObjectMapper objectMapper;
 
   @Autowired
+  @Qualifier("MySqlDatabaseCleaner")
   protected DatabaseCleaner databaseCleaner;
 
   private MockMvc mockMvc;
