@@ -50,7 +50,6 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
 
   @BeforeEach
   public void setup() {
-    if (userRepository.existsById(1L)) return; // Clean이 먹지 않아서 임의로 추가함 By K-Diger
     user = userRepository.save(User.init("loginId", "password", "test@suwiki.kr"));
     claim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
     accessToken = tokenAgent.createAccessToken(user.getId(), claim);
