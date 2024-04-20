@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.auth.core.annotation.JwtVerify;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.user.service.UserBusinessService;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +30,7 @@ import static usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.JoinForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.UserQuitForm;
+import static usw.suwiki.statistics.log.MonitorOption.USER;
 
 @RestController
 @RequestMapping("/v2/user")
@@ -37,21 +38,21 @@ import static usw.suwiki.domain.user.dto.UserRequestDto.UserQuitForm;
 public class UserControllerV2 {
   private final UserBusinessService userBusinessService;
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("/loginId/check")
   @ResponseStatus(OK)
   public ResponseForm overlapId(@Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
     return ResponseForm.success(userBusinessService.executeCheckId(checkLoginIdForm.loginId()));
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("/email/check")
   @ResponseStatus(OK)
   public ResponseForm overlapEmail(@Valid @RequestBody CheckEmailForm checkEmailForm) {
     return ResponseForm.success(userBusinessService.executeCheckEmail(checkEmailForm.email()));
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping
   @ResponseStatus(OK)
   public ResponseForm join(@Valid @RequestBody JoinForm joinForm) {
@@ -59,14 +60,14 @@ public class UserControllerV2 {
     return ResponseForm.success(response);
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("inquiry-loginId")
   @ResponseStatus(OK)
   public ResponseForm findId(@Valid @RequestBody FindIdForm findIdForm) {
     return ResponseForm.success(userBusinessService.executeFindId(findIdForm.email()));
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("inquiry-password")
   @ResponseStatus(OK)
   public ResponseForm findPw(@Valid @RequestBody FindPasswordForm findPasswordForm) {
@@ -76,7 +77,7 @@ public class UserControllerV2 {
     );
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PatchMapping("password")
   @ResponseStatus(OK)
   public ResponseForm resetPw(
@@ -90,7 +91,7 @@ public class UserControllerV2 {
     );
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("mobile-login")
   @ResponseStatus(OK)
   public ResponseForm mobileLogin(@Valid @RequestBody LoginForm loginForm) {
@@ -100,7 +101,7 @@ public class UserControllerV2 {
     );
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("web-login")
   @ResponseStatus(OK)
   public ResponseForm webLogin(
@@ -124,7 +125,7 @@ public class UserControllerV2 {
   }
 
   @JwtVerify
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("client-logout")
   @ResponseStatus(OK)
   public ResponseForm clientLogout(HttpServletResponse response) {
@@ -137,7 +138,7 @@ public class UserControllerV2 {
   }
 
   @JwtVerify
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @GetMapping
   @ResponseStatus(OK)
   public ResponseForm myPage(@Valid @RequestHeader String Authorization) {
@@ -145,7 +146,7 @@ public class UserControllerV2 {
   }
 
   @JwtVerify
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @DeleteMapping
   @ResponseStatus(OK)
   public ResponseForm userQuit(

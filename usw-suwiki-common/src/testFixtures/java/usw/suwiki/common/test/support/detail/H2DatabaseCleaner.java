@@ -1,12 +1,12 @@
-package usw.suwiki.comon.test.support.detail;
+package usw.suwiki.common.test.support.detail;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.comon.test.Table;
-import usw.suwiki.comon.test.support.DatabaseCleaner;
+import usw.suwiki.common.test.Table;
+import usw.suwiki.common.test.support.DatabaseCleaner;
 
 import java.util.Set;
 

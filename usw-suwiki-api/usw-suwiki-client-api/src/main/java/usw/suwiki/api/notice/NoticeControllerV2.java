@@ -11,12 +11,13 @@ import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.notice.dto.NoticeResponse;
 import usw.suwiki.domain.notice.service.NoticeService;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.statistics.log.MonitorOption.NOTICE;
 
 @RestController
 @RequestMapping(value = "/notices")
@@ -24,7 +25,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class NoticeControllerV2 {
   private final NoticeService noticeService;
 
-  @ApiLogger(option = "notice")
+  @Monitoring(option = NOTICE)
   @GetMapping("/v2")
   @ResponseStatus(OK)
   public ResponseForm findNoticesApiV2(@RequestParam(required = false) Optional<Integer> page) {
@@ -32,7 +33,7 @@ public class NoticeControllerV2 {
     return new ResponseForm(response);
   }
 
-  @ApiLogger(option = "notice")
+  @Monitoring(option = NOTICE)
   @GetMapping("/v2/{noticeId}")
   @ResponseStatus(OK)
   public ResponseForm findNoticeApiV2(@PathVariable Long noticeId) {

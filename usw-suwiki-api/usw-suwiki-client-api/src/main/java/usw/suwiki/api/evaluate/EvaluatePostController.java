@@ -20,11 +20,12 @@ import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostRequest;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponse;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.statistics.log.MonitorOption.EVALUATE_POSTS;
 
 @RestController
 @RequestMapping(value = "/evaluate-posts")
@@ -33,7 +34,7 @@ public class EvaluatePostController {
   private final EvaluatePostService evaluatePostService;
   private final JwtAgent jwtAgent;
 
-  @ApiLogger(option = "evaluatePosts")
+  @Monitoring(option = EVALUATE_POSTS)
   @GetMapping
   @ResponseStatus(OK)
   public EvaluatePostResponse.Details readEvaluatePostsByLectureApi(
@@ -50,7 +51,7 @@ public class EvaluatePostController {
     return evaluatePostService.loadAllEvaluatePostsByLectureId(new PageOption(page), userId, lectureId);
   }
 
-  @ApiLogger(option = "evaluatePosts")
+  @Monitoring(option = EVALUATE_POSTS)
   @PostMapping
   @ResponseStatus(OK)
   public String writeEvaluation(
@@ -69,7 +70,7 @@ public class EvaluatePostController {
     return "success";
   }
 
-  @ApiLogger(option = "evaluatePosts")
+  @Monitoring(option = EVALUATE_POSTS)
   @PutMapping
   @ResponseStatus(OK)
   public String updateEvaluation(
@@ -86,7 +87,7 @@ public class EvaluatePostController {
     return "success";
   }
 
-  @ApiLogger(option = "evaluatePosts")
+  @Monitoring(option = EVALUATE_POSTS)
   @GetMapping("/written")
   @ResponseStatus(OK)
   public ResponseForm findByUser(
@@ -102,7 +103,7 @@ public class EvaluatePostController {
     return new ResponseForm(evaluatePostService.loadAllEvaluatePostsByUserId(new PageOption(page), userId));
   }
 
-  @ApiLogger(option = "evaluatePosts")
+  @Monitoring(option = EVALUATE_POSTS)
   @DeleteMapping
   @ResponseStatus(OK)
   public String deleteEvaluation(@RequestParam Long evaluateIdx, @RequestHeader String Authorization) {

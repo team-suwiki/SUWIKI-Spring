@@ -1,4 +1,4 @@
-package usw.suwiki.comon.test.extension;
+package usw.suwiki.common.test.extension;
 
 import org.assertj.core.api.ThrowableAssert;
 import org.assertj.core.api.ThrowableAssertAlternative;

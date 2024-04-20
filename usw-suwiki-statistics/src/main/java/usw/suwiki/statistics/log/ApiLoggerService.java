@@ -15,56 +15,44 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ApiLoggerService {
+  private final ApiLoggerRepository apiLoggerRepository;
 
-    private final ApiLoggerRepository apiLoggerRepository;
-    private final String lecturePostsOption = "lecture";
-    private final String evaluatePostsOption = "evaluatePosts";
-    private final String examPostsOption = "examPosts";
-    private final String userOption = "user";
-    private final String noticeOption = "notice";
+  @Async
+  @Transactional
+  public void logApi(MonitorOption option, Long processTime) {
+    Optional<ApiLogger> apiLogger = apiLoggerRepository.findByCallDate(LocalDate.now());
 
-    @Async
-    @Transactional
-    public void logApi(LocalDate today, Long currentProcessTime, String option) {
-        Optional<ApiLogger> apiLogger = apiLoggerRepository.findByCallDate(today);
-        if (apiLogger.isEmpty()) {
-            try {
-                apiLoggerRepository.save(makeNewApiStatistics(today, currentProcessTime, option));
-            } catch (DataIntegrityViolationException exception) {
-                log.error("Try to Create Duplicated Unique Key Exception message : {}",
-                    exception.getMessage());
-                logApi(today, currentProcessTime, option);
-            }
-            return;
-        }
-        apiLoggerRepository.save(makeOldApiStatistics(apiLogger.get(), currentProcessTime, option));
+    if (apiLogger.isEmpty()) {
+      try {
+        apiLoggerRepository.save(newApiStatistics(option, processTime));
+      } catch (DataIntegrityViolationException exception) {
+        log.error("Try to Create Duplicated Unique Key Exception message : {}", exception.getMessage());
+        logApi(option, processTime);
+      }
+      return;
     }
+    apiLoggerRepository.save(oldApiStatistics(apiLogger.get(), option, processTime));
+  }
 
-    private ApiLogger makeNewApiStatistics(
-        LocalDate today, Long currentProcessTime, String option
-    ) {
-        ApiLogger newApiLogger = new ApiLogger();
-        newApiLogger = switch (option) {
-            case lecturePostsOption -> newApiLogger.saveNewLectureStatistics(today, currentProcessTime);
-            case evaluatePostsOption -> newApiLogger.saveNewEvaluatePostsStatistics(today, currentProcessTime);
-            case examPostsOption -> newApiLogger.saveNewExamPostsStatistics(today, currentProcessTime);
-            case userOption -> newApiLogger.saveNewUserStatistics(today, currentProcessTime);
-            case noticeOption -> newApiLogger.saveNewNoticeStatistics(today, currentProcessTime);
-            default -> newApiLogger;
-        };
-        return newApiLogger;
-    }
+  private ApiLogger newApiStatistics(MonitorOption option, Long processTime) {
+    return switch (option) {
+      case LECTURE -> ApiLogger.lecture(processTime);
+      case EVALUATE_POSTS -> ApiLogger.evaluate(processTime);
+      case EXAM_POSTS -> ApiLogger.exam(processTime);
+      case USER -> ApiLogger.user(processTime);
+      case NOTICE -> ApiLogger.notice(processTime);
+      default -> new ApiLogger();
+    };
+  }
 
-    private ApiLogger makeOldApiStatistics(
-        ApiLogger apiLogger, Long currentProcessTime, String option
-    ) {
-        switch (option) {
-            case lecturePostsOption -> apiLogger.calculateLectureApiStatistics(currentProcessTime);
-            case evaluatePostsOption -> apiLogger.calculateEvaluatePostsApiStatistics(currentProcessTime);
-            case examPostsOption -> apiLogger.calculateExamPostsStatistics(currentProcessTime);
-            case userOption -> apiLogger.calculateUserApiStatistics(currentProcessTime);
-            case noticeOption -> apiLogger.calculateNoticeApiStatistics(currentProcessTime);
-        }
-        return apiLogger;
-    }
+  private ApiLogger oldApiStatistics(ApiLogger apiLogger, MonitorOption option, Long processTime) {
+    return switch (option) {
+      case LECTURE -> apiLogger.logLecture(processTime);
+      case EVALUATE_POSTS -> apiLogger.logEvaluatePosts(processTime);
+      case EXAM_POSTS -> apiLogger.logExamPosts(processTime);
+      case USER -> apiLogger.logUser(processTime);
+      case NOTICE -> apiLogger.logNotice(processTime);
+      default -> apiLogger;
+    };
+  }
 }

@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.user.service.UserBusinessService;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.statistics.log.MonitorOption.USER;
 
 @RestController
 @RequestMapping("/v2/user/restricted-reason")
@@ -18,7 +19,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class RestrictingUserControllerV2 {
   private final UserBusinessService userBusinessService;
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @ResponseStatus(OK)
   public ResponseForm loadRestrictedReason(@Valid @RequestHeader String Authorization) {
     return ResponseForm.success(userBusinessService.executeLoadRestrictedReason(Authorization));

@@ -16,7 +16,7 @@ import usw.suwiki.domain.report.EvaluatePostReport;
 import usw.suwiki.domain.report.ExamPostReport;
 import usw.suwiki.domain.user.dto.UserAdminResponseDto;
 import usw.suwiki.domain.user.service.AdminBusinessService;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import java.util.Map;
 
@@ -28,6 +28,7 @@ import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostBlacklistFo
 import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostNoProblemForm;
 import static usw.suwiki.domain.user.dto.UserAdminRequestDto.ExamPostRestrictForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
+import static usw.suwiki.statistics.log.MonitorOption.ADMIN;
 
 @RestController
 @RequestMapping("/v2/admin")
@@ -35,7 +36,7 @@ import static usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
 public class AdminControllerV2 {
   private final AdminBusinessService adminBusinessService;
 
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @PostMapping("/login")
   @ResponseStatus(OK)
   public Map<String, String> administratorLogin(@Valid @RequestBody LoginForm loginForm) {
@@ -43,7 +44,7 @@ public class AdminControllerV2 {
   }
 
   @JwtVerify(option = "ADMIN")
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @PostMapping("/evaluate-posts/restrict")
   @ResponseStatus(OK)
   public Map<String, Boolean> restrictEvaluatePost(
@@ -55,7 +56,7 @@ public class AdminControllerV2 {
 
   @JwtVerify(option = "ADMIN")
   @ResponseStatus(OK)
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @PostMapping("/exam-post/restrict")
   public Map<String, Boolean> restrictExamPost(
     @Valid @RequestHeader String Authorization,
@@ -67,7 +68,7 @@ public class AdminControllerV2 {
 
   @JwtVerify(option = "ADMIN")
   @ResponseStatus(OK)
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @PostMapping("/evaluate-post/blacklist")
   public Map<String, Boolean> banEvaluatePost(
     @Valid @RequestHeader String Authorization,
@@ -78,7 +79,7 @@ public class AdminControllerV2 {
 
   @JwtVerify(option = "ADMIN")
   @ResponseStatus(OK)
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @PostMapping("/exam-post/blacklist")
   public Map<String, Boolean> banExamPost(
     @Valid @RequestHeader String Authorization,
@@ -89,7 +90,7 @@ public class AdminControllerV2 {
 
   @JwtVerify(option = "ADMIN")
   @ResponseStatus(OK)
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @DeleteMapping("/evaluate-post")
   public Map<String, Boolean> noProblemEvaluatePost(
     @Valid @RequestHeader String Authorization,
@@ -100,7 +101,7 @@ public class AdminControllerV2 {
 
   @JwtVerify(option = "ADMIN")
   @ResponseStatus(OK)
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @DeleteMapping("/exam-post")
   public Map<String, Boolean> noProblemExamPost(
     @Valid @RequestHeader String Authorization,
@@ -110,7 +111,7 @@ public class AdminControllerV2 {
   }
 
   @JwtVerify(option = "ADMIN")
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @GetMapping("/reported-posts")
   @ResponseStatus(OK)
   public UserAdminResponseDto.LoadAllReportedPostForm loadReportedPost(@RequestHeader String Authorization) {
@@ -119,14 +120,14 @@ public class AdminControllerV2 {
 
 
   @JwtVerify(option = "ADMIN")
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @GetMapping("/reported-evaluate/")
   @ResponseStatus(OK)
   public EvaluatePostReport loadDetailReportedEvaluatePost(@RequestHeader String Authorization, @RequestParam Long target) {
     return adminBusinessService.executeLoadDetailReportedEvaluatePost(target);
   }
 
-  @ApiLogger(option = "admin")
+  @Monitoring(option = ADMIN)
   @GetMapping("/reported-exam/")
   @ResponseStatus(OK)
   public ExamPostReport loadDetailReportedExamPost(@RequestHeader String Authorization, @RequestParam Long target) {

@@ -21,7 +21,7 @@ import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
 import usw.suwiki.domain.user.service.UserBusinessService;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +40,7 @@ import static usw.suwiki.domain.user.dto.UserRequestDto.UserQuitForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyRestrictedReasonResponseForm;
 import static usw.suwiki.domain.user.dto.UserResponseDto.UserInformationResponseForm;
+import static usw.suwiki.statistics.log.MonitorOption.USER;
 
 @RestController
 @RequestMapping("/user")
@@ -48,21 +49,21 @@ public class UserController {
   private final UserBusinessService userBusinessService;
   private final ConfirmationTokenBusinessService confirmationTokenBusinessService;
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("/check-id")
   @ResponseStatus(OK)
   public Map<String, Boolean> overlapId(@Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
     return userBusinessService.executeCheckId(checkLoginIdForm.loginId());
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("/check-email")
   @ResponseStatus(OK)
   public Map<String, Boolean> overlapEmail(@Valid @RequestBody CheckEmailForm checkEmailForm) {
     return userBusinessService.executeCheckEmail(checkEmailForm.email());
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("join")
   @ResponseStatus(OK)
   public Map<String, Boolean> join(@Valid @RequestBody JoinForm joinForm) {
@@ -70,28 +71,28 @@ public class UserController {
   }
 
   // todo: confirmationControllerV2와 같은 코드
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @GetMapping(value = "verify-email", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
   @ResponseStatus(OK)
   public String confirmEmail(@RequestParam("token") String token) {
     return confirmationTokenBusinessService.confirmToken(token);
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("find-id")
   @ResponseStatus(OK)
   public Map<String, Boolean> findId(@Valid @RequestBody FindIdForm findIdForm) {
     return userBusinessService.executeFindId(findIdForm.email());
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("find-pw")
   @ResponseStatus(OK)
   public Map<String, Boolean> findPw(@Valid @RequestBody FindPasswordForm findPasswordForm) {
     return userBusinessService.executeFindPw(findPasswordForm.loginId(), findPasswordForm.email());
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("reset-pw")
   @ResponseStatus(OK)
   public Map<String, Boolean> resetPw(
@@ -105,7 +106,7 @@ public class UserController {
     );
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("login")
   @ResponseStatus(OK)
   public Map<String, String> mobileLogin(
@@ -116,7 +117,7 @@ public class UserController {
     );
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("client-login")
   @ResponseStatus(OK)
   public Map<String, String> clientLogin(
@@ -139,7 +140,7 @@ public class UserController {
     }};
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("client-logout")
   @ResponseStatus(OK)
   public Map<String, Boolean> clientLogout(HttpServletResponse response) {
@@ -151,14 +152,14 @@ public class UserController {
     }};
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @GetMapping("/my-page")
   @ResponseStatus(OK)
   public UserInformationResponseForm myPage(@Valid @RequestHeader String Authorization) {
     return userBusinessService.executeLoadMyPage(Authorization);
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("/client-refresh")
   @ResponseStatus(OK)
   public Map<String, String> clientTokenRefresh(
@@ -178,7 +179,7 @@ public class UserController {
     }};
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("/refresh")
   @ResponseStatus(OK)
   public Map<String, String> tokenRefresh(@Valid @RequestHeader String Authorization) {
@@ -186,7 +187,7 @@ public class UserController {
   }
 
   // 회원 탈퇴
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("quit")
   @ResponseStatus(INTERNAL_SERVER_ERROR)
   public Map<String, Boolean> userQuit(
@@ -202,7 +203,7 @@ public class UserController {
     throw new AccountException(ExceptionType.SERVER_ERROR);
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("/favorite-major")
   @ResponseStatus(OK)
   public String saveFavoriteMajor(
@@ -213,7 +214,7 @@ public class UserController {
     return "success";
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @DeleteMapping("/favorite-major")
   @ResponseStatus(OK)
   public String deleteFavoriteMajor(@RequestHeader String Authorization, @RequestParam String majorType) {
@@ -221,14 +222,14 @@ public class UserController {
     return "success";
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @GetMapping("/favorite-major")
   @ResponseStatus(OK)
   public ResponseForm loadFavoriteMajor(@RequestHeader String Authorization) {
     return userBusinessService.executeFavoriteMajorLoad(Authorization);
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @GetMapping(value = "/suki", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
   @ResponseStatus(OK)
   public String thanksToSuwiki() {
@@ -242,14 +243,14 @@ public class UserController {
       """;
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @GetMapping("/restricted-reason")
   @ResponseStatus(OK)
   public List<LoadMyRestrictedReasonResponseForm> loadRestrictedReason(@Valid @RequestHeader String Authorization) {
     return userBusinessService.executeLoadRestrictedReason(Authorization);
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @GetMapping("/blacklist-reason")
   @ResponseStatus(OK)
   public List<LoadMyBlackListReasonResponseForm> loadBlacklistReason(@Valid @RequestHeader String Authorization) {

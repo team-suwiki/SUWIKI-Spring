@@ -2,15 +2,15 @@ package usw.suwiki.statistics.aspect;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+import usw.suwiki.statistics.annotation.AppProfile;
 
-@Slf4j
 @Aspect
 @Component
+@AppProfile
 @RequiredArgsConstructor
 public class CacheStaticsAspect {
 
@@ -18,9 +18,8 @@ public class CacheStaticsAspect {
   private final CacheStaticsLogger cacheStaticsLogger;
 
   @Around("@annotation(usw.suwiki.statistics.annotation.CacheStatics)")
-  public Object execute(ProceedingJoinPoint pjp) throws Throwable {
+  public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
     cacheStaticsLogger.getCachesStats(httpServletRequest.getRequestURI().split("/")[1]);
-
-    return pjp.proceed(pjp.getArgs());
+    return joinPoint.proceed(joinPoint.getArgs());
   }
 }

@@ -1,4 +1,4 @@
-package usw.suwiki.comon.test;
+package usw.suwiki.common.test;
 
 import io.github.hejow.restdocs.document.ApiTag;
 

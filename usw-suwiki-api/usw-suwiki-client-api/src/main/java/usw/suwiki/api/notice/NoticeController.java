@@ -20,12 +20,13 @@ import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.notice.dto.NoticeRequest;
 import usw.suwiki.domain.notice.dto.NoticeResponse;
 import usw.suwiki.domain.notice.service.NoticeService;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.statistics.log.MonitorOption.NOTICE;
 
 @RestController
 @RequestMapping(value = "/notice")
@@ -34,7 +35,7 @@ public class NoticeController {
   private final NoticeService noticeService;
   private final JwtAgent jwtAgent;
 
-  @ApiLogger(option = "notice")
+  @Monitoring(option = NOTICE)
   @GetMapping("/all")
   @ResponseStatus(OK)
   public ResponseForm findNoticesApi(@RequestParam(required = false) Optional<Integer> page) {
@@ -42,7 +43,7 @@ public class NoticeController {
     return new ResponseForm(response);
   }
 
-  @ApiLogger(option = "notice")
+  @Monitoring(option = NOTICE)
   @GetMapping("/")
   @ResponseStatus(OK)
   public ResponseForm findNoticeApi(@RequestParam Long noticeId) {
@@ -50,7 +51,7 @@ public class NoticeController {
     return new ResponseForm(response);
   }
 
-  @ApiLogger(option = "notice")
+  @Monitoring(option = NOTICE)
   @PostMapping("/")
   @ResponseStatus(OK)
   public String write(
@@ -63,7 +64,7 @@ public class NoticeController {
     return "success";
   }
 
-  @ApiLogger(option = "notice")
+  @Monitoring(option = NOTICE)
   @PutMapping("/")
   @ResponseStatus(OK)
   public String updateNotice(
@@ -78,7 +79,7 @@ public class NoticeController {
     return "success";
   }
 
-  @ApiLogger(option = "notice")
+  @Monitoring(option = NOTICE)
   @DeleteMapping("/")
   @ResponseStatus(OK)
   public String deleteNotice(

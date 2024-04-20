@@ -18,8 +18,10 @@ import usw.suwiki.domain.lecture.dto.LectureResponse;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
 import usw.suwiki.domain.lecture.schedule.service.LectureScheduleService;
 import usw.suwiki.domain.lecture.service.LectureService;
-import usw.suwiki.statistics.annotation.ApiLogger;
 import usw.suwiki.statistics.annotation.CacheStatics;
+import usw.suwiki.statistics.annotation.Monitoring;
+
+import static usw.suwiki.statistics.log.MonitorOption.LECTURE;
 
 @RestController
 @RequestMapping(value = "/lecture")
@@ -29,7 +31,7 @@ public class LectureController {
   private final LectureScheduleService lectureScheduleService;
   private final JwtAgent jwtAgent;
 
-  @ApiLogger(option = "lecture")
+  @Monitoring(option = LECTURE)
   @GetMapping("/search")
   @ResponseStatus(HttpStatus.OK)
   public LectureResponse.Simples searchLectureApi(
@@ -58,7 +60,7 @@ public class LectureController {
 
   @CacheStatics
   @Cacheable(cacheNames = "lecture")
-  @ApiLogger(option = "lecture")
+  @Monitoring(option = LECTURE)
   @GetMapping("/all")
   @ResponseStatus(HttpStatus.OK)
   public LectureResponse.Simples findAllLectureApi(
@@ -70,7 +72,7 @@ public class LectureController {
     return lectureService.loadAllLectures(findOption);
   }
 
-  @ApiLogger(option = "lecture")
+  @Monitoring(option = LECTURE)
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public ResponseForm findLectureByLectureId(

@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.lecture.major.service.FavoriteMajorServiceV2;
 import usw.suwiki.domain.user.dto.FavoriteSaveDto;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.statistics.log.MonitorOption.USER;
 
 @RestController
 @RequestMapping("/v2/favorite-major")
@@ -23,7 +24,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class FavoriteMajorController {
   private final FavoriteMajorServiceV2 favoriteMajorServiceV2;
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping
   @ResponseStatus(OK)
   public String create(@RequestHeader String Authorization, @RequestBody FavoriteSaveDto favoriteSaveDto) {
@@ -31,7 +32,7 @@ public class FavoriteMajorController {
     return "success";
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @DeleteMapping
   @ResponseStatus(OK)
   public String delete(@RequestHeader String Authorization, @RequestParam String majorType) {
@@ -39,7 +40,7 @@ public class FavoriteMajorController {
     return "success";
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @GetMapping
   @ResponseStatus(OK)
   public ResponseForm retrieve(@RequestHeader String Authorization) {

@@ -14,12 +14,13 @@ import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.service.ExamPostService;
 import usw.suwiki.domain.report.dto.ReportRequest;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
 import static usw.suwiki.common.response.ApiResponseFactory.successFlag;
+import static usw.suwiki.statistics.log.MonitorOption.USER;
 
 @RestController
 @RequestMapping("/user/report")
@@ -29,7 +30,7 @@ public class ReportController {
   private final ExamPostService examPostService;
   private final JwtAgent jwtAgent;
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("/evaluate")
   @ResponseStatus(OK)
   public Map<String, Boolean> reportEvaluate(
@@ -44,7 +45,7 @@ public class ReportController {
     return successFlag();
   }
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @PostMapping("/exam")
   @ResponseStatus(OK)
   public Map<String, Boolean> reportExam(

@@ -1,6 +1,6 @@
-package usw.suwiki.comon.test.support;
+package usw.suwiki.common.test.support;
 
-import usw.suwiki.comon.test.Table;
+import usw.suwiki.common.test.Table;
 
 import java.util.Set;
 

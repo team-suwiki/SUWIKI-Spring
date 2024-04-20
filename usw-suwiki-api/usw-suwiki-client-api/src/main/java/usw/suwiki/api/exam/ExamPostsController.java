@@ -21,11 +21,12 @@ import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.exampost.dto.ExamPostRequest;
 import usw.suwiki.domain.exampost.dto.ExamPostResponse;
 import usw.suwiki.domain.exampost.service.ExamPostService;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
+import static usw.suwiki.statistics.log.MonitorOption.EXAM_POSTS;
 
 @RestController
 @RequestMapping(value = "/exam-posts")
@@ -34,7 +35,7 @@ public class ExamPostsController {
   private final ExamPostService examPostService;
   private final JwtAgent jwtAgent;
 
-  @ApiLogger(option = "examPosts")
+  @Monitoring(option = EXAM_POSTS)
   @GetMapping
   @ResponseStatus(OK)
   public ExamPostResponse.Details readAllExamPosts(
@@ -47,7 +48,7 @@ public class ExamPostsController {
     return examPostService.loadAllExamPosts(userId, lectureId, new PageOption(page));
   }
 
-  @ApiLogger(option = "examPosts")
+  @Monitoring(option = EXAM_POSTS)
   @PostMapping("/purchase")
   @ResponseStatus(OK)
   public String purchaseExamPost(@RequestHeader String Authorization, @RequestParam Long lectureId) {
@@ -57,7 +58,7 @@ public class ExamPostsController {
     return "success";
   }
 
-  @ApiLogger(option = "examPosts")
+  @Monitoring(option = EXAM_POSTS)
   @PostMapping
   @ResponseStatus(OK)
   public String writeExamPost(
@@ -71,7 +72,7 @@ public class ExamPostsController {
     return "success";
   }
 
-  @ApiLogger(option = "examPosts")
+  @Monitoring(option = EXAM_POSTS)
   @PutMapping
   public String updateExamPost(
     @RequestHeader String Authorization,
@@ -89,7 +90,7 @@ public class ExamPostsController {
   }
 
   @JwtVerify
-  @ApiLogger(option = "examPosts")
+  @Monitoring(option = EXAM_POSTS)
   @GetMapping("/written")
   @ResponseStatus(OK)
   public ResponseForm findExamPostsByUserApi(
@@ -100,7 +101,7 @@ public class ExamPostsController {
     return new ResponseForm(examPostService.loadAllMyExamPosts(new PageOption(page), userIdx));
   }
 
-  @ApiLogger(option = "examPosts")
+  @Monitoring(option = EXAM_POSTS)
   @DeleteMapping
   @ResponseStatus(OK)
   public String deleteExamPosts(@RequestHeader String Authorization, @RequestParam Long examIdx) {
@@ -110,7 +111,7 @@ public class ExamPostsController {
     return "success";
   }
 
-  @ApiLogger(option = "examPosts")
+  @Monitoring(option = EXAM_POSTS)
   @GetMapping("/purchase")
   @ResponseStatus(OK)
   public ResponseForm readPurchaseHistoryApi(@RequestHeader String Authorization) {

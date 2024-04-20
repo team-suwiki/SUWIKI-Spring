@@ -8,12 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.domain.user.service.UserBusinessService;
-import usw.suwiki.statistics.annotation.ApiLogger;
+import usw.suwiki.statistics.annotation.Monitoring;
 
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonResponseForm;
+import static usw.suwiki.statistics.log.MonitorOption.USER;
 
 @RestController
 @RequestMapping("/v2/blacklist")
@@ -21,7 +22,7 @@ import static usw.suwiki.domain.user.dto.UserResponseDto.LoadMyBlackListReasonRe
 public class BlacklistDomainControllerV2 {
   private final UserBusinessService userBusinessService;
 
-  @ApiLogger(option = "user")
+  @Monitoring(option = USER)
   @GetMapping("/logs")
   @ResponseStatus(OK)
   public List<LoadMyBlackListReasonResponseForm> loadBlacklistReason(@Valid @RequestHeader String Authorization) {
