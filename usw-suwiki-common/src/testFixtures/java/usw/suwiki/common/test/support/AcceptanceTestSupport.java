@@ -71,6 +71,10 @@ public abstract class AcceptanceTestSupport {
     return perform(uri, accessToken, parameters);
   }
 
+  public ResultActions getNonJson(Uri uri, String accessToken, List<Pair<String, String>> parameters) throws Exception {
+    return performNonJson(uri, accessToken, parameters);
+  }
+
   public ResultActions post(Uri uri, Object requestBody) throws Exception {
     return perform(uri, HttpMethod.POST, null, requestBody);
   }
@@ -116,6 +120,16 @@ public abstract class AcceptanceTestSupport {
     return perform(request, accessToken);
   }
 
+  private ResultActions performNonJson(Uri uri, String accessToken, List<Pair<String, String>> parameters) throws Exception {
+    MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+    parameters.forEach(parameter -> queryParams.add(parameter.getFirst(), parameter.getSecond()));
+
+    var request = toRequestBuilderNonJsonRequest(uri, HttpMethod.GET)
+        .queryParams(queryParams);
+
+    return perform(request, accessToken);
+  }
+
   /**
    * command 전용 acceptance test template
    */
@@ -149,5 +163,19 @@ public abstract class AcceptanceTestSupport {
     return request.accept(MediaType.APPLICATION_JSON)
       .contentType(MediaType.APPLICATION_JSON)
       .requestAttr("org.springframework.restdocs.urlTemplate", uri.urlTemplate); // rest-docs pathvariable 설정
+  }
+
+  private MockHttpServletRequestBuilder toRequestBuilderNonJsonRequest(Uri uri, HttpMethod httpMethod) {
+    var request = switch (httpMethod) {
+      case GET -> RestDocumentationRequestBuilders.get(uri.resource);
+      case POST -> RestDocumentationRequestBuilders.post(uri.resource);
+      case PUT -> RestDocumentationRequestBuilders.put(uri.resource);
+      case PATCH -> RestDocumentationRequestBuilders.patch(uri.resource);
+      case DELETE -> RestDocumentationRequestBuilders.delete(uri.resource);
+    };
+
+    return request.accept(MediaType.TEXT_HTML_VALUE)
+        .contentType(MediaType.TEXT_HTML_VALUE)
+        .requestAttr("org.springframework.restdocs.urlTemplate", uri.urlTemplate); // rest-docs pathvariable 설정
   }
 }
