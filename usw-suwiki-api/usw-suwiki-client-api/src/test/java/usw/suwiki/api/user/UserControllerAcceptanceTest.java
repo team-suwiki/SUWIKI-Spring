@@ -72,7 +72,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
 
   @BeforeEach
   public void setup() {
-    user = userRepository.save(User.init(loginId, password, email));
+    user = userRepository.save(User.init(loginId, passwordEncoder.encode(password), email));
     confirmationToken = confirmationTokenRepository.save(new ConfirmationToken(user.getId()));
     claim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
     accessToken = tokenAgent.createAccessToken(user.getId(), claim);
@@ -485,6 +485,53 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       ResponseValidator.validate(result, status().isOk(), expectedResults);
 
       // non-db validation
+
+      // docs
+      result.andDo(RestDocument.builder()
+          .identifier(identifier)
+          .summary(summary)
+          .description(description)
+          .tag(tag)
+          .result(result)
+          .generateDocs()
+      );
+    }
+  }
+
+  @Nested
+  @DisplayName("비밀번호 초기화 테스트")
+  class RestPwTest {
+
+    final String endpoint = "/user/reset-pw";
+
+    @Test
+    void 비밀번호_초기화_성공() throws Exception {
+      // expected
+      final String identifier = "reset-id";
+      final String summary = "비밀번호 초기화 API";
+      final String description = "비밀번호 초기화 API입니다.";
+      final var tag = USER_TABLE;
+      final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
+        add(Pair.of("$.success", true));
+      }};
+
+      // setup
+      String newPassword = "newPassword1!";
+      var requestBody = new EditMyPasswordForm(password, newPassword);
+
+      // execution
+      var result = post(Uri.of(endpoint), accessToken, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isOk(), expectedResults);
+
+      // db validation
+      Optional<User> diger = userRepository.findByLoginId(loginId);
+
+      assertAll(
+          () -> assertThat(diger.get()).isNotNull(),
+          () -> assertTrue(passwordEncoder.matches(newPassword, diger.get().getPassword()))
+      );
 
       // docs
       result.andDo(RestDocument.builder()
