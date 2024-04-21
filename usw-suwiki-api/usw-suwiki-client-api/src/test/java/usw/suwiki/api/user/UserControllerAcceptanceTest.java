@@ -19,8 +19,7 @@ import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.core.secure.model.Claim;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
-import usw.suwiki.domain.user.dto.UserRequestDto;
-import usw.suwiki.domain.user.dto.UserRequestDto.FindIdForm;
+import usw.suwiki.domain.user.dto.UserRequestDto.*;
 import usw.suwiki.domain.user.model.UserClaim;
 
 import java.lang.reflect.Constructor;
@@ -56,6 +55,9 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
   private ConfirmationToken confirmationToken;
   private Claim claim;
   private String accessToken;
+  private final String loginId = "suwiki";
+  private final String password = "p@sSw0rc1!!";
+  private final String email = "suwiki@suwon.ac.kr";
 
   @Override
   protected Set<Table> targetTables() {
@@ -70,7 +72,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
 
   @BeforeEach
   public void setup() {
-    user = userRepository.save(User.init("loginId", "password", "test@suwiki.kr"));
+    user = userRepository.save(User.init(loginId, password, email));
     confirmationToken = confirmationTokenRepository.save(new ConfirmationToken(user.getId()));
     claim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
     accessToken = tokenAgent.createAccessToken(user.getId(), claim);
@@ -94,7 +96,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       }};
 
       // setup
-      var requestBody = new UserRequestDto.CheckLoginIdForm("loginId");
+      var requestBody = new CheckLoginIdForm(loginId);
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -125,7 +127,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       }};
 
       // setup
-      var requestBody = new UserRequestDto.CheckLoginIdForm("diger");
+      var requestBody = new CheckLoginIdForm("diger");
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -147,7 +149,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
     @Test
     void 아이디_중복확인_실패_잘못된_요청값() throws Exception {
       // setup
-      var requestBody = new UserRequestDto.CheckLoginIdForm("");
+      var requestBody = new CheckLoginIdForm("");
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -175,7 +177,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       }};
 
       // setup
-      var requestBody = new UserRequestDto.CheckEmailForm("test@suwiki.kr");
+      var requestBody = new CheckEmailForm(email);
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -206,7 +208,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       }};
 
       // setup
-      var requestBody = new UserRequestDto.CheckEmailForm("diger@suwiki.kr");
+      var requestBody = new CheckEmailForm("diger@suwon.ac.kr");
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -228,7 +230,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
     @Test
     void 아이디_중복확인_실패_잘못된_요청값() throws Exception {
       // setup
-      var requestBody = new UserRequestDto.CheckEmailForm("");
+      var requestBody = new CheckEmailForm("");
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -256,7 +258,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       }};
 
       // setup
-      var requestBody = new UserRequestDto.JoinForm("diger", "digerPassword123!", "diger@suwon.ac.kr");
+      var requestBody = new JoinForm("diger", "digerpassword1!", "diger@suwon.ac.kr");
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -287,7 +289,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
     @Test
     void 회원가입_실패_아이디_중복() throws Exception {
       // setup
-      var requestBody = new UserRequestDto.JoinForm("loginId", "digerPassword123!", "diger@gmail.com");
+      var requestBody = new JoinForm(loginId, "digerPassword123!", "diger@gmail.com");
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -299,7 +301,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
     @Test
     void 회원가입_실패_이메일_중복() throws Exception {
       // setup
-      var requestBody = new UserRequestDto.JoinForm("diger", "digerPassword123!", "test@suwiki.kr");
+      var requestBody = new JoinForm("diger", "digerPassword123!", email);
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -311,7 +313,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
     @Test
     void 회원가입_실패_값_누락() throws Exception {
       // setup
-      var requestBody = new UserRequestDto.JoinForm("diger", "", "test@suwiki.kr");
+      var requestBody = new JoinForm("diger", "", "test@suwiki.kr");
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -323,7 +325,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
     @Test
     void 회원가입_실패_교내이메일이아닌경우() throws Exception {
       // setup
-      var requestBody = new UserRequestDto.JoinForm("diger", "digerPassword123!", "diger@gmail.com");
+      var requestBody = new JoinForm("diger", "digerPassword123!", "diger@gmail.com");
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
@@ -425,7 +427,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
     @Test
     void 아이디_찾기_성공() throws Exception {
       // expected
-      final String identifier = "verify-email";
+      final String identifier = "find-id";
       final String summary = "아이디 찾기 API";
       final String description = "아이디 찾기 API입니다.";
       final var tag = USER_TABLE;
@@ -434,7 +436,47 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       }};
 
       // setup
-      FindIdForm requestBody = new FindIdForm("test@suwiki.kr");
+      var requestBody = new FindIdForm(email);
+
+      // execution
+      var result = post(Uri.of(endpoint), null, requestBody);
+
+      // result validation
+      ResponseValidator.validate(result, status().isOk(), expectedResults);
+
+      // non-db validation
+
+      // docs
+      result.andDo(RestDocument.builder()
+          .identifier(identifier)
+          .summary(summary)
+          .description(description)
+          .tag(tag)
+          .result(result)
+          .generateDocs()
+      );
+    }
+  }
+
+  @Nested
+  @DisplayName("비밀번호 찾기 테스트")
+  class FindPwTest {
+
+    final String endpoint = "/user/find-pw";
+
+    @Test
+    void 비밀번호_찾기_성공() throws Exception {
+      // expected
+      final String identifier = "find-id";
+      final String summary = "비밀번호 찾기 API";
+      final String description = "비밀번호 찾기 API입니다.";
+      final var tag = USER_TABLE;
+      final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
+        add(Pair.of("$.success", true));
+      }};
+
+      // setup
+      var requestBody = new FindPasswordForm(loginId, email);
 
       // execution
       var result = post(Uri.of(endpoint), null, requestBody);
