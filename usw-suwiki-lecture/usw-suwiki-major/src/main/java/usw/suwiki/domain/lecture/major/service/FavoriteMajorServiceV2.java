@@ -3,7 +3,6 @@ package usw.suwiki.domain.lecture.major.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.FavoriteMajorException;
 import usw.suwiki.core.secure.TokenAgent;
@@ -21,7 +20,7 @@ public class FavoriteMajorServiceV2 {
   private final TokenAgent tokenAgent;
 
   public void save(String authorization, String majorType) {
-    validateRestrictedUser(authorization);
+    tokenAgent.validateRestrictedUser(authorization);
     Long userId = tokenAgent.parseId(authorization);
 
     validateDuplicateFavoriteMajor(userId, majorType);
@@ -36,7 +35,7 @@ public class FavoriteMajorServiceV2 {
   }
 
   public List<String> findAllMajorTypeByUser(String authorization) {
-    validateRestrictedUser(authorization);
+    tokenAgent.validateRestrictedUser(authorization);
     Long userId = tokenAgent.parseId(authorization);
 
     List<FavoriteMajor> favoriteMajors = favoriteMajorRepositoryV2.findAllByUserIdx(userId);
@@ -44,7 +43,7 @@ public class FavoriteMajorServiceV2 {
   }
 
   public void delete(String authorization, String majorType) {
-    validateRestrictedUser(authorization);
+    tokenAgent.validateRestrictedUser(authorization);
     Long userId = tokenAgent.parseId(authorization);
 
     FavoriteMajor favoriteMajor = favoriteMajorRepositoryV2.findByUserIdxAndMajorType(userId, majorType)
@@ -56,11 +55,5 @@ public class FavoriteMajorServiceV2 {
   public void deleteAllFromUserId(Long userId) {
     List<FavoriteMajor> favoriteMajors = favoriteMajorRepositoryV2.findAllByUserIdx(userId);
     favoriteMajorRepositoryV2.deleteAll(favoriteMajors);
-  }
-
-  private void validateRestrictedUser(String authorization) {
-    if (tokenAgent.isRestrictedUser(authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
   }
 }

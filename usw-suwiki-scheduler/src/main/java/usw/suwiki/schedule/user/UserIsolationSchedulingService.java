@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.auth.token.service.ConfirmationTokenCRUDService;
-import usw.suwiki.auth.token.service.RefreshTokenCRUDService;
+import usw.suwiki.auth.token.service.RefreshTokenService;
 import usw.suwiki.core.mail.EmailSender;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.service.ExamPostCRUDService;
@@ -41,7 +41,7 @@ public class UserIsolationSchedulingService {
   private final EvaluatePostService evaluatePostService;
   private final ExamPostCRUDService examPostCRUDService;
 
-  private final RefreshTokenCRUDService refreshTokenCRUDService;
+  private final RefreshTokenService refreshTokenService;
   private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 
   @Scheduled(cron = "2 0 0 * * *")
@@ -99,7 +99,7 @@ public class UserIsolationSchedulingService {
     for (User user : userCRUDService.loadUsersLastLoginBetweenStartEnd(startTime, endTime)) {
       Long userIdx = user.getId();
       clearViewExamService.clear(userIdx);
-      refreshTokenCRUDService.deleteByUserId(userIdx);
+      refreshTokenService.deleteByUserId(userIdx);
       reportService.deleteFromUserIdx(userIdx);
       evaluatePostService.deleteAllByUserId(userIdx);
       examPostCRUDService.deleteFromUserIdx(userIdx);

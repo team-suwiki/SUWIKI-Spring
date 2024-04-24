@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.common.response.ApiResponse;
+import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.lecture.timetable.dto.TimetableRequest;
 import usw.suwiki.domain.lecture.timetable.dto.TimetableResponse;
 import usw.suwiki.domain.lecture.timetable.service.TimetableService;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TimetableController {
   private final TimetableService timetableService;
-  private final JwtAgent jwtAgent;
+  private final TokenAgent tokenAgent;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
@@ -34,7 +34,7 @@ public class TimetableController {
     @RequestHeader String authorization,
     @Valid @RequestBody TimetableRequest.Description request
   ) {
-    Long userId = jwtAgent.parseId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
     timetableService.create(userId, request);
     return ApiResponse.success();
   }
@@ -45,7 +45,7 @@ public class TimetableController {
     @RequestHeader String authorization,
     @RequestBody List<TimetableRequest.Bulk> requests
   ) {
-    Long userId = jwtAgent.parseId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
     timetableService.bulkInsert(userId, requests);
     return ApiResponse.success();
   }
@@ -57,7 +57,7 @@ public class TimetableController {
     @RequestHeader String authorization,
     @Valid @RequestBody TimetableRequest.Description request
   ) {
-    Long userId = jwtAgent.parseId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
 
     timetableService.update(userId, timetableId, request);
     return ApiResponse.success();
@@ -69,7 +69,7 @@ public class TimetableController {
     @PathVariable Long timetableId,
     @RequestHeader String authorization
   ) {
-    Long userId = jwtAgent.parseId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
 
     timetableService.delete(userId, timetableId);
     return ApiResponse.success();
@@ -78,7 +78,7 @@ public class TimetableController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public ApiResponse<List<TimetableResponse.Simple>> getMyAllTimetables(@RequestHeader String authorization) {
-    Long userId = jwtAgent.parseId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
     return ApiResponse.ok(timetableService.getMyAllTimetables(userId));
   }
 
@@ -88,7 +88,7 @@ public class TimetableController {
     @RequestHeader String authorization,
     @PathVariable Long timetableId
   ) {
-    jwtAgent.validateJwt(authorization);
+    tokenAgent.validateJwt(authorization);
     return ApiResponse.ok(timetableService.loadTimetable(timetableId));
   }
 
@@ -99,7 +99,7 @@ public class TimetableController {
     @PathVariable Long timetableId,
     @Valid @RequestBody TimetableRequest.Cell request
   ) {
-    Long userId = jwtAgent.parseId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
     timetableService.addCell(userId, timetableId, request);
     return ApiResponse.success();
   }
@@ -112,7 +112,7 @@ public class TimetableController {
     @PathVariable int cellIdx,
     @Valid @RequestBody TimetableRequest.UpdateCell request
   ) {
-    Long userId = jwtAgent.parseId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
     timetableService.updateCell(userId, timetableId, cellIdx, request);
     return ApiResponse.success();
   }
@@ -124,7 +124,7 @@ public class TimetableController {
     @PathVariable Long timetableId,
     @PathVariable int cellIdx
   ) {
-    Long userId = jwtAgent.parseId(authorization);
+    Long userId = tokenAgent.parseId(authorization);
     timetableService.deleteCell(userId, timetableId, cellIdx);
     return ApiResponse.success();
   }

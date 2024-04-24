@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.common.response.ApiResponse;
 import usw.suwiki.common.response.ResponseForm;
-import usw.suwiki.core.exception.AccountException;
-import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.lecture.dto.LectureResponse;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
 import usw.suwiki.domain.lecture.schedule.service.LectureScheduleService;
@@ -29,7 +27,7 @@ import static usw.suwiki.statistics.log.MonitorOption.LECTURE;
 public class LectureController {
   private final LectureService lectureService;
   private final LectureScheduleService lectureScheduleService;
-  private final JwtAgent jwtAgent;
+  private final TokenAgent tokenAgent;
 
   @Monitoring(option = LECTURE)
   @GetMapping("/search")
@@ -79,10 +77,7 @@ public class LectureController {
     @RequestHeader String Authorization,
     @RequestParam Long lectureId
   ) {
-    if (jwtAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-
+    tokenAgent.validateRestrictedUser(Authorization);
     return new ResponseForm(lectureService.loadLectureDetail(lectureId));
   }
 }

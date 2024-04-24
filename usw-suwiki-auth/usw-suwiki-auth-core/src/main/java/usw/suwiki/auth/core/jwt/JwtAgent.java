@@ -1,87 +1,64 @@
 package usw.suwiki.auth.core.jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.auth.token.RefreshToken;
-import usw.suwiki.auth.token.service.RefreshTokenCRUDService;
+import usw.suwiki.auth.token.service.RefreshTokenService;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.core.secure.model.Claim;
 
-import java.security.Key;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtAgent implements TokenAgent {
-
-  @Value("${spring.secret-key}")
-  private String key;
-
-  @Value("${jwt.access-duration}")
-  public long accessTokenExpireTime;
-
-  @Value("${jwt.refresh-duration}")
-  public long refreshTokenExpireTime;
-
-  private final RefreshTokenCRUDService refreshTokenCRUDService;
+class JwtAgent implements TokenAgent {
+  private final RefreshTokenService refreshTokenService;
+  private final JwtSecretProvider jwtSecretProvider;
+  private final RawParser rawParser;
 
   @Override
   @Transactional
-  public String provideRefreshTokenInLogin(Long userId) {
-    Optional<RefreshToken> wrappedRefreshToken = refreshTokenCRUDService.loadByUserId(userId);
+  public String login(Long userId) { // todo: 하나의 토큰 묶음을 리턴할 것
+    Optional<RefreshToken> wrappedRefreshToken = refreshTokenService.loadByUserId(userId);
 
     if (wrappedRefreshToken.isEmpty()) {
-      return createRefreshToken(userId);
+      String refreshToken = generateRefreshToken();
+      refreshTokenService.save(userId, refreshToken);
+      return refreshToken;
     }
 
     RefreshToken refreshToken = wrappedRefreshToken.get();
-    if (isRefreshTokenExpired(refreshToken.getPayload())) {
-      String payload = generateRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime));
-      refreshToken.reissue(payload);
-      return payload;
+    if (rawParser.isExpired(refreshToken.getPayload())) {
+      return refreshToken.reissue(generateRefreshToken());
     }
 
     return refreshToken.getPayload();
   }
 
   @Override
-  @Transactional
-  public String reissueRefreshToken(String payload) {
-    RefreshToken refreshToken = refreshTokenCRUDService.loadByPayload(payload);
+  public String reissue(String payload) {
+    RefreshToken refreshToken = refreshTokenService.loadByPayload(payload);
     refreshToken.validatePayload(payload);
-
-    String newPayload = generateRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime));
-    refreshToken.reissue(newPayload);
-    return newPayload;
+    return refreshToken.reissue(generateRefreshToken());
   }
 
-  public void validateJwt(String token) {
-    try {
-      Jwts.parserBuilder()
-        .setSigningKey(getSigningKey()).build()
-        .parseClaimsJws(token);
-    } catch (MalformedJwtException | IllegalArgumentException exception) {
-      throw new AccountException(ExceptionType.LOGIN_REQUIRED);
-    } catch (ExpiredJwtException exception) {
-      throw new AccountException(ExceptionType.TOKEN_IS_EXPIRED);
-    } catch (SignatureException exception) {
-      throw new AccountException(ExceptionType.INVALID_TOKEN);
-    }
+  private String generateRefreshToken() {
+    return Jwts.builder()
+      .signWith(jwtSecretProvider.key())
+      .setHeaderParam("type", "JWT")
+      .setExpiration(jwtSecretProvider.refreshTokenExpireTime())
+      .compact();
+  }
+
+  @Override
+  public void validateJwt(String token) { // todo: 인터셉터 개편 후 삭제 예정, 호출될 일 없게 만들기
+    rawParser.validate(token);
   }
 
   @Override
@@ -90,74 +67,27 @@ public class JwtAgent implements TokenAgent {
     claims.putAll(Map.of("id", userId, "loginId", claim.loginId(), "role", claim.role(), "restricted", claim.restricted()));
 
     return Jwts.builder()
-      .signWith(getSigningKey())
+      .signWith(jwtSecretProvider.key())
       .setHeaderParam("type", "JWT")
       .setClaims(claims)
-      .setExpiration(new Date(new Date().getTime() + accessTokenExpireTime))
+      .setExpiration(jwtSecretProvider.accessTokenExpiredTime())
       .compact();
-  }
-
-  @Override
-  public String createRefreshToken(Long userId) {
-    String refreshToken = generateRefreshToken(new Date(new Date().getTime() + refreshTokenExpireTime));
-    refreshTokenCRUDService.save(userId, refreshToken);
-    return refreshToken;
   }
 
   @Override
   public Long parseId(String token) {
-    validateJwt(token);
-    Object id = Jwts.parserBuilder()
-      .setSigningKey(getSigningKey())
-      .build()
-      .parseClaimsJws(token)
-      .getBody().get("id");
-    return Long.valueOf(String.valueOf(id));
+    return rawParser.parse(token, RawParser.Content.ID, Long.class);
   }
 
   @Override
   public String parseRole(String token) {
-    validateJwt(token);
-    return (String) Jwts.parserBuilder()
-      .setSigningKey(getSigningKey())
-      .build()
-      .parseClaimsJws(token)
-      .getBody().get("role");
+    return rawParser.parse(token, RawParser.Content.ROLE, String.class);
   }
 
   @Override
-  public boolean isRestrictedUser(String token) {
-    validateJwt(token);
-    return (boolean) Jwts.parserBuilder()
-      .setSigningKey(getSigningKey())
-      .build()
-      .parseClaimsJws(token)
-      .getBody().get("restricted");
-  }
-
-  private boolean isRefreshTokenExpired(String payload) {
-    try {
-      Jwts.parserBuilder()
-        .setSigningKey(getSigningKey())
-        .build()
-        .parseClaimsJws(payload)
-        .getBody().getExpiration();
-    } catch (ExpiredJwtException expiredJwtException) {
-      return true;
+  public void validateRestrictedUser(String token) {
+    if (Boolean.TRUE.equals(rawParser.parse(token, RawParser.Content.RESTRICTED, Boolean.class))) {
+      throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
-    return false;
-  }
-
-  private Key getSigningKey() {
-    final byte[] keyBytes = Decoders.BASE64.decode(this.key);
-    return Keys.hmacShaKeyFor(keyBytes);
-  }
-
-  private String generateRefreshToken(Date refreshTokenExpireIn) {
-    return Jwts.builder()
-      .signWith(getSigningKey())
-      .setHeaderParam("type", "JWT")
-      .setExpiration(refreshTokenExpireIn)
-      .compact();
   }
 }

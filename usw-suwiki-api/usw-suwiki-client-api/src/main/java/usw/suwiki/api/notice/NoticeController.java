@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.notice.dto.NoticeRequest;
 import usw.suwiki.domain.notice.dto.NoticeResponse;
 import usw.suwiki.domain.notice.service.NoticeService;
@@ -33,7 +33,7 @@ import static usw.suwiki.statistics.log.MonitorOption.NOTICE;
 @RequiredArgsConstructor
 public class NoticeController {
   private final NoticeService noticeService;
-  private final JwtAgent jwtAgent;
+  private final TokenAgent tokenAgent;
 
   @Monitoring(option = NOTICE)
   @GetMapping("/all")
@@ -58,7 +58,7 @@ public class NoticeController {
     @RequestHeader String Authorization,
     @Valid @RequestBody NoticeRequest.Create request
   ) {
-    jwtAgent.validateJwt(Authorization);
+    tokenAgent.validateJwt(Authorization);
     validateAdmin(Authorization);
     noticeService.write(request.getTitle(), request.getContent());
     return "success";
@@ -72,7 +72,7 @@ public class NoticeController {
     @RequestParam Long noticeId,
     @Valid @RequestBody NoticeRequest.Update request
   ) {
-    jwtAgent.validateJwt(Authorization);
+    tokenAgent.validateJwt(Authorization);
     validateAdmin(Authorization);
     noticeService.update(noticeId, request.getTitle(), request.getContent());
 
@@ -86,7 +86,7 @@ public class NoticeController {
     @RequestHeader String Authorization,
     @RequestParam Long noticeId
   ) {
-    jwtAgent.validateJwt(Authorization);
+    tokenAgent.validateJwt(Authorization);
     validateAdmin(Authorization);
     noticeService.delete(noticeId);
 
@@ -94,7 +94,7 @@ public class NoticeController {
   }
 
   private void validateAdmin(String authorization) {
-    if (!(jwtAgent.parseRole(authorization).equals("ADMIN"))) {
+    if (!(tokenAgent.parseRole(authorization).equals("ADMIN"))) {
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }
   }

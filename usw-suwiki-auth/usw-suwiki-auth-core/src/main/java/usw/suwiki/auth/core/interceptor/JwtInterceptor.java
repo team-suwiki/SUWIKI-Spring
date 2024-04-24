@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import usw.suwiki.auth.core.annotation.JwtVerify;
-import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.TokenAgent;
 
 @Slf4j
 @Component
@@ -20,7 +20,7 @@ import usw.suwiki.core.exception.ExceptionType;
 public class JwtInterceptor implements HandlerInterceptor {
   private static final String ADMIN = "ADMIN";
 
-  private final JwtAgent jwtAgent;
+  private final TokenAgent tokenAgent;
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -41,6 +41,6 @@ public class JwtInterceptor implements HandlerInterceptor {
 
   private String extractRole(HttpServletRequest request) {
     String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
-    return jwtAgent.parseRole(jwt); // validate
+    return tokenAgent.parseRole(jwt);
   }
 }

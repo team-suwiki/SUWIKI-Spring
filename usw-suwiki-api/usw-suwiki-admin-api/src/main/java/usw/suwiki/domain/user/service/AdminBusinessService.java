@@ -3,10 +3,10 @@ package usw.suwiki.domain.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.secure.PasswordEncoder;
+import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.core.secure.model.Claim;
 import usw.suwiki.domain.evaluatepost.EvaluatePost;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
@@ -48,7 +48,7 @@ public class AdminBusinessService {
   private final ExamPostCRUDService examPostCRUDService;
   private final EvaluatePostService evaluatePostService;
 
-  private final JwtAgent jwtAgent;
+  private final TokenAgent tokenAgent;
 
   public Map<String, String> executeAdminLogin(LoginForm loginForm) {
     User user = userCRUDService.loadUserFromLoginId(loginForm.loginId());
@@ -59,7 +59,7 @@ public class AdminBusinessService {
         final long totalUserCount = userCount + userIsolationCount;
         Claim claim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
 
-        return adminLoginResponseForm(jwtAgent.createAccessToken(user.getId(), claim), String.valueOf(totalUserCount));
+        return adminLoginResponseForm(tokenAgent.createAccessToken(user.getId(), claim), String.valueOf(totalUserCount));
       }
       throw new AccountException(ExceptionType.USER_RESTRICTED);
     }

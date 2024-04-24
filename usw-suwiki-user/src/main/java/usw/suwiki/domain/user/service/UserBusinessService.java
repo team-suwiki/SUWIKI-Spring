@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.auth.token.ConfirmationToken;
 import usw.suwiki.auth.token.RefreshToken;
 import usw.suwiki.auth.token.service.ConfirmationTokenCRUDService;
-import usw.suwiki.auth.token.service.RefreshTokenCRUDService;
+import usw.suwiki.auth.token.service.RefreshTokenService;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
@@ -56,7 +56,7 @@ public class UserBusinessService {
   private final ClearExamPostsService clearExamPostsService;
   private final ClearEvaluatePostsService clearEvaluatePostsService;
 
-  private final RefreshTokenCRUDService refreshTokenCRUDService;
+  private final RefreshTokenService refreshTokenService;
   private final ConfirmationTokenCRUDService confirmationTokenCRUDService;
 
   private final TokenAgent tokenAgent;
@@ -161,11 +161,11 @@ public class UserBusinessService {
       user.isUserEmailAuthed(confirmationTokenCRUDService.loadConfirmationTokenFromUserIdx(user.getId()));
       if (user.validatePassword(passwordEncoder, inputPassword)) {
         user.login();
-        return generateUserJWT(user);
+        return generateJwt(user);
       }
     } else if (userIsolationCRUDService.isLoginableIsolatedUser(loginId, inputPassword, passwordEncoder)) {
       User user = userIsolationCRUDService.awakeIsolated(userCRUDService, loginId);
-      return generateUserJWT(user);
+      return generateJwt(user);
     }
     throw new AccountException(ExceptionType.PASSWORD_ERROR);
   }
@@ -191,15 +191,15 @@ public class UserBusinessService {
 
   public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
     String payload = requestRefreshCookie.getValue();
-    RefreshToken refreshToken = refreshTokenCRUDService.loadByPayload(payload);
+    RefreshToken refreshToken = refreshTokenService.loadByPayload(payload);
     User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
-    return refreshUserJWT(user, payload);
+    return refreshJwt(user, payload);
   }
 
   public Map<String, String> executeJWTRefreshForMobileClient(String payload) {
-    RefreshToken refreshToken = refreshTokenCRUDService.loadByPayload(payload);
+    RefreshToken refreshToken = refreshTokenService.loadByPayload(payload);
     User user = userCRUDService.loadUserFromUserIdx(refreshToken.getUserIdx());
-    return refreshUserJWT(user, refreshToken.getPayload());
+    return refreshJwt(user, refreshToken.getPayload());
   }
 
   public Map<String, Boolean> executeQuit(String authorization, String inputPassword) {
@@ -229,28 +229,22 @@ public class UserBusinessService {
     return restrictingUserCRUDService.loadRestrictedLog(requestUser.getId());
   }
 
-  public void executeFavoriteMajorSave(String Authorization, FavoriteSaveDto favoriteSaveDto) {
-    if (tokenAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-    Long userId = tokenAgent.parseId(Authorization);
+  public void executeFavoriteMajorSave(String authorization, FavoriteSaveDto favoriteSaveDto) {
+    tokenAgent.validateRestrictedUser(authorization);
+    Long userId = tokenAgent.parseId(authorization);
 
     favoriteMajorService.save(userId, favoriteSaveDto.getMajorType());
   }
 
-  public void executeFavoriteMajorDelete(String Authorization, String majorType) {
-    if (tokenAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-    Long userIdx = tokenAgent.parseId(Authorization);
+  public void executeFavoriteMajorDelete(String authorization, String majorType) {
+    tokenAgent.validateRestrictedUser(authorization);
+    Long userIdx = tokenAgent.parseId(authorization);
     favoriteMajorService.delete(userIdx, majorType);
   }
 
-  public ResponseForm executeFavoriteMajorLoad(String Authorization) {
-    if (tokenAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-    Long userIdx = tokenAgent.parseId(Authorization);
+  public ResponseForm executeFavoriteMajorLoad(String authorization) {
+    tokenAgent.validateRestrictedUser(authorization);
+    Long userIdx = tokenAgent.parseId(authorization);
     List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
     return new ResponseForm(list);
   }
@@ -260,21 +254,21 @@ public class UserBusinessService {
     user.awake(loginId, password, email);
   }
 
-  private Map<String, String> generateUserJWT(User user) {
+  private Map<String, String> generateJwt(User user) {
     Claim userClaim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
 
     return new HashMap<>() {{
       put("AccessToken", tokenAgent.createAccessToken(user.getId(), userClaim));
-      put("RefreshToken", tokenAgent.provideRefreshTokenInLogin(user.getId()));
+      put("RefreshToken", tokenAgent.login(user.getId()));
     }};
   }
 
-  private Map<String, String> refreshUserJWT(User user, String refreshTokenPayload) {
+  private Map<String, String> refreshJwt(User user, String refreshTokenPayload) {
     Claim userClaim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
 
     return new HashMap<>() {{
       put("AccessToken", tokenAgent.createAccessToken(user.getId(), userClaim));
-      put("RefreshToken", tokenAgent.reissueRefreshToken(refreshTokenPayload));
+      put("RefreshToken", tokenAgent.reissue(refreshTokenPayload));
     }};
   }
 }

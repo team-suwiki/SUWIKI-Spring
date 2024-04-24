@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.auth.core.annotation.JwtVerify;
-import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.common.response.ResponseForm;
-import usw.suwiki.core.exception.AccountException;
-import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.exampost.dto.ExamPostRequest;
 import usw.suwiki.domain.exampost.dto.ExamPostResponse;
 import usw.suwiki.domain.exampost.service.ExamPostService;
@@ -33,7 +31,7 @@ import static usw.suwiki.statistics.log.MonitorOption.EXAM_POSTS;
 @RequiredArgsConstructor
 public class ExamPostsController {
   private final ExamPostService examPostService;
-  private final JwtAgent jwtAgent;
+  private final TokenAgent tokenAgent;
 
   @Monitoring(option = EXAM_POSTS)
   @GetMapping
@@ -43,8 +41,8 @@ public class ExamPostsController {
     @RequestParam Long lectureId,
     @RequestParam(required = false) Optional<Integer> page
   ) {
-    validateAuth(Authorization);
-    Long userId = jwtAgent.parseId(Authorization);
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long userId = tokenAgent.parseId(Authorization);
     return examPostService.loadAllExamPosts(userId, lectureId, new PageOption(page));
   }
 
@@ -52,8 +50,8 @@ public class ExamPostsController {
   @PostMapping("/purchase")
   @ResponseStatus(OK)
   public String purchaseExamPost(@RequestHeader String Authorization, @RequestParam Long lectureId) {
-    validateAuth(Authorization);
-    Long userId = jwtAgent.parseId(Authorization);
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long userId = tokenAgent.parseId(Authorization);
     examPostService.purchaseExamPost(userId, lectureId);
     return "success";
   }
@@ -66,8 +64,8 @@ public class ExamPostsController {
     @RequestParam Long lectureId,
     @Valid @RequestBody ExamPostRequest.Create request
   ) {
-    validateAuth(Authorization);
-    Long userIdx = jwtAgent.parseId(Authorization);
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long userIdx = tokenAgent.parseId(Authorization);
     examPostService.write(userIdx, lectureId, request);
     return "success";
   }
@@ -79,12 +77,7 @@ public class ExamPostsController {
     @RequestParam Long examIdx,
     @Valid @RequestBody ExamPostRequest.Update request
   ) {
-    jwtAgent.validateJwt(Authorization);
-
-    if (jwtAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-
+    tokenAgent.validateRestrictedUser(Authorization);
     examPostService.update(examIdx, request);
     return "success";
   }
@@ -97,7 +90,7 @@ public class ExamPostsController {
     @RequestHeader String Authorization,
     @RequestParam(required = false) Optional<Integer> page
   ) {
-    Long userIdx = jwtAgent.parseId(Authorization);
+    Long userIdx = tokenAgent.parseId(Authorization);
     return new ResponseForm(examPostService.loadAllMyExamPosts(new PageOption(page), userIdx));
   }
 
@@ -105,8 +98,8 @@ public class ExamPostsController {
   @DeleteMapping
   @ResponseStatus(OK)
   public String deleteExamPosts(@RequestHeader String Authorization, @RequestParam Long examIdx) {
-    validateAuth(Authorization);
-    Long userIdx = jwtAgent.parseId(Authorization);
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long userIdx = tokenAgent.parseId(Authorization);
     examPostService.deleteExamPost(userIdx, examIdx);
     return "success";
   }
@@ -115,15 +108,8 @@ public class ExamPostsController {
   @GetMapping("/purchase")
   @ResponseStatus(OK)
   public ResponseForm readPurchaseHistoryApi(@RequestHeader String Authorization) {
-    jwtAgent.validateJwt(Authorization);
-    Long userId = jwtAgent.parseId(Authorization);
+    tokenAgent.validateJwt(Authorization);
+    Long userId = tokenAgent.parseId(Authorization);
     return new ResponseForm(examPostService.loadPurchasedHistories(userId));
-  }
-
-  private void validateAuth(String authorization) {
-    jwtAgent.validateJwt(authorization);
-    if (jwtAgent.isRestrictedUser(authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
   }
 }

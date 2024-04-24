@@ -33,8 +33,9 @@ public class RefreshToken {
     this.payload = payload;
   }
 
-  public void reissue(String payload) {
+  public String reissue(String payload) {
     this.payload = payload;
+    return payload;
   }
 
   public void validatePayload(String payload) {

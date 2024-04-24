@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.auth.core.jwt.JwtAgent;
-import usw.suwiki.core.exception.AccountException;
-import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.service.ExamPostService;
 import usw.suwiki.domain.report.dto.ReportRequest;
@@ -28,7 +26,7 @@ import static usw.suwiki.statistics.log.MonitorOption.USER;
 public class ReportController {
   private final EvaluatePostService evaluatePostService;
   private final ExamPostService examPostService;
-  private final JwtAgent jwtAgent;
+  private final TokenAgent tokenAgent;
 
   @Monitoring(option = USER)
   @PostMapping("/evaluate")
@@ -37,10 +35,8 @@ public class ReportController {
     @RequestHeader String Authorization,
     @Valid @RequestBody ReportRequest.Evaluate request
   ) {
-    if (jwtAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-    Long reportingUserId = jwtAgent.parseId(Authorization);
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long reportingUserId = tokenAgent.parseId(Authorization);
     evaluatePostService.report(reportingUserId, request.getEvaluateIdx());
     return successFlag();
   }
@@ -52,10 +48,8 @@ public class ReportController {
     @RequestHeader String Authorization,
     @Valid @RequestBody ReportRequest.Exam request
   ) {
-    if (jwtAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-    Long reportingUserId = jwtAgent.parseId(Authorization);
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long reportingUserId = tokenAgent.parseId(Authorization);
     examPostService.report(reportingUserId, request.getExamIdx());
     return successFlag();
   }

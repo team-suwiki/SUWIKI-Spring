@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.common.response.ResponseForm;
-import usw.suwiki.core.exception.AccountException;
-import usw.suwiki.core.exception.ExceptionType;
+import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostRequest;
 import usw.suwiki.domain.evaluatepost.dto.EvaluatePostResponse;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
@@ -32,7 +30,7 @@ import static usw.suwiki.statistics.log.MonitorOption.EVALUATE_POSTS;
 @RequiredArgsConstructor
 public class EvaluatePostController {
   private final EvaluatePostService evaluatePostService;
-  private final JwtAgent jwtAgent;
+  private final TokenAgent tokenAgent;
 
   @Monitoring(option = EVALUATE_POSTS)
   @GetMapping
@@ -40,14 +38,10 @@ public class EvaluatePostController {
   public EvaluatePostResponse.Details readEvaluatePostsByLectureApi(
     @RequestHeader String Authorization,
     @RequestParam Long lectureId,
-    @RequestParam(required = false) Optional<Integer> page) {
-
-    jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-
-    Long userId = jwtAgent.parseId(Authorization);
+    @RequestParam(required = false) Optional<Integer> page
+  ) {
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long userId = tokenAgent.parseId(Authorization);
     return evaluatePostService.loadAllEvaluatePostsByLectureId(new PageOption(page), userId, lectureId);
   }
 
@@ -59,12 +53,8 @@ public class EvaluatePostController {
     @RequestParam Long lectureId,
     @Valid @RequestBody EvaluatePostRequest.Create request
   ) {
-    jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-
-    Long userId = jwtAgent.parseId(Authorization);
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long userId = tokenAgent.parseId(Authorization);
     evaluatePostService.write(userId, lectureId, request);
 
     return "success";
@@ -78,11 +68,7 @@ public class EvaluatePostController {
     @RequestParam Long evaluateIdx,
     @Valid @RequestBody EvaluatePostRequest.Update request
   ) {
-    jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-
+    tokenAgent.validateRestrictedUser(Authorization);
     evaluatePostService.update(evaluateIdx, request);
     return "success";
   }
@@ -94,12 +80,8 @@ public class EvaluatePostController {
     @RequestHeader String Authorization,
     @RequestParam(required = false) Optional<Integer> page
   ) {
-    jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-
-    Long userId = jwtAgent.parseId(Authorization);
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long userId = tokenAgent.parseId(Authorization);
     return new ResponseForm(evaluatePostService.loadAllEvaluatePostsByUserId(new PageOption(page), userId));
   }
 
@@ -107,12 +89,8 @@ public class EvaluatePostController {
   @DeleteMapping
   @ResponseStatus(OK)
   public String deleteEvaluation(@RequestParam Long evaluateIdx, @RequestHeader String Authorization) {
-    jwtAgent.validateJwt(Authorization);
-    if (jwtAgent.isRestrictedUser(Authorization)) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
-
-    Long userId = jwtAgent.parseId(Authorization);
+    tokenAgent.validateRestrictedUser(Authorization);
+    Long userId = tokenAgent.parseId(Authorization);
     evaluatePostService.deleteEvaluatePost(evaluateIdx, userId);
     return "success";
   }
