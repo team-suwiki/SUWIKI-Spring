@@ -16,7 +16,7 @@ class LectureScheduleMapper {
   public static Lecture toLecture(JsonLecture jsonLecture) {
     return Lecture.builder()
       .name(jsonLecture.getLectureName())
-      .type(jsonLecture.getLectureType())
+      .type(Lecture.Type.valueOf(jsonLecture.getLectureType()))
       .professor(jsonLecture.getProfessor())
       .semester(jsonLecture.getSelectedSemester())
       .majorType(jsonLecture.getMajorType())
@@ -26,7 +26,7 @@ class LectureScheduleMapper {
           .grade(jsonLecture.getGrade())
           .point(jsonLecture.getPoint())
           .diclNo(jsonLecture.getDividedClassNumber())
-          .evaluateType(jsonLecture.getEvaluateType())
+          .evaluateType(LectureDetail.Evaluation.valueOf(jsonLecture.getEvaluateType()))
           .capprType(jsonLecture.getCapacityPresentationType())
           .build())
       .build();

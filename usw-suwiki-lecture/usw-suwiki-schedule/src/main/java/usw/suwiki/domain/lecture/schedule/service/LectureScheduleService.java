@@ -45,12 +45,12 @@ public class LectureScheduleService {
 
   public LectureResponse.Lectures findPagedLecturesBySchedule(
     Long cursorId,
-    int limit,
+    int size,
     String keyword,
     String major,
     Integer grade
   ) {
-    Slice<Lecture> lectures = lectureQueryRepository.findCurrentSemesterLectures(cursorId, limit, keyword, major, grade);
+    Slice<Lecture> lectures = lectureQueryRepository.findCurrentSemesterLectures(cursorId, size, keyword, major, grade);
     return new LectureResponse.Lectures(lectures.isLast(), toPaginationResponse(lectures));
   }
 

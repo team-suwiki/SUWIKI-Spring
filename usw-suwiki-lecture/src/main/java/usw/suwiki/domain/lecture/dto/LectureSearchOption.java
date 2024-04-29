@@ -18,6 +18,6 @@ public class LectureSearchOption { // todo: apply validation on controller
   private final String majorType;
 
   public boolean passMajorFiltering() {
-    return majorType.equals("전체");
+    return "전체".equals(majorType);
   }
 }

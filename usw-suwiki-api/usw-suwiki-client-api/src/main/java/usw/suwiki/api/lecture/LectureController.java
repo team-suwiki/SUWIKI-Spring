@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.common.response.ApiResponse;
-import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.lecture.dto.LectureResponse;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
@@ -29,22 +28,9 @@ public class LectureController {
   private final LectureScheduleService lectureScheduleService;
   private final TokenAgent tokenAgent;
 
-  @Monitoring(option = LECTURE)
-  @GetMapping("/search")
-  @ResponseStatus(HttpStatus.OK)
-  public LectureResponse.Simples searchLectureApi(
-    @RequestParam String searchValue,
-    @RequestParam(required = false) String option,
-    @RequestParam(required = false) Integer page,
-    @RequestParam(required = false) String majorType
-  ) {
-    LectureSearchOption findOption = new LectureSearchOption(option, page, majorType);
-    return lectureService.loadAllLecturesByKeyword(searchValue, findOption);
-  }
-
   @GetMapping("/current/cells/search") // todo: (03.18) 이것만큼은 건들면 안된다.
   @ResponseStatus(HttpStatus.OK)
-  public ApiResponse<LectureResponse.Lectures> searchLectureCells(
+  public ApiResponse<LectureResponse.Lectures> searchTimetableCells(
     @RequestParam(required = false) Long cursorId,
     @RequestParam(required = false, defaultValue = "20") Integer size,
     @RequestParam(required = false) String keyword,
@@ -56,12 +42,25 @@ public class LectureController {
     return ApiResponse.ok(response);
   }
 
+  @Monitoring(option = LECTURE)
+  @GetMapping("/search")
+  @ResponseStatus(HttpStatus.OK)
+  public LectureResponse.Simples search(
+    @RequestParam String searchValue,
+    @RequestParam(required = false) String option,
+    @RequestParam(required = false) Integer page,
+    @RequestParam(required = false) String majorType
+  ) {
+    LectureSearchOption findOption = new LectureSearchOption(option, page, majorType);
+    return lectureService.loadAllLecturesByKeyword(searchValue, findOption);
+  }
+
   @CacheStatics
   @Cacheable(cacheNames = "lecture")
   @Monitoring(option = LECTURE)
   @GetMapping("/all")
   @ResponseStatus(HttpStatus.OK)
-  public LectureResponse.Simples findAllLectureApi(
+  public LectureResponse.Simples getMainPageLectures(
     @RequestParam(required = false) String option,
     @RequestParam(required = false) Integer page,
     @RequestParam(required = false) String majorType
@@ -73,11 +72,11 @@ public class LectureController {
   @Monitoring(option = LECTURE)
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public ResponseForm findLectureByLectureId(
+  public ApiResponse<LectureResponse.Detail> getDetail(
     @RequestHeader String Authorization,
     @RequestParam Long lectureId
   ) {
     tokenAgent.validateRestrictedUser(Authorization);
-    return new ResponseForm(lectureService.loadLectureDetail(lectureId));
+    return ApiResponse.ok(lectureService.loadLectureDetail(lectureId));
   }
 }

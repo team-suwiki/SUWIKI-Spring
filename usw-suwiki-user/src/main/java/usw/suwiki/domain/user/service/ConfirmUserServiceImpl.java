@@ -24,6 +24,6 @@ public class ConfirmUserServiceImpl implements ConfirmUserService {
   public void activated(Long userId) {
     userRepository.findById(userId)
       .orElseThrow(() -> new AccountException(USER_NOT_FOUND))
-      .activateUser();
+      .activate();
   }
 }

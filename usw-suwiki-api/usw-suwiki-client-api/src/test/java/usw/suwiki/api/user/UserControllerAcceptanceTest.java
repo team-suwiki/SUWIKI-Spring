@@ -39,7 +39,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static usw.suwiki.common.test.Tag.USER_TABLE;
+import static usw.suwiki.common.test.Tag.USER;
+import static usw.suwiki.common.test.support.Pair.parameter;
 
 @AcceptanceTest(testDatabase = AcceptanceTest.TestDatabase.MYSQL)
 class UserControllerAcceptanceTest extends AcceptanceTestSupport {
@@ -82,7 +83,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       final String identifier = "check-id";
       final String summary = "아이디 중복 확인 (중복일 시) API";
       final String description = "아이디 중복 확인 (중복일 시) API입니다. Body에는 String 타입을 입력해야하며 Blank 제약조건이 있습니다.";
-      final var tag = USER_TABLE;
+
       final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
         add(Pair.of("$.overlap", true));
       }};
@@ -101,7 +102,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
         .identifier(identifier)
         .summary(summary)
         .description(description)
-        .tag(tag)
+        .tag(USER)
         .result(result)
         .generateDocs()
       );
@@ -113,7 +114,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       final String identifier = "check-id";
       final String summary = "아이디 중복 확인 (중복 아닐 시) API";
       final String description = "아이디 중복 확인 (중복 아닐 시) API입니다. Body에는 String 타입을 입력해야하며 Blank 제약조건이 있습니다.";
-      final var tag = USER_TABLE;
+
       final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
         add(Pair.of("$.overlap", false));
       }};
@@ -132,7 +133,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
         .identifier(identifier)
         .summary(summary)
         .description(description)
-        .tag(tag)
+        .tag(USER)
         .result(result)
         .generateDocs()
       );
@@ -163,7 +164,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       final String identifier = "check-email";
       final String summary = "이메일 중복 확인 (중복일 시) API";
       final String description = "이메일 중복 확인 (중복일 시) API입니다. Body에는 String 타입을 입력해야하며 Blank 제약조건이 있습니다.";
-      final var tag = USER_TABLE;
+
       final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
         add(Pair.of("$.overlap", true));
       }};
@@ -182,7 +183,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
         .identifier(identifier)
         .summary(summary)
         .description(description)
-        .tag(tag)
+        .tag(USER)
         .result(result)
         .generateDocs()
       );
@@ -194,7 +195,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       final String identifier = "check-email";
       final String summary = "이메일 중복 확인 (중복일 시) API";
       final String description = "이메일 중복 확인 (중복일 시) API입니다. Body에는 String 타입을 입력해야하며 Blank 제약조건이 있습니다.";
-      final var tag = USER_TABLE;
+
       final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
         add(Pair.of("$.overlap", false));
       }};
@@ -213,7 +214,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
         .identifier(identifier)
         .summary(summary)
         .description(description)
-        .tag(tag)
+        .tag(USER)
         .result(result)
         .generateDocs()
       );
@@ -244,7 +245,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       final String identifier = "join";
       final String summary = "회원가입 API";
       final String description = "회원가입 API입니다. Body에는 String 타입의 \"LoginId\", \"Password\", \"Email\"을 입력해야하며 모든 필드가 Blank 제약조건이 있습니다.";
-      final var tag = USER_TABLE;
+
       final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
         add(Pair.of("$.success", true));
       }};
@@ -272,7 +273,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
         .identifier(identifier)
         .summary(summary)
         .description(description)
-        .tag(tag)
+        .tag(USER)
         .result(result)
         .generateDocs()
       );
@@ -339,16 +340,14 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       final String identifier = "verify-email";
       final String summary = "이메일 인증 API";
       final String description = "이메일 인증 API입니다. Parameter에는 \"token\"을 Key로 갖고 값을 입력해야합니다.";
-      final var tag = USER_TABLE;
+
       final String expectedResults = ConfirmResponse.SUCCESS.getContent();
 
       // setup
       final String emailVerificationToken = confirmationToken.getToken();
-      final List<Pair<String, String>> parameter = new ArrayList<>();
-      parameter.add(Pair.of("token", emailVerificationToken));
 
       // execution
-      var result = getNonJson(Uri.of(endpoint), null, parameter);
+      var result = getNonJson(Uri.of(endpoint), parameter("token", emailVerificationToken));
 
       // result validation
       ResponseValidator.validateNonJSONResponse(result, status().isOk(), expectedResults);
@@ -368,11 +367,9 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
     void 이메일_인증_실패_잘못된_토큰() throws Exception {
       // setup
       final String emailVerificationToken = confirmationToken.getToken();
-      final List<Pair<String, String>> parameter = new ArrayList<>();
-      parameter.add(Pair.of("token", emailVerificationToken + "diger"));
 
       // execution
-      var result = getNonJson(Uri.of(endpoint), null, parameter);
+      var result = getNonJson(Uri.of(endpoint), parameter("token", emailVerificationToken + "diger"));
 
       // result validation
       ResponseValidator.validate(result, status().isOk(), ExceptionType.valueOf(ConfirmResponse.ERROR.getContent()));
@@ -395,11 +392,9 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       confirmationTokenRepository.save(reflectedConfirmationToken);
 
       final String emailVerificationToken = confirmationToken.getToken();
-      final List<Pair<String, String>> parameter = new ArrayList<>();
-      parameter.add(Pair.of("token", emailVerificationToken));
 
       // execution
-      var result = getNonJson(Uri.of(endpoint), null, parameter);
+      var result = getNonJson(Uri.of(endpoint), parameter("token", emailVerificationToken));
 
       // result validation
       ResponseValidator.validate(result, status().isOk(), ExceptionType.valueOf(ConfirmResponse.EXPIRED.getContent()));
@@ -422,7 +417,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       final String identifier = "find-id";
       final String summary = "아이디 찾기 API";
       final String description = "아이디 찾기 API입니다.";
-      final var tag = USER_TABLE;
+
       final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
         add(Pair.of("$.success", true));
       }};
@@ -443,7 +438,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
         .identifier(identifier)
         .summary(summary)
         .description(description)
-        .tag(tag)
+        .tag(USER)
         .result(result)
         .generateDocs()
       );
@@ -462,7 +457,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       final String identifier = "find-id";
       final String summary = "비밀번호 찾기 API";
       final String description = "비밀번호 찾기 API입니다.";
-      final var tag = USER_TABLE;
+
       final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
         add(Pair.of("$.success", true));
       }};
@@ -483,7 +478,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
         .identifier(identifier)
         .summary(summary)
         .description(description)
-        .tag(tag)
+        .tag(USER)
         .result(result)
         .generateDocs()
       );
@@ -502,7 +497,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
       final String identifier = "reset-id";
       final String summary = "비밀번호 초기화 API";
       final String description = "비밀번호 초기화 API입니다.";
-      final var tag = USER_TABLE;
+
       final List<Pair<String, Object>> expectedResults = new ArrayList<>() {{
         add(Pair.of("$.success", true));
       }};
@@ -530,7 +525,7 @@ class UserControllerAcceptanceTest extends AcceptanceTestSupport {
         .identifier(identifier)
         .summary(summary)
         .description(description)
-        .tag(tag)
+        .tag(USER)
         .result(result)
         .generateDocs()
       );

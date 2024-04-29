@@ -3,6 +3,8 @@ package usw.suwiki.domain.lecture;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +24,10 @@ import java.util.regex.Pattern;
 public class Lecture extends BaseEntity {
   private static final Pattern LECTURE_PATTERN = Pattern.compile("^(2\\d{3})-(1|2)$");
 
+  public enum Type {
+    중핵, 전교, 기교, 선교, 소교, 전선, 전취, 전핵, 교직, RT, 전필, 선수, 기과, 전기
+  }
+
   @Column(name = "semester_list")
   private String semester;
 
@@ -34,14 +40,17 @@ public class Lecture extends BaseEntity {
   private String majorType;
 
   @Column(name = "lecture_type")
-  private String type;
+  @Enumerated(EnumType.STRING)
+  private Type type;
 
   @Embedded
   private LectureDetail lectureDetail;
 
   @Embedded
+  @Builder.Default
   private LectureEvaluationInfo lectureEvaluationInfo = new LectureEvaluationInfo();
 
+  @Builder.Default
   private int postsCount = 0;
 
   public void evaluate(Evaluation evaluation) {
@@ -92,5 +101,9 @@ public class Lecture extends BaseEntity {
     if (!LECTURE_PATTERN.matcher(candidate).matches()) {
       throw new IllegalArgumentException("invalid semester");
     }
+  }
+
+  public String getType() {
+    return type.name();
   }
 }

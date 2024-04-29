@@ -22,8 +22,8 @@ class JwtAgent implements TokenAgent {
   private final JwtSecretProvider jwtSecretProvider;
   private final RawParser rawParser;
 
-  @Override
   @Transactional
+  @Override
   public String login(Long userId) { // todo: 하나의 토큰 묶음을 리턴할 것
     Optional<RefreshToken> wrappedRefreshToken = refreshTokenService.loadByUserId(userId);
 
@@ -41,6 +41,7 @@ class JwtAgent implements TokenAgent {
     return refreshToken.getPayload();
   }
 
+  @Transactional
   @Override
   public String reissue(String payload) {
     RefreshToken refreshToken = refreshTokenService.loadByPayload(payload);

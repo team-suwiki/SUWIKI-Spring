@@ -58,7 +58,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
   @BeforeEach
   void setup() {
     user = userRepository.save(User.init("loginId", "password", "test@suwiki.kr"));
-    claim = new UserClaim(user.getLoginId(), user.getRole().name(), user.getRestricted());
+    claim = new UserClaim("loginId", "USER", false);
 
     accessToken = tokenAgent.createAccessToken(user.getId(), claim);
   }
@@ -95,7 +95,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
           .identifier("create-timetable")
           .summary("[토큰 필요] 시간표 생성 API")
           .description("시간표를 생성하는 API 입니다. semester에는 [\"FIRST\", \"SECOND\", \"SUMMER\", \"WINTER\"] 만 입력 가능하니다.")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -123,7 +123,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("create-timetable-fail-bad-request")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -148,7 +148,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("create-timetable-fail-wrong-semester")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -172,7 +172,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("create-timetable-fail-invalid-token")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -212,7 +212,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
           .identifier("update-timetable-success")
           .summary("[토큰 필요] 시간표 수정 API")
           .description("시간표 수정 API 입니다. semester에는 [\"FIRST\", \"SECOND\", \"SUMMER\", \"WINTER\"] 만 입력 가능하니다.")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -239,7 +239,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("update-timetable-fail-not-author")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -268,7 +268,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("update-timetable-fail-bad-request")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -294,7 +294,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("update-timetable-fail-wrong-semester")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -319,7 +319,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("update-timetable-fail-invalid-token")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -352,7 +352,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
           .identifier("delete-timetable-success")
           .summary("[토큰 필요] 시간표 삭제 API")
           .description("시간표 삭제 API 입니다.")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -377,7 +377,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("delete-timetable-fail-not-author")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -410,7 +410,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
           .identifier("get-all-timetables-success")
           .summary("[토큰 필요] 내 모든 시간표 조회 API")
           .description("내 시간표를 조회할 수 있는 API 입니다.")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -420,7 +420,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
     void 시간표_단건_불러오기_성공() throws Exception {
       // given
       var timetable = 시간표_생성();
-      var timetableCell = 시간표_셀_생성("MON", 1, 3);
+      var timetableCell = 시간표_셀_생성("MON", 2, 4);
       var timetableCell2 = 시간표_셀_생성("TUE", 1, 3);
 
       timetable.addCell(timetableCell);
@@ -453,7 +453,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
           .identifier("get-timetable-success")
           .summary("[토큰 필요] 특정 시간표 조회 API")
           .description("특정 시간표의 모든 셀과 데이터를 가져오는 API 입니다.")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -503,7 +503,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
             color : 'ORANGE','APRICOT','PINK','SKY','BROWN','LIGHT_BROWN','BROWN_DARK','PURPLE','PURPLE_LIGHT','RED_LIGHT','GREEN','GREEN_LIGHT','GREEN_DARK','NAVY','NAVY_LIGHT','NAVY_DARK','VIOLET','VIOLET_LIGHT','GRAY','GRAY_DARK'
             대소문자는 구분하지 않으니 참고바랍니다.
             """)
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -536,7 +536,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("insert-timetable-cell-fail-not-author")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -564,7 +564,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("insert-timetable-cell-fail-overlapped-cell")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -620,7 +620,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
           .identifier("update-timetable-cell-success")
           .summary("[토큰 필요] 시간표 셀 수정 API")
           .description("시간표 셀 수정 API 입니다. cell index 값은 내려준 값과 동일합니다.")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -647,7 +647,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("update-timetable-cell-fail-not-author")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -677,7 +677,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("update-timetable-cell-fail-overlapped-cell")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -716,7 +716,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
           .identifier("delete-timetable-cell-success")
           .summary("[토큰 필요] 시간표 셀 삭제 API")
           .description("시간표 셀 삭제 API 입니다. cell index 값은 조회 API에서 내려준 값입니다.")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -741,7 +741,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
       result.andDo(
         RestDocument.builder()
           .identifier("delete-timetable-cell-fail-not-author")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );
@@ -786,7 +786,7 @@ class TimetableAcceptanceTest extends AcceptanceTestSupport {
           .identifier("timetable-bulk-insert-success")
           .summary("[토큰 필요] 시간표 벌크 인서트 API")
           .description("시간표 벌크 인서트 API 입니다.")
-          .tag(Tag.TIME_TABLE)
+          .tag(Tag.TIMETABLE)
           .result(result)
           .generateDocs()
       );

@@ -78,7 +78,6 @@ public class User extends BaseEntity {
       .loginId(loginId)
       .password(password)
       .email(email)
-      .role(Role.USER)
       .restricted(true)
       .restrictedCount(0)
       .writtenEvaluation(0)
@@ -121,7 +120,7 @@ public class User extends BaseEntity {
     login();
   }
 
-  public void activateUser() {
+  public void activate() {
     this.restricted = false;
     this.role = Role.USER;
     super.modified();

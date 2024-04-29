@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -22,7 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import usw.suwiki.common.test.HttpMethod;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -61,16 +60,16 @@ public abstract class AcceptanceTestSupport {
     return perform(uri, accessToken, null);
   }
 
-  public ResultActions get(Uri uri, List<Pair<String, String>> parameters) throws Exception {
+  public ResultActions get(Uri uri, Pair... parameters) throws Exception {
     return perform(uri, null, parameters);
   }
 
-  public ResultActions get(Uri uri, String accessToken, List<Pair<String, String>> parameters) throws Exception {
+  public ResultActions get(Uri uri, String accessToken, Pair... parameters) throws Exception {
     return perform(uri, accessToken, parameters);
   }
 
-  public ResultActions getNonJson(Uri uri, String accessToken, List<Pair<String, String>> parameters) throws Exception {
-    return performNonJson(uri, accessToken, parameters);
+  public ResultActions getNonJson(Uri uri, Pair... parameters) throws Exception {
+    return performNonJson(uri, null, parameters);
   }
 
   public ResultActions post(Uri uri, Object requestBody) throws Exception {
@@ -108,7 +107,7 @@ public abstract class AcceptanceTestSupport {
   /**
    * query 전용 acceptance test template
    */
-  private ResultActions perform(Uri uri, String accessToken, List<Pair<String, String>> parameters) throws Exception {
+  private ResultActions perform(Uri uri, String accessToken, Pair... parameters) throws Exception {
     var request = toRequestBuilder(uri, HttpMethod.GET);
 
     if (parameters != null) {
@@ -118,7 +117,7 @@ public abstract class AcceptanceTestSupport {
     return perform(request, accessToken);
   }
 
-  private ResultActions performNonJson(Uri uri, String accessToken, List<Pair<String, String>> parameters) throws Exception {
+  private ResultActions performNonJson(Uri uri, String accessToken, Pair... parameters) throws Exception {
     var request = toRequestBuilderNonJsonRequest(uri, HttpMethod.GET);
 
     if (parameters != null) {
@@ -128,10 +127,10 @@ public abstract class AcceptanceTestSupport {
     return perform(request, accessToken);
   }
 
-  private MultiValueMap<String, String> toParams(List<Pair<String, String>> parameters) {
-    return parameters.stream().collect(
+  private MultiValueMap<String, String> toParams(Pair... parameters) {
+    return Arrays.stream(parameters).collect(
       LinkedMultiValueMap::new,
-      (map, pair) -> map.add(pair.getFirst(), pair.getSecond()),
+      (map, pair) -> map.add(pair.first(), pair.second()),
       LinkedMultiValueMap::addAll
     );
   }
