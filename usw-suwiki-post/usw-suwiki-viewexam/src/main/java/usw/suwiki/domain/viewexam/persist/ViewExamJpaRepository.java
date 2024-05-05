@@ -33,7 +33,7 @@ class ViewExamJpaRepository implements ViewExamRepository {
 
   @Override
   public List<ViewExam> findByUserId(Long userIdx) {
-    List result = em.createQuery("SELECT v FROM ViewExam v JOIN v.user u WHERE u.id = :idx ORDER BY v.createDate")
+    List result = em.createQuery("SELECT v FROM ViewExam v JOIN v.userIdx u WHERE v.userIdx = :idx ORDER BY v.createDate")
       .setParameter("idx", userIdx)
       .getResultList();
 
