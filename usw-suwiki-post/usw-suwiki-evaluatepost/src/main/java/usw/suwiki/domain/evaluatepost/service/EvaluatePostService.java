@@ -74,7 +74,7 @@ public class EvaluatePostService {
     Evaluation currentEvaluation = EvaluatePostMapper.toEvaluatedData(evaluatePost.getLectureRating());
 
     evaluatePost.update(
-      evaluatePost.getContent(),
+      request.getContent(),
       evaluatePost.getLectureName(),
       request.getSelectedSemester(),
       evaluatePost.getProfessor(),
