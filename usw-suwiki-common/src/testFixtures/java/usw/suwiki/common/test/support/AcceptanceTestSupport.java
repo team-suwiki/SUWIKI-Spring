@@ -80,8 +80,16 @@ public abstract class AcceptanceTestSupport {
     return perform(uri, HttpMethod.POST, accessToken, requestBody);
   }
 
+  public ResultActions post(Uri uri, String accessToken, Object requestBody, Pair... parameters) throws Exception {
+    return perform(uri, HttpMethod.POST, accessToken, requestBody, parameters);
+  }
+
   public ResultActions put(Uri uri, Object requestBody) throws Exception {
     return perform(uri, HttpMethod.PUT, null, requestBody);
+  }
+
+  public ResultActions put(Uri uri, String accessToken, Object requestBody, Pair... parameters) throws Exception {
+    return perform(uri, HttpMethod.PUT, accessToken, requestBody, parameters);
   }
 
   public ResultActions put(Uri uri, String accessToken, Object requestBody) throws Exception {
@@ -102,6 +110,10 @@ public abstract class AcceptanceTestSupport {
 
   public ResultActions delete(Uri uri, String accessToken, Object requestBody) throws Exception {
     return perform(uri, HttpMethod.DELETE, accessToken, requestBody);
+  }
+
+  public ResultActions delete(Uri uri, String accessToken, Object requestBody, Pair... parameters) throws Exception {
+    return perform(uri, HttpMethod.DELETE, accessToken, requestBody, parameters);
   }
 
   /**
@@ -143,6 +155,20 @@ public abstract class AcceptanceTestSupport {
 
     if (requestBody != null) {
       request.content(objectMapper.writeValueAsString(requestBody));
+    }
+
+    return perform(request, accessToken);
+  }
+
+  private ResultActions perform(Uri uri, HttpMethod httpMethod, String accessToken, Object requestBody, Pair... parameters) throws Exception {
+    var request = toRequestBuilder(uri, httpMethod);
+
+    if (requestBody != null) {
+      request.content(objectMapper.writeValueAsString(requestBody));
+    }
+
+    if (parameters != null) {
+      request.queryParams(toParams(parameters));
     }
 
     return perform(request, accessToken);
