@@ -3,14 +3,12 @@ package usw.suwiki.domain.evaluatepost;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import usw.suwiki.infra.jpa.BaseEntity;
 
 @Getter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EvaluatePost extends BaseEntity {
@@ -49,4 +47,37 @@ public class EvaluatePost extends BaseEntity {
   public String getProfessor() {
     return lectureInfo.getProfessor();
   }
+
+  public String getSelectedSemester() {
+    return lectureInfo.getSelectedSemester();
+  }
+
+  public float getTotalAvg() {
+    return lectureRating.getTotalAvg();
+  }
+
+  public float getSatisfaction() {
+    return lectureRating.getSatisfaction();
+  }
+
+  public float getLearning() {
+    return lectureRating.getLearning();
+  }
+
+  public float getHoney() {
+    return lectureRating.getHoney();
+  }
+
+  public int getTeam() {
+    return lectureRating.getTeam();
+  }
+
+  public int getDifficulty() {
+    return lectureRating.getDifficulty();
+  }
+
+  public int getHomework() {
+    return lectureRating.getHomework();
+  }
 }
+
