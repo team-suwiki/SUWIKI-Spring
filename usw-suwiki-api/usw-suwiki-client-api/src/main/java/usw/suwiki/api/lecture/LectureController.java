@@ -28,17 +28,16 @@ public class LectureController {
   private final LectureScheduleService lectureScheduleService;
   private final TokenAgent tokenAgent;
 
-  @GetMapping("/current/cells/search") // todo: (03.18) 이것만큼은 건들면 안된다.
+  @GetMapping("/current/cells/search") // (03.18) 이것만큼은 건들면 안된다.
   @ResponseStatus(HttpStatus.OK)
-  public ApiResponse<LectureResponse.Lectures> searchTimetableCells(
+  public ApiResponse<LectureResponse.ScheduledLecture> searchTimetableCells(
     @RequestParam(required = false) Long cursorId,
     @RequestParam(required = false, defaultValue = "20") Integer size,
     @RequestParam(required = false) String keyword,
     @RequestParam(required = false) String major,
     @RequestParam(required = false) Integer grade
   ) {
-    LectureResponse.Lectures response =
-      lectureScheduleService.findPagedLecturesBySchedule(cursorId, size, keyword, major, grade);
+    var response = lectureScheduleService.findPagedLecturesBySchedule(cursorId, size, keyword, major, grade);
     return ApiResponse.ok(response);
   }
 

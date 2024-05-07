@@ -1,4 +1,4 @@
-package usw.suwiki.domain.lecture.schedule.data;
+package usw.suwiki.domain.lecture.service;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -17,11 +17,7 @@ public class LectureStringConverter {
   private static final int START_POINTER = -1;
   private static final int NEXT_TIME = 1;
 
-  /**
-   * @param placeSchedules 강의 장소 및 시간 원본 lecture_schedule.place_schedule
-   * @implNote place_schedule을 DTO 리스트로 변환
-   */
-  public static List<LectureCell> chunkToLectureCells(String placeSchedules) {
+  public static List<LectureCell> toLectureCells(String placeSchedules) {
     List<LectureCell> lectureCells = new ArrayList<>();
 
     // e.g. "IT103(..),IT505(..)" -> [ "IT103(..)", "IT505(..)" ]

@@ -53,9 +53,7 @@ public class LectureService {
   private LectureResponse.Simples toResponse(Lectures lectures) {
     return new LectureResponse.Simples(
       lectures.count(),
-      lectures.content().stream()
-        .map(LectureMapper::toSimple)
-        .toList()
+      lectures.content().stream().map(LectureMapper::toSimple).toList()
     );
   }
 

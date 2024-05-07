@@ -8,8 +8,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
@@ -24,56 +22,20 @@ import static usw.suwiki.domain.lecture.QLecture.lecture;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LectureQueryRepository {
-  private static final int SLICE_LIMIT_PLUS_AMOUNT = 1;
   private static final String DEFAULT_ORDER = "modifiedDate";
   private static final Integer DEFAULT_LIMIT = 10;
   private static final Integer DEFAULT_PAGE = 1;
 
   private final JPAQueryFactory queryFactory;
-  private final SemesterProvider semesterProvider;
 
-  public Slice<Lecture> findCurrentSemesterLectures(
-    final Long cursorId,
-    final int limit,
-    final String keyword,
-    final String majorType,
-    final Integer grade
-  ) {
-    var result = queryFactory.selectFrom(lecture)
-      .where(
-        isCursorGt(cursorId),
-        containsKeywordInNameOrProfessor(keyword),
-        isMajorTypeEq(majorType),
-        isGradeEq(grade),
-        lecture.semester.endsWith(semesterProvider.current())
-      )
-      .orderBy(lecture.id.asc())
-      .limit(limit + SLICE_LIMIT_PLUS_AMOUNT)
-      .fetch();
-
-    if (result.size() > limit) {
-      result.remove(limit);
-    }
-
-    return new SliceImpl<>(result, Pageable.ofSize(limit), result.size() > limit);
-  }
-
-  public Optional<Lecture> findByExtraUniqueKey(
-    String lectureName,
-    String professor,
-    String majorType,
-    String dividedClassNumber
-  ) {
-    var result = queryFactory.selectFrom(lecture)
+  public Optional<Lecture> findByExtraKeys(String lectureName, String professor, String major, String dividedClassNumber) {
+    return Optional.ofNullable(queryFactory.selectFrom(lecture)
       .where(lecture.name.eq(lectureName),
         lecture.professor.eq(professor),
-        lecture.majorType.eq(majorType),
+        lecture.majorType.eq(major),
         lecture.lectureDetail.diclNo.eq(dividedClassNumber))
-      .fetchOne();
-
-    return Optional.ofNullable(result);
+      .fetchOne());
   }
-
 
   public Lectures findAllLecturesByOption(String searchValue, LectureSearchOption option) {
     Pageable pageable = PageRequest.of(page(option.getPageNumber()) - 1, DEFAULT_LIMIT);
@@ -158,22 +120,6 @@ public class LectureQueryRepository {
     return queryFactory.selectDistinct(lecture.majorType)
       .from(lecture)
       .fetch();
-  }
-
-  private BooleanExpression isCursorGt(Long cursorId) {
-    return cursorId == null ? null : lecture.id.gt(cursorId);
-  }
-
-  private BooleanExpression containsKeywordInNameOrProfessor(String keyword) {
-    return keyword == null ? null : lecture.name.contains(keyword).or(lecture.professor.contains(keyword));
-  }
-
-  private BooleanExpression isMajorTypeEq(String majorType) {
-    return majorType == null ? null : lecture.majorType.eq(majorType);
-  }
-
-  private BooleanExpression isGradeEq(Integer grade) {
-    return grade == null ? null : lecture.lectureDetail.grade.eq(grade);
   }
 
   private OrderSpecifier<?> orderSpecifier(String option) {

@@ -1,17 +1,21 @@
 package usw.suwiki.domain.lecture.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+import static usw.suwiki.domain.lecture.service.LectureStringConverter.toLectureCells;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LectureResponse {
 
   @Data
   public static class Simples {
-    private final long count;
+    private final long count; // total
     private final List<Simple> data;
   }
 
@@ -47,9 +51,16 @@ public class LectureResponse {
   }
 
   @Data
-  public static class Lectures { // 시간표 선택 시 나오는 강의 데이터 (네이밍 수정 요망)
-    private final boolean isLast;
+  public static class ScheduledLecture {
+    private final Boolean isLast;
     private final List<Lecture> content;
+
+    public static ScheduledLecture of(int size, List<Lecture> content) {
+      return new ScheduledLecture(
+        content.size() < size,
+        content.size() > size ? content.subList(0, size) : content
+      );
+    }
   }
 
   @Data
@@ -61,6 +72,17 @@ public class LectureResponse {
     private final int grade;
     private final String professorName;
     private final List<LectureCell> originalCellList; // todo: 프론트에 빌어서 이름 바꾸기
+
+    @QueryProjection
+    public Lecture(Long id, String name, String type, String major, int grade, String professorName, String placeSchedules) {
+      this.id = id;
+      this.name = name;
+      this.type = type;
+      this.major = major;
+      this.grade = grade;
+      this.professorName = professorName;
+      this.originalCellList = placeSchedules == null ? emptyList() : toLectureCells(placeSchedules);
+    }
   }
 
   @Data

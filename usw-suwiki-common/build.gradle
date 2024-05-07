@@ -2,7 +2,6 @@ apply plugin: 'java-test-fixtures'
 
 dependencies {
   implementation('org.springframework.data:spring-data-commons')
-  implementation('org.springframework.boot:spring-boot-starter-validation') // todo: BulkRequest 확인 (24.03.06)
 
   implementation('org.apache.commons:commons-text:1.10.0')
   implementation('com.fasterxml.jackson.core:jackson-annotations')
@@ -10,7 +9,7 @@ dependencies {
 
   // test supports
   testFixturesImplementation project(':usw-suwiki-core:usw-suwiki-exception')
-  
+
   testFixturesImplementation('org.springframework.boot:spring-boot-starter')
   testFixturesImplementation('org.springframework.boot:spring-boot-starter-web')
   testFixturesImplementation('org.springframework.boot:spring-boot-starter-test')

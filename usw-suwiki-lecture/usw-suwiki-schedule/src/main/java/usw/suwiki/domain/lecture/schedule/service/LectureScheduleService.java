@@ -5,7 +5,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.data.domain.Slice;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,7 +20,6 @@ import usw.suwiki.domain.lecture.schedule.LectureSchedule;
 import usw.suwiki.domain.lecture.schedule.LectureScheduleQueryRepository;
 import usw.suwiki.domain.lecture.schedule.LectureScheduleRepository;
 import usw.suwiki.domain.lecture.schedule.data.JsonLecture;
-import usw.suwiki.domain.lecture.schedule.data.LectureStringConverter;
 import usw.suwiki.domain.lecture.schedule.data.USWTermResolver;
 import usw.suwiki.domain.lecture.schedule.model.LectureInfo;
 
@@ -30,7 +28,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -43,32 +40,8 @@ public class LectureScheduleService {
 
   private final SemesterProvider semesterProvider;
 
-  public LectureResponse.Lectures findPagedLecturesBySchedule(
-    Long cursorId,
-    int size,
-    String keyword,
-    String major,
-    Integer grade
-  ) {
-    Slice<Lecture> lectures = lectureQueryRepository.findCurrentSemesterLectures(cursorId, size, keyword, major, grade);
-    return new LectureResponse.Lectures(lectures.isLast(), toPaginationResponse(lectures));
-  }
-
-  // todo: 쿼리 개선하기
-  private List<LectureResponse.Lecture> toPaginationResponse(Slice<Lecture> lectures) {
-    return lectures.stream().flatMap(lecture -> {
-        List<String> placeSchedules = lectureScheduleQueryRepository.findAllPlaceSchedulesByLectureId(lecture.getId());
-        return placeSchedules.isEmpty()
-          ? Stream.of(LectureScheduleMapper.toEmptyCellResponse(lecture))
-          : toResponseWithCells(lecture, placeSchedules);
-      })
-      .toList();
-  }
-
-  private Stream<LectureResponse.Lecture> toResponseWithCells(Lecture lecture, List<String> placeSchedules) {
-    return placeSchedules.stream().map(placeSchedule ->
-      LectureScheduleMapper.toResponse(lecture, LectureStringConverter.chunkToLectureCells(placeSchedule))
-    );
+  public LectureResponse.ScheduledLecture findPagedLecturesBySchedule(Long cursorId, int size, String keyword, String major, Integer grade) {
+    return lectureScheduleQueryRepository.findCurrentSemesterLectures(cursorId, size, keyword, major, grade);
   }
 
   @Async
@@ -128,7 +101,7 @@ public class LectureScheduleService {
   }
 
   private void insertJsonLectureOrLectureSchedule(JsonLecture jsonLecture) {
-    Optional<Lecture> optionalLecture = lectureQueryRepository.findByExtraUniqueKey(
+    Optional<Lecture> optionalLecture = lectureQueryRepository.findByExtraKeys(
       jsonLecture.getLectureName(),
       jsonLecture.getProfessor(),
       jsonLecture.getMajorType(),
