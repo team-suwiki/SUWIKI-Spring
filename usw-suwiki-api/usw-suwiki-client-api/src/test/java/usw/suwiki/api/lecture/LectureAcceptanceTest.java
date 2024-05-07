@@ -11,6 +11,8 @@ import usw.suwiki.common.test.support.Uri;
 import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.lecture.Lecture;
 import usw.suwiki.domain.lecture.LectureRepository;
+import usw.suwiki.domain.lecture.schedule.LectureSchedule;
+import usw.suwiki.domain.lecture.schedule.LectureScheduleRepository;
 import usw.suwiki.domain.user.model.UserClaim;
 
 import java.util.List;
@@ -25,6 +27,8 @@ import static usw.suwiki.core.exception.ExceptionType.USER_RESTRICTED;
 class LectureAcceptanceTest extends AcceptanceTestSupport {
   @Autowired
   private LectureRepository lectureRepository;
+  @Autowired
+  private LectureScheduleRepository lectureScheduleRepository;
   @Autowired
   private TokenAgent tokenAgent;
 
@@ -178,11 +182,11 @@ class LectureAcceptanceTest extends AcceptanceTestSupport {
   }
 
   @Nested
-  class 강의_조회_테스트 {
+  class 강의_상세조회_테스트 {
     private final String endpoint = "/lecture";
 
     @Test
-    void 강의_조회_성공() throws Exception {
+    void 강의_상세조회_성공() throws Exception {
       // given
       var accessToken = tokenAgent.createAccessToken(1L, new UserClaim("loginId", "USER", false));
 
@@ -222,7 +226,7 @@ class LectureAcceptanceTest extends AcceptanceTestSupport {
     }
 
     @Test
-    void 강의_조회_실패_제한된_유저() throws Exception {
+    void 강의_상세조회_실패_제한된_유저() throws Exception {
       // given
       var accessToken = tokenAgent.createAccessToken(1L, new UserClaim("loginId", "USER", true));
 
@@ -249,20 +253,43 @@ class LectureAcceptanceTest extends AcceptanceTestSupport {
   }
 
   @Test
-  void 시간표_전용_강의_조회_성공() throws Exception { // 테스트 중
+  void 시간표_전용_강의_조회_성공() throws Exception {
     // given
+    var lecture = 강의_생성();
+    var lectureSchedule = 강의_일정_생성(lecture.getId());
 
     // when
-    var result = get(Uri.of("/lecture/current/cells/search"),
-      parameter("cursorId", 1),
-      parameter("keyword", ""),
-      parameter("major", "전체"),
-      parameter("grade", 1)
-    );
+    var result = get(Uri.of("/lecture/current/cells/search"));
 
     // then
+    result.andExpectAll(
+      status().isOk(),
+      jsonPath("$.data.isLast").value(true),
+      jsonPath("$.data.content[0].id").value(lecture.getId()),
+      jsonPath("$.data.content[0].name").value(lecture.getName()),
+      jsonPath("$.data.content[0].type").value(lecture.getType()),
+      jsonPath("$.data.content[0].major").value(lecture.getMajorType()),
+      jsonPath("$.data.content[0].professorName").value(lecture.getProfessor()),
+      jsonPath("$.data.content[0].originalCellList.size()").value(lectureSchedule.getPlaceSchedule().split(",(?![^()]*\\))").length)
+    );
 
     // docs
+    result.andDo(
+      RestDocument.builder()
+        .identifier("get-lecture-schedule-success")
+        .summary("시간표용 강의 정보 조회 API")
+        .description("""
+          시간표용 강의 정보 조회 API 입니다. 최근 학기를 기준으로 조회됩니다. 사용할 수 있는 QueryString 은 다음과 같습니다.
+          cursorId : 마지막으로 조회한 식별자 (default : 0)
+          size : 제한 없음 (default : 20)
+          major : 전공
+          keyword : 검색할 키워드, 강의 혹은 교수 이름으로 검색,
+          grade : 학년 (1 ~ 4)
+          """)
+        .tag(Tag.LECTURE)
+        .result(result)
+        .generateDocs()
+    );
   }
 
   private Lecture 강의_생성() {
@@ -271,5 +298,9 @@ class LectureAcceptanceTest extends AcceptanceTestSupport {
 
   private List<Lecture> 강의_생성(int size) {
     return lectureRepository.saveAll(LectureFixture.list(size));
+  }
+
+  private LectureSchedule 강의_일정_생성(Long lectureId) {
+    return lectureScheduleRepository.save(LectureScheduleFixture.one(lectureId));
   }
 }
