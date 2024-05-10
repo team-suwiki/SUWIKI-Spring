@@ -1,14 +1,11 @@
-package usw.suwiki.statistics.annotation;
-
-import usw.suwiki.statistics.log.MonitorTarget;
+package usw.suwiki.auth.core.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Monitoring {
-  MonitorTarget target();
+public @interface Login {
 }

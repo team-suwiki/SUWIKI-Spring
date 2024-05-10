@@ -6,8 +6,9 @@ subprojects {
 
 project(':usw-suwiki-auth:usw-suwiki-auth-core') {
   dependencies {
+    implementation project(':usw-suwiki-user')
+    
     implementation project(':usw-suwiki-core:usw-suwiki-secure')
-
     implementation project(':usw-suwiki-auth:usw-suwiki-auth-token')
 
     implementation('io.jsonwebtoken:jjwt-api:0.11.5')

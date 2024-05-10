@@ -8,7 +8,6 @@ import usw.suwiki.auth.token.ConfirmationToken;
 import usw.suwiki.auth.token.RefreshToken;
 import usw.suwiki.auth.token.service.ConfirmationTokenCRUDService;
 import usw.suwiki.auth.token.service.RefreshTokenService;
-import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.mail.EmailSender;
@@ -62,7 +61,7 @@ public class UserBusinessService {
   private final TokenAgent tokenAgent;
 
   @Transactional(readOnly = true)
-  public Map<String, Boolean> executeCheckId(String loginId) {
+  public Map<String, Boolean> isDuplicatedId(String loginId) {
     if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent() ||
         userIsolationCRUDService.isIsolatedByLoginId(loginId)
     ) {
@@ -72,7 +71,7 @@ public class UserBusinessService {
   }
 
   @Transactional(readOnly = true)
-  public Map<String, Boolean> executeCheckEmail(String email) {
+  public Map<String, Boolean> isDuplicatedEmail(String email) {
     if (userCRUDService.loadWrappedUserFromEmail(email).isPresent() ||
         userIsolationCRUDService.isIsolatedByEmail(email)
     ) {
@@ -116,7 +115,7 @@ public class UserBusinessService {
     return successFlag();
   }
 
-  public Map<String, Boolean> executeFindId(String email) {
+  public Map<String, Boolean> findId(String email) {
     Optional<User> requestUser = userCRUDService.loadWrappedUserFromEmail(email);
     Optional<String> isolatedLoginId = userIsolationCRUDService.getIsolatedLoginIdByEmail(email);
 
@@ -131,7 +130,7 @@ public class UserBusinessService {
   }
 
   // todo: isoloation user table부터 확인 후 user table 확인하도록 수정
-  public Map<String, Boolean> executeFindPw(String loginId, String email) {
+  public Map<String, Boolean> findPw(String loginId, String email) {
     Optional<User> userByLoginId = userCRUDService.loadWrappedUserFromLoginId(loginId);
 
     if (userByLoginId.isEmpty()) {
@@ -155,7 +154,7 @@ public class UserBusinessService {
     throw new AccountException(ExceptionType.USER_NOT_FOUND_BY_EMAIL);
   }
 
-  public Map<String, String> executeLogin(String loginId, String inputPassword) {
+  public Map<String, String> login(String loginId, String inputPassword) {
     if (userCRUDService.loadWrappedUserFromLoginId(loginId).isPresent()) {
       User user = userCRUDService.loadUserFromLoginId(loginId);
       user.isUserEmailAuthed(confirmationTokenCRUDService.loadConfirmationTokenFromUserIdx(user.getId()));
@@ -171,8 +170,8 @@ public class UserBusinessService {
   }
 
 
-  public Map<String, Boolean> executeEditPassword(String Authorization, String prePassword, String newPassword) {
-    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.parseId(Authorization));
+  public Map<String, Boolean> editPassword(Long userId, String prePassword, String newPassword) {
+    User user = userCRUDService.loadUserFromUserIdx(userId);
 
     if (!passwordEncoder.matches(prePassword, user.getPassword())) {
       throw new AccountException(ExceptionType.PASSWORD_ERROR);
@@ -183,10 +182,9 @@ public class UserBusinessService {
     return successFlag();
   }
 
-  public UserInformationResponseForm executeLoadMyPage(String Authorization) {
-    Long userIdx = tokenAgent.parseId(Authorization);
-    User user = userCRUDService.loadUserFromUserIdx(userIdx);
-    return UserInformationResponseForm.buildMyPageResponseForm(user);
+  public UserInformationResponseForm loadMyPage(Long userId) {
+    User user = userCRUDService.loadUserFromUserIdx(userId);
+    return UserInformationResponseForm.toMyPageResponse(user);
   }
 
   public Map<String, String> executeJWTRefreshForWebClient(Cookie requestRefreshCookie) {
@@ -202,8 +200,8 @@ public class UserBusinessService {
     return refreshJwt(user, refreshToken.getPayload());
   }
 
-  public Map<String, Boolean> executeQuit(String authorization, String inputPassword) {
-    User user = userCRUDService.loadUserFromUserIdx(tokenAgent.parseId(authorization));
+  public Map<String, Boolean> quit(Long userId, String inputPassword) {
+    User user = userCRUDService.loadUserFromUserIdx(userId);
 
     if (!user.validatePassword(passwordEncoder, inputPassword)) {
       throw new AccountException(ExceptionType.PASSWORD_ERROR);
@@ -219,34 +217,26 @@ public class UserBusinessService {
     return successFlag();
   }
 
-  public List<LoadMyBlackListReasonResponseForm> executeLoadBlackListReason(String Authorization) {
-    User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.parseId(Authorization));
+  public List<LoadMyBlackListReasonResponseForm> executeLoadBlackListReason(Long id) {
+    User requestUser = userCRUDService.loadUserFromUserIdx(id);
     return blacklistDomainCRUDService.loadAllBlacklistLog(requestUser.getId());
   }
 
-  public List<LoadMyRestrictedReasonResponseForm> executeLoadRestrictedReason(String Authorization) {
-    User requestUser = userCRUDService.loadUserFromUserIdx(tokenAgent.parseId(Authorization));
+  public List<LoadMyRestrictedReasonResponseForm> executeLoadRestrictedReason(Long userId) {
+    User requestUser = userCRUDService.loadUserFromUserIdx(userId);
     return restrictingUserCRUDService.loadRestrictedLog(requestUser.getId());
   }
 
-  public void executeFavoriteMajorSave(String authorization, FavoriteSaveDto favoriteSaveDto) {
-    tokenAgent.validateRestrictedUser(authorization);
-    Long userId = tokenAgent.parseId(authorization);
-
+  public void saveFavoriteMajor(Long userId, FavoriteSaveDto favoriteSaveDto) {
     favoriteMajorService.save(userId, favoriteSaveDto.getMajorType());
   }
 
-  public void executeFavoriteMajorDelete(String authorization, String majorType) {
-    tokenAgent.validateRestrictedUser(authorization);
-    Long userIdx = tokenAgent.parseId(authorization);
-    favoriteMajorService.delete(userIdx, majorType);
+  public void deleteFavoriteMajor(Long userId, String majorType) {
+    favoriteMajorService.delete(userId, majorType);
   }
 
-  public ResponseForm executeFavoriteMajorLoad(String authorization) {
-    tokenAgent.validateRestrictedUser(authorization);
-    Long userIdx = tokenAgent.parseId(authorization);
-    List<String> list = favoriteMajorService.findMajorTypeByUser(userIdx);
-    return new ResponseForm(list);
+  public List<String> executeFavoriteMajorLoad(Long userId) {
+    return favoriteMajorService.findMajorTypeByUser(userId);
   }
 
   private void rollBackUserFromSleeping(Long userIdx, String loginId, String password, String email) {

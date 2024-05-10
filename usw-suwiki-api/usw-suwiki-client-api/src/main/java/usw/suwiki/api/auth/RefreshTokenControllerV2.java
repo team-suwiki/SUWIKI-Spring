@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
-import static usw.suwiki.statistics.log.MonitorOption.USER;
+import static usw.suwiki.statistics.log.MonitorTarget.USER;
 
 @RestController
 @RequestMapping("/v2/refreshtoken")
@@ -25,7 +25,7 @@ import static usw.suwiki.statistics.log.MonitorOption.USER;
 public class RefreshTokenControllerV2 {
   private final UserBusinessService userBusinessService;
 
-  @Monitoring(option = USER)
+  @Monitoring(target = USER)
   @PostMapping("/web-client/refresh")
   @ResponseStatus(OK)
   public ResponseForm clientTokenRefresh(
@@ -45,7 +45,7 @@ public class RefreshTokenControllerV2 {
     }});
   }
 
-  @Monitoring(option = USER)
+  @Monitoring(target = USER)
   @PostMapping("/mobile-client/refresh")
   @ResponseStatus(OK)
   public ResponseForm tokenRefresh(@RequestHeader String Authorization) {

@@ -50,7 +50,7 @@ public class AdminBusinessService {
 
   private final TokenAgent tokenAgent;
 
-  public Map<String, String> executeAdminLogin(LoginForm loginForm) {
+  public Map<String, String> adminLogin(LoginForm loginForm) {
     User user = userCRUDService.loadUserFromLoginId(loginForm.loginId());
     if (user.validatePassword(passwordEncoder, loginForm.password())) {
       if (user.isAdmin()) {

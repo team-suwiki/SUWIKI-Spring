@@ -33,6 +33,5 @@ project(':usw-suwiki-lecture:usw-suwiki-timetable') {
 project(':usw-suwiki-lecture:usw-suwiki-major') {
   dependencies {
     implementation project(':usw-suwiki-user')
-    implementation project(':usw-suwiki-core:usw-suwiki-secure') // todo: 코드 개선하면 삭제가능할듯
   }
 }

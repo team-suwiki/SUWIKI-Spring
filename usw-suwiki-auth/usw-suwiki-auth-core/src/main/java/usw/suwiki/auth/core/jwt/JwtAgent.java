@@ -3,8 +3,11 @@ package usw.suwiki.auth.core.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import usw.suwiki.auth.core.common.CustomUserDetailsService;
 import usw.suwiki.auth.token.RefreshToken;
 import usw.suwiki.auth.token.service.RefreshTokenService;
 import usw.suwiki.core.exception.AccountException;
@@ -15,12 +18,31 @@ import usw.suwiki.core.secure.model.Claim;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.lang.Boolean.TRUE;
+import static usw.suwiki.auth.core.jwt.RawParser.Content;
+import static usw.suwiki.domain.user.Role.ADMIN;
+
 @Component
 @RequiredArgsConstructor
-class JwtAgent implements TokenAgent {
+public class JwtAgent implements TokenAgent { // todo: public 이지만 외부로 노출을 감출 것.
   private final RefreshTokenService refreshTokenService;
+
+  private final CustomUserDetailsService userDetailsService;
   private final JwtSecretProvider jwtSecretProvider;
   private final RawParser rawParser;
+
+  public Authentication parseAuthentication(String token) {
+    validateRestricted(token);
+    var loginId = rawParser.parse(token, Content.LOGIN_ID, String.class);
+    var userDetails = userDetailsService.loadUserByUsername(loginId);
+    return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+  }
+
+  private void validateRestricted(String token) {
+    if (TRUE.equals(rawParser.parse(token, Content.RESTRICTED, Boolean.class))) {
+      throw new AccountException(ExceptionType.USER_RESTRICTED);
+    }
+  }
 
   @Transactional
   @Override
@@ -58,11 +80,6 @@ class JwtAgent implements TokenAgent {
   }
 
   @Override
-  public void validateJwt(String token) { // todo: 인터셉터 개편 후 삭제 예정, 호출될 일 없게 만들기
-    rawParser.validate(token);
-  }
-
-  @Override
   public String createAccessToken(Long userId, Claim claim) {
     Claims claims = Jwts.claims().setSubject(claim.loginId());
     claims.putAll(Map.of("id", userId, "loginId", claim.loginId(), "role", claim.role(), "restricted", claim.restricted()));
@@ -75,20 +92,11 @@ class JwtAgent implements TokenAgent {
       .compact();
   }
 
-  @Override
-  public Long parseId(String token) {
-    return rawParser.parse(token, RawParser.Content.ID, Long.class);
-  }
-
-  @Override
   public String parseRole(String token) {
-    return rawParser.parse(token, RawParser.Content.ROLE, String.class);
+    return rawParser.parse(token, Content.ROLE, String.class);
   }
 
-  @Override
-  public void validateRestrictedUser(String token) {
-    if (Boolean.TRUE.equals(rawParser.parse(token, RawParser.Content.RESTRICTED, Boolean.class))) {
-      throw new AccountException(ExceptionType.USER_RESTRICTED);
-    }
+  public boolean isNotAdmin(String token) {
+    return token != null && ADMIN.isAdmin(parseRole(token));
   }
 }

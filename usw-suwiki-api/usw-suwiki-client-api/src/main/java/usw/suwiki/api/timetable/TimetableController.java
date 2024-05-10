@@ -2,129 +2,118 @@ package usw.suwiki.api.timetable;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.auth.core.annotation.Authorize;
+import usw.suwiki.auth.core.annotation.Login;
 import usw.suwiki.common.response.ApiResponse;
-import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.lecture.timetable.dto.TimetableRequest;
 import usw.suwiki.domain.lecture.timetable.dto.TimetableResponse;
 import usw.suwiki.domain.lecture.timetable.service.TimetableService;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+
 @RestController
 @RequestMapping("/timetables")
 @RequiredArgsConstructor
 public class TimetableController {
   private final TimetableService timetableService;
-  private final TokenAgent tokenAgent;
 
+  @Authorize
   @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  public ApiResponse<?> createTimetable(
-    @RequestHeader String authorization,
-    @Valid @RequestBody TimetableRequest.Description request
-  ) {
-    Long userId = tokenAgent.parseId(authorization);
+  @ResponseStatus(CREATED)
+  public ApiResponse<?> createTimetable(@Login Long userId, @Valid @RequestBody TimetableRequest.Description request) {
     timetableService.create(userId, request);
     return ApiResponse.success();
   }
 
+  @Authorize
   @PostMapping("/bulk")
-  @ResponseStatus(HttpStatus.OK)
-  public ApiResponse<?> bulkInsert(
-    @RequestHeader String authorization,
-    @RequestBody List<TimetableRequest.Bulk> requests
-  ) {
-    Long userId = tokenAgent.parseId(authorization);
+  @ResponseStatus(OK)
+  public ApiResponse<?> bulkInsert(@Login Long userId, @RequestBody List<TimetableRequest.Bulk> requests) {
     timetableService.bulkInsert(userId, requests);
     return ApiResponse.success();
   }
 
+  @Authorize
   @PutMapping("/{timetableId}")
-  @ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(OK)
   public ApiResponse<?> updateTimetable(
+    @Login Long userId,
     @PathVariable Long timetableId,
-    @RequestHeader String authorization,
     @Valid @RequestBody TimetableRequest.Description request
   ) {
-    Long userId = tokenAgent.parseId(authorization);
-
     timetableService.update(userId, timetableId, request);
     return ApiResponse.success();
   }
 
+  @Authorize
   @DeleteMapping("/{timetableId}")
-  @ResponseStatus(HttpStatus.OK)
-  public ApiResponse<?> deleteTimetable(
-    @PathVariable Long timetableId,
-    @RequestHeader String authorization
-  ) {
-    Long userId = tokenAgent.parseId(authorization);
-
+  @ResponseStatus(OK)
+  public ApiResponse<?> deleteTimetable(@Login Long userId, @PathVariable Long timetableId) {
     timetableService.delete(userId, timetableId);
     return ApiResponse.success();
   }
 
+  @Authorize
   @GetMapping
-  @ResponseStatus(HttpStatus.OK)
-  public ApiResponse<List<TimetableResponse.Simple>> getMyAllTimetables(@RequestHeader String authorization) {
-    Long userId = tokenAgent.parseId(authorization);
-    return ApiResponse.ok(timetableService.getMyAllTimetables(userId));
+  @ResponseStatus(OK)
+  public ApiResponse<List<TimetableResponse.Simple>> getMyAllTimetables(@Login Long userId) {
+    var response = timetableService.getMyAllTimetables(userId);
+    return ApiResponse.ok(response);
   }
 
+  @Authorize
   @GetMapping("/{timetableId}")
-  @ResponseStatus(HttpStatus.OK)
-  public ApiResponse<TimetableResponse.Detail> getTimetable(
-    @RequestHeader String authorization,
-    @PathVariable Long timetableId
-  ) {
-    tokenAgent.validateJwt(authorization);
-    return ApiResponse.ok(timetableService.loadTimetable(timetableId));
+  @ResponseStatus(OK)
+  public ApiResponse<TimetableResponse.Detail> getTimetable(@PathVariable Long timetableId) {
+    var response = timetableService.loadTimetable(timetableId);
+    return ApiResponse.ok(response);
   }
 
+  @Authorize
   @PostMapping("/{timetableId}/cells")
-  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseStatus(CREATED)
   public ApiResponse<?> insertCell(
-    @RequestHeader String authorization,
+    @Login Long userId,
     @PathVariable Long timetableId,
     @Valid @RequestBody TimetableRequest.Cell request
   ) {
-    Long userId = tokenAgent.parseId(authorization);
     timetableService.addCell(userId, timetableId, request);
     return ApiResponse.success();
   }
 
+  @Authorize
   @PutMapping("/{timetableId}/cells/{cellIdx}")
-  @ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(OK)
   public ApiResponse<?> updateCell(
-    @RequestHeader String authorization,
+    @Login Long userId,
     @PathVariable Long timetableId,
     @PathVariable int cellIdx,
     @Valid @RequestBody TimetableRequest.UpdateCell request
   ) {
-    Long userId = tokenAgent.parseId(authorization);
     timetableService.updateCell(userId, timetableId, cellIdx, request);
     return ApiResponse.success();
   }
 
+  @Authorize
   @DeleteMapping("/{timetableId}/cells/{cellIdx}")
-  @ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(OK)
   public ApiResponse<?> deleteCell(
-    @RequestHeader String authorization,
+    @Login Long userId,
     @PathVariable Long timetableId,
     @PathVariable int cellIdx
   ) {
-    Long userId = tokenAgent.parseId(authorization);
     timetableService.deleteCell(userId, timetableId, cellIdx);
     return ApiResponse.success();
   }

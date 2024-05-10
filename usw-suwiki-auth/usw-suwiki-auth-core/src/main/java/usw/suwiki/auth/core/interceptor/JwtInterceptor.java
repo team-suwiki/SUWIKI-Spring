@@ -3,44 +3,48 @@ package usw.suwiki.auth.core.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import usw.suwiki.auth.core.annotation.JwtVerify;
+import usw.suwiki.auth.core.annotation.Authorize;
+import usw.suwiki.auth.core.jwt.JwtAgent;
 import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
-import usw.suwiki.core.secure.TokenAgent;
+import usw.suwiki.domain.user.Role;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtInterceptor implements HandlerInterceptor {
-  private static final String ADMIN = "ADMIN";
-
-  private final TokenAgent tokenAgent;
+  private final JwtAgent jwtAgent;
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-    if (handler instanceof HandlerMethod handlerMethod) {
-      JwtVerify jwtVerify = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), JwtVerify.class);
+    var authorize = resolve(handler);
 
-      if (jwtVerify != null && ADMIN.equals(jwtVerify.option())) {
-        if (ADMIN.equals(extractRole(request))) {
-          return true;
-        }
-
-        throw new AccountException(ExceptionType.USER_RESTRICTED);
-      }
+    if (authorize != null) {
+      String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+      validateAccessIfAdmin(authorize.role(), token);
+      setAuthentication(token);
     }
 
     return true;
   }
 
-  private String extractRole(HttpServletRequest request) {
-    String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
-    return tokenAgent.parseRole(jwt);
+  private Authorize resolve(Object handler) {
+    var method = ((HandlerMethod) handler).getMethod();
+    return method.getAnnotation(Authorize.class);
+  }
+
+  private void validateAccessIfAdmin(Role role, String token) {
+    if (role.isAdmin() && jwtAgent.isNotAdmin(token)) {
+      throw new AccountException(ExceptionType.USER_RESTRICTED);
+    }
+  }
+
+  private void setAuthentication(String token) {
+    var authentication = jwtAgent.parseAuthentication(token);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 }

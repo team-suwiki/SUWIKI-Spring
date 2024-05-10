@@ -7,13 +7,5 @@ public interface TokenAgent {
 
   String reissue(String payload);
 
-  void validateJwt(String token);
-
   String createAccessToken(Long userId, Claim claim);
-
-  Long parseId(String token);
-
-  String parseRole(String token);
-
-  void validateRestrictedUser(String token);
 }

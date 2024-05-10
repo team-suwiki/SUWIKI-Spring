@@ -7,6 +7,7 @@ import usw.suwiki.core.exception.AccountException;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.domain.user.User;
 import usw.suwiki.domain.user.UserRepository;
+import usw.suwiki.domain.user.model.UserAdapter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserCRUDService {
+public class UserCRUDService implements UserAdapterService {
   private final UserRepository userRepository;
 
   public void saveUser(User user) {
@@ -62,10 +63,7 @@ public class UserCRUDService {
   }
 
   private User convertOptionalUserToDomainUser(Optional<User> optionalUser) {
-    if (optionalUser.isPresent()) {
-      return optionalUser.get();
-    }
-    throw new AccountException(ExceptionType.USER_NOT_EXISTS);
+    return optionalUser.orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_EXISTS));
   }
 
   @Transactional(readOnly = true)
@@ -80,5 +78,12 @@ public class UserCRUDService {
   public void softDeleteForIsolation(Long userIdx) {
     User user = loadUserById(userIdx);
     user.sleep();
+  }
+
+  @Override
+  public UserAdapter findByUsername(String username) {
+    return userRepository.findByLoginId(username)
+      .map(UserAdapter::from)
+      .orElseThrow(() -> new AccountException(ExceptionType.USER_NOT_FOUND));
   }
 }

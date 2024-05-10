@@ -2,7 +2,7 @@ package usw.suwiki.statistics.log;
 
 import static java.lang.Character.toUpperCase;
 
-public enum MonitorOption {
+public enum MonitorTarget {
   LECTURE,
   EVALUATE_POSTS,
   EXAM_POSTS,

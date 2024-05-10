@@ -19,7 +19,7 @@ public class ApiLoggerService {
 
   @Async
   @Transactional
-  public void logApi(MonitorOption option, Long processTime) {
+  public void logApi(MonitorTarget option, Long processTime) {
     Optional<ApiLogger> apiLogger = apiLoggerRepository.findByCallDate(LocalDate.now());
 
     if (apiLogger.isEmpty()) {
@@ -34,7 +34,7 @@ public class ApiLoggerService {
     apiLoggerRepository.save(oldApiStatistics(apiLogger.get(), option, processTime));
   }
 
-  private ApiLogger newApiStatistics(MonitorOption option, Long processTime) {
+  private ApiLogger newApiStatistics(MonitorTarget option, Long processTime) {
     return switch (option) {
       case LECTURE -> ApiLogger.lecture(processTime);
       case EVALUATE_POSTS -> ApiLogger.evaluate(processTime);
@@ -45,7 +45,7 @@ public class ApiLoggerService {
     };
   }
 
-  private ApiLogger oldApiStatistics(ApiLogger apiLogger, MonitorOption option, Long processTime) {
+  private ApiLogger oldApiStatistics(ApiLogger apiLogger, MonitorTarget option, Long processTime) {
     return switch (option) {
       case LECTURE -> apiLogger.logLecture(processTime);
       case EVALUATE_POSTS -> apiLogger.logEvaluatePosts(processTime);

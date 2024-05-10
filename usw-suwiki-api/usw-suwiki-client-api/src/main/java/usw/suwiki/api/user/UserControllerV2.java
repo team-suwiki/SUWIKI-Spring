@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.auth.core.annotation.JwtVerify;
+import usw.suwiki.auth.core.annotation.Authorize;
+import usw.suwiki.auth.core.annotation.Login;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.user.service.UserBusinessService;
 import usw.suwiki.statistics.annotation.Monitoring;
@@ -30,7 +30,7 @@ import static usw.suwiki.domain.user.dto.UserRequestDto.FindPasswordForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.JoinForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.LoginForm;
 import static usw.suwiki.domain.user.dto.UserRequestDto.UserQuitForm;
-import static usw.suwiki.statistics.log.MonitorOption.USER;
+import static usw.suwiki.statistics.log.MonitorTarget.USER;
 
 @RestController
 @RequestMapping("/v2/user")
@@ -38,21 +38,23 @@ import static usw.suwiki.statistics.log.MonitorOption.USER;
 public class UserControllerV2 {
   private final UserBusinessService userBusinessService;
 
-  @Monitoring(option = USER)
+  @Monitoring(target = USER)
   @PostMapping("/loginId/check")
   @ResponseStatus(OK)
   public ResponseForm overlapId(@Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
-    return ResponseForm.success(userBusinessService.executeCheckId(checkLoginIdForm.loginId()));
+    var response = userBusinessService.isDuplicatedId(checkLoginIdForm.loginId());
+    return ResponseForm.success(response);
   }
 
-  @Monitoring(option = USER)
+  @Monitoring(target = USER)
   @PostMapping("/email/check")
   @ResponseStatus(OK)
   public ResponseForm overlapEmail(@Valid @RequestBody CheckEmailForm checkEmailForm) {
-    return ResponseForm.success(userBusinessService.executeCheckEmail(checkEmailForm.email()));
+    var response = userBusinessService.isDuplicatedEmail(checkEmailForm.email());
+    return ResponseForm.success(response);
   }
 
-  @Monitoring(option = USER)
+  @Monitoring(target = USER)
   @PostMapping
   @ResponseStatus(OK)
   public ResponseForm join(@Valid @RequestBody JoinForm joinForm) {
@@ -60,58 +62,46 @@ public class UserControllerV2 {
     return ResponseForm.success(response);
   }
 
-  @Monitoring(option = USER)
+  @Monitoring(target = USER)
   @PostMapping("inquiry-loginId")
   @ResponseStatus(OK)
   public ResponseForm findId(@Valid @RequestBody FindIdForm findIdForm) {
-    return ResponseForm.success(userBusinessService.executeFindId(findIdForm.email()));
+    var response = userBusinessService.findId(findIdForm.email());
+    return ResponseForm.success(response);
   }
 
-  @Monitoring(option = USER)
+  @Monitoring(target = USER)
   @PostMapping("inquiry-password")
   @ResponseStatus(OK)
   public ResponseForm findPw(@Valid @RequestBody FindPasswordForm findPasswordForm) {
-    return ResponseForm.success(userBusinessService.executeFindPw(
-      findPasswordForm.loginId(),
-      findPasswordForm.email())
-    );
+    var response = userBusinessService.findPw(findPasswordForm.loginId(), findPasswordForm.email());
+    return ResponseForm.success(response);
   }
 
-  @Monitoring(option = USER)
+  @Authorize
+  @Monitoring(target = USER)
   @PatchMapping("password")
   @ResponseStatus(OK)
-  public ResponseForm resetPw(
-    @Valid @RequestBody EditMyPasswordForm editMyPasswordForm,
-    @RequestHeader String Authorization
-  ) {
-    return ResponseForm.success(userBusinessService.executeEditPassword(
-      Authorization,
-      editMyPasswordForm.prePassword(),
-      editMyPasswordForm.newPassword())
-    );
+  public ResponseForm resetPw(@Login Long userId, @Valid @RequestBody EditMyPasswordForm request) {
+    var response = userBusinessService.editPassword(userId, request.prePassword(), request.newPassword());
+    return ResponseForm.success(response);
   }
 
-  @Monitoring(option = USER)
+  @Monitoring(target = USER)
   @PostMapping("mobile-login")
   @ResponseStatus(OK)
-  public ResponseForm mobileLogin(@Valid @RequestBody LoginForm loginForm) {
-    return ResponseForm.success(userBusinessService.executeLogin(
-      loginForm.loginId(),
-      loginForm.password())
-    );
+  public ResponseForm mobileLogin(@Valid @RequestBody LoginForm request) {
+    return ResponseForm.success(userBusinessService.login(request.loginId(), request.password()));
   }
 
-  @Monitoring(option = USER)
+  @Monitoring(target = USER)
   @PostMapping("web-login")
   @ResponseStatus(OK)
   public ResponseForm webLogin(
     @Valid @RequestBody LoginForm loginForm,
     HttpServletResponse response
   ) {
-    Map<String, String> tokenPair = userBusinessService.executeLogin(
-      loginForm.loginId(),
-      loginForm.password()
-    );
+    Map<String, String> tokenPair = userBusinessService.login(loginForm.loginId(), loginForm.password());
 
     Cookie refreshCookie = new Cookie("refreshToken", tokenPair.get("RefreshToken"));
     refreshCookie.setMaxAge(270 * 24 * 60 * 60);
@@ -124,35 +114,34 @@ public class UserControllerV2 {
     }});
   }
 
-  @JwtVerify
-  @Monitoring(option = USER)
+  @Authorize
+  @Monitoring(target = USER)
   @PostMapping("client-logout")
   @ResponseStatus(OK)
   public ResponseForm clientLogout(HttpServletResponse response) {
     Cookie refreshCookie = new Cookie("refreshToken", "");
     refreshCookie.setMaxAge(0);
     response.addCookie(refreshCookie);
+
     return ResponseForm.success(new HashMap<>() {{
       put("Success", true);
     }});
   }
 
-  @JwtVerify
-  @Monitoring(option = USER)
+  @Authorize
+  @Monitoring(target = USER)
   @GetMapping
   @ResponseStatus(OK)
-  public ResponseForm myPage(@Valid @RequestHeader String Authorization) {
-    return ResponseForm.success(userBusinessService.executeLoadMyPage(Authorization));
+  public ResponseForm myPage(@Login Long userId) {
+    var response = userBusinessService.loadMyPage(userId);
+    return ResponseForm.success(response);
   }
 
-  @JwtVerify
-  @Monitoring(option = USER)
+  @Authorize
+  @Monitoring(target = USER)
   @DeleteMapping
   @ResponseStatus(OK)
-  public ResponseForm userQuit(
-    @Valid @RequestBody UserQuitForm userQuitForm,
-    @Valid @RequestHeader String Authorization
-  ) {
-    return ResponseForm.success(userBusinessService.executeQuit(Authorization, userQuitForm.password()));
+  public ResponseForm userQuit(@Login Long userId, @Valid @RequestBody UserQuitForm userQuitForm) {
+    return ResponseForm.success(userBusinessService.quit(userId, userQuitForm.password()));
   }
 }

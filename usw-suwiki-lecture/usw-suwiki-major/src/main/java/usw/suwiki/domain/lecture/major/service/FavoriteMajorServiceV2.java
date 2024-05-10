@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import usw.suwiki.core.exception.ExceptionType;
 import usw.suwiki.core.exception.FavoriteMajorException;
-import usw.suwiki.core.secure.TokenAgent;
 import usw.suwiki.domain.lecture.major.FavoriteMajor;
 import usw.suwiki.domain.lecture.major.FavoriteMajorRepositoryV2;
 
@@ -17,14 +16,8 @@ import java.util.List;
 public class FavoriteMajorServiceV2 {
   private final FavoriteMajorRepositoryV2 favoriteMajorRepositoryV2;
 
-  private final TokenAgent tokenAgent;
-
-  public void save(String authorization, String majorType) {
-    tokenAgent.validateRestrictedUser(authorization);
-    Long userId = tokenAgent.parseId(authorization);
-
+  public void save(Long userId, String majorType) {
     validateDuplicateFavoriteMajor(userId, majorType);
-
     favoriteMajorRepositoryV2.save(new FavoriteMajor(userId, majorType));
   }
 
@@ -34,18 +27,12 @@ public class FavoriteMajorServiceV2 {
     }
   }
 
-  public List<String> findAllMajorTypeByUser(String authorization) {
-    tokenAgent.validateRestrictedUser(authorization);
-    Long userId = tokenAgent.parseId(authorization);
-
+  public List<String> findAllMajorTypeByUser(Long userId) {
     List<FavoriteMajor> favoriteMajors = favoriteMajorRepositoryV2.findAllByUserIdx(userId);
     return favoriteMajors.stream().map(FavoriteMajor::getMajorType).toList();
   }
 
-  public void delete(String authorization, String majorType) {
-    tokenAgent.validateRestrictedUser(authorization);
-    Long userId = tokenAgent.parseId(authorization);
-
+  public void delete(Long userId, String majorType) {
     FavoriteMajor favoriteMajor = favoriteMajorRepositoryV2.findByUserIdxAndMajorType(userId, majorType)
       .orElseThrow(() -> new FavoriteMajorException(ExceptionType.FAVORITE_MAJOR_NOT_FOUND));
 

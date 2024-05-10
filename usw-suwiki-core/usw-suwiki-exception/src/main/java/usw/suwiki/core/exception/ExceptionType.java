@@ -131,6 +131,7 @@ public enum ExceptionType {
   HTTP_METHOD_NOT_ALLOWED("CLIENT002", "해당 HTTP 메서드는 제공하지 않습니다.", METHOD_NOT_ALLOWED),
   INVALID_REQUEST_BODY("CLIENT003", "요청 바디가 유효하지 않습니다.", BAD_REQUEST),
   INVALID_REQUEST_PARAM("CLIENT004", "요청 파라미터가 유효하지 않습니다.", BAD_REQUEST),
+  AUTHORIZATION_NOT_PROCESSED("CLIENT005", "인증을 진행하지 않았습니다.", BAD_REQUEST),
 
   ;
 

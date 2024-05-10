@@ -17,7 +17,7 @@ import static usw.suwiki.core.exception.ExceptionType.TOKEN_IS_EXPIRED;
 @Component
 class RawParser {
   enum Content {
-    ID, ROLE, RESTRICTED;
+    ID, LOGIN_ID, ROLE, RESTRICTED;
   }
 
   private final JwtParser parser;
