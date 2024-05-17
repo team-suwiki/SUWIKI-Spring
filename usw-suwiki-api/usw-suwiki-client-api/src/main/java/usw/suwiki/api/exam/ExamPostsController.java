@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
-import usw.suwiki.auth.core.annotation.Login;
 import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.exampost.dto.ExamPostRequest;
 import usw.suwiki.domain.exampost.dto.ExamPostResponse;
 import usw.suwiki.domain.exampost.service.ExamPostService;
-import usw.suwiki.statistics.annotation.Monitoring;
+import usw.suwiki.statistics.annotation.Statistics;
 
 import java.util.Optional;
 
@@ -32,11 +32,11 @@ public class ExamPostsController {
   private final ExamPostService examPostService;
 
   @Authorize
-  @Monitoring(target = EXAM_POSTS)
+  @Statistics(target = EXAM_POSTS)
   @GetMapping
   @ResponseStatus(OK)
   public ExamPostResponse.Details readAllExamPosts(
-    @Login Long userId,
+    @Authenticated Long userId,
     @RequestParam Long lectureId,
     @RequestParam(required = false) Optional<Integer> page
   ) {
@@ -44,20 +44,20 @@ public class ExamPostsController {
   }
 
   @Authorize
-  @Monitoring(target = EXAM_POSTS)
+  @Statistics(target = EXAM_POSTS)
   @PostMapping("/purchase")
   @ResponseStatus(OK)
-  public String purchaseExamPost(@Login Long userId, @RequestParam Long lectureId) {
+  public String purchaseExamPost(@Authenticated Long userId, @RequestParam Long lectureId) {
     examPostService.purchaseExamPost(userId, lectureId);
     return "success";
   }
 
   @Authorize
-  @Monitoring(target = EXAM_POSTS)
+  @Statistics(target = EXAM_POSTS)
   @PostMapping
   @ResponseStatus(OK)
   public String writeExamPost(
-    @Login Long userId,
+    @Authenticated Long userId,
     @RequestParam Long lectureId,
     @Valid @RequestBody ExamPostRequest.Create request
   ) {
@@ -66,7 +66,7 @@ public class ExamPostsController {
   }
 
   @Authorize
-  @Monitoring(target = EXAM_POSTS)
+  @Statistics(target = EXAM_POSTS)
   @PutMapping
   @ResponseStatus(OK)
   public String updateExamPost(
@@ -78,11 +78,11 @@ public class ExamPostsController {
   }
 
   @Authorize
-  @Monitoring(target = EXAM_POSTS)
+  @Statistics(target = EXAM_POSTS)
   @GetMapping("/written")
   @ResponseStatus(OK)
   public ResponseForm findExamPostsByUserApi(
-    @Login Long userId,
+    @Authenticated Long userId,
     @RequestParam(required = false) Optional<Integer> page
   ) {
     var response = examPostService.loadAllMyExamPosts(new PageOption(page), userId);
@@ -90,19 +90,19 @@ public class ExamPostsController {
   }
 
   @Authorize
-  @Monitoring(target = EXAM_POSTS)
+  @Statistics(target = EXAM_POSTS)
   @DeleteMapping
   @ResponseStatus(OK)
-  public String deleteExamPosts(@Login Long userId, @RequestParam Long examIdx) {
+  public String deleteExamPosts(@Authenticated Long userId, @RequestParam Long examIdx) {
     examPostService.deleteExamPost(userId, examIdx);
     return "success";
   }
 
   @Authorize
-  @Monitoring(target = EXAM_POSTS)
+  @Statistics(target = EXAM_POSTS)
   @GetMapping("/purchase")
   @ResponseStatus(OK)
-  public ResponseForm readPurchaseHistoryApi(@Login Long userId) {
+  public ResponseForm readPurchaseHistoryApi(@Authenticated Long userId) {
     var response = examPostService.loadPurchasedHistories(userId);
     return new ResponseForm(response);
   }

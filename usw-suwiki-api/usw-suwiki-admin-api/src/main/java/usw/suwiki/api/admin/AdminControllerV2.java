@@ -16,7 +16,7 @@ import usw.suwiki.domain.report.ExamPostReport;
 import usw.suwiki.domain.user.Role;
 import usw.suwiki.domain.user.dto.UserAdminResponseDto;
 import usw.suwiki.domain.user.service.AdminBusinessService;
-import usw.suwiki.statistics.annotation.Monitoring;
+import usw.suwiki.statistics.annotation.Statistics;
 
 import java.util.Map;
 
@@ -36,7 +36,7 @@ import static usw.suwiki.statistics.log.MonitorTarget.ADMIN;
 public class AdminControllerV2 {
   private final AdminBusinessService adminBusinessService;
 
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @PostMapping("/login")
   @ResponseStatus(OK)
   public Map<String, String> administratorLogin(@Valid @RequestBody LoginForm loginForm) {
@@ -44,7 +44,7 @@ public class AdminControllerV2 {
   }
 
   @Authorize(Role.ADMIN)
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @PostMapping("/evaluate-posts/restrict")
   @ResponseStatus(OK)
   public Map<String, Boolean> restrictEvaluatePost(
@@ -55,7 +55,7 @@ public class AdminControllerV2 {
 
   @Authorize(Role.ADMIN)
   @ResponseStatus(OK)
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @PostMapping("/exam-post/restrict")
   public Map<String, Boolean> restrictExamPost(
     @Valid @RequestBody ExamPostRestrictForm examPostRestrictForm
@@ -66,7 +66,7 @@ public class AdminControllerV2 {
 
   @Authorize(Role.ADMIN)
   @ResponseStatus(OK)
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @PostMapping("/evaluate-post/blacklist")
   public Map<String, Boolean> banEvaluatePost(
     @Valid @RequestBody EvaluatePostBlacklistForm evaluatePostBlacklistForm
@@ -76,7 +76,7 @@ public class AdminControllerV2 {
 
   @Authorize(Role.ADMIN)
   @ResponseStatus(OK)
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @PostMapping("/exam-post/blacklist")
   public Map<String, Boolean> banExamPost(
     @Valid @RequestBody ExamPostBlacklistForm examPostBlacklistForm
@@ -86,7 +86,7 @@ public class AdminControllerV2 {
 
   @Authorize(Role.ADMIN)
   @ResponseStatus(OK)
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @DeleteMapping("/evaluate-post")
   public Map<String, Boolean> noProblemEvaluatePost(
     @Valid @RequestBody EvaluatePostNoProblemForm evaluatePostNoProblemForm
@@ -96,7 +96,7 @@ public class AdminControllerV2 {
 
   @Authorize(Role.ADMIN)
   @ResponseStatus(OK)
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @DeleteMapping("/exam-post")
   public Map<String, Boolean> noProblemExamPost(
     @Valid @RequestBody ExamPostNoProblemForm examPostNoProblemForm
@@ -105,7 +105,7 @@ public class AdminControllerV2 {
   }
 
   @Authorize(Role.ADMIN)
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @GetMapping("/reported-posts")
   @ResponseStatus(OK)
   public UserAdminResponseDto.LoadAllReportedPostForm loadReportedPost() {
@@ -113,7 +113,7 @@ public class AdminControllerV2 {
   }
 
   @Authorize(Role.ADMIN)
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @GetMapping("/reported-evaluate/")
   @ResponseStatus(OK)
   public EvaluatePostReport loadDetailReportedEvaluatePost(@RequestParam Long target) {
@@ -121,7 +121,7 @@ public class AdminControllerV2 {
   }
 
   @Authorize(Role.ADMIN)
-  @Monitoring(target = ADMIN)
+  @Statistics(target = ADMIN)
   @GetMapping("/reported-exam/")
   @ResponseStatus(OK)
   public ExamPostReport loadDetailReportedExamPost(@RequestParam Long target) {

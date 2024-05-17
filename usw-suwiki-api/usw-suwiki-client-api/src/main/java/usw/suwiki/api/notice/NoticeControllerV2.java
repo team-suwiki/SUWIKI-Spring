@@ -11,7 +11,7 @@ import usw.suwiki.common.pagination.PageOption;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.notice.dto.NoticeResponse;
 import usw.suwiki.domain.notice.service.NoticeService;
-import usw.suwiki.statistics.annotation.Monitoring;
+import usw.suwiki.statistics.annotation.Statistics;
 
 import java.util.Optional;
 
@@ -24,7 +24,7 @@ import static usw.suwiki.statistics.log.MonitorTarget.NOTICE;
 public class NoticeControllerV2 {
   private final NoticeService noticeService;
 
-  @Monitoring(target = NOTICE)
+  @Statistics(target = NOTICE)
   @GetMapping("/v2")
   @ResponseStatus(OK)
   public ResponseForm getAllNoticesV2(@RequestParam(required = false) Optional<Integer> page) {
@@ -32,7 +32,7 @@ public class NoticeControllerV2 {
     return new ResponseForm(response);
   }
 
-  @Monitoring(target = NOTICE)
+  @Statistics(target = NOTICE)
   @GetMapping("/v2/{noticeId}")
   @ResponseStatus(OK)
   public ResponseForm getNoticeV2(@PathVariable Long noticeId) {

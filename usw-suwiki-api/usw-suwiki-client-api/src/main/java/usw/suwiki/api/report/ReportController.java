@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
-import usw.suwiki.auth.core.annotation.Login;
 import usw.suwiki.domain.evaluatepost.service.EvaluatePostService;
 import usw.suwiki.domain.exampost.service.ExamPostService;
 import usw.suwiki.domain.report.dto.ReportRequest;
-import usw.suwiki.statistics.annotation.Monitoring;
+import usw.suwiki.statistics.annotation.Statistics;
 
 import java.util.Map;
 
@@ -28,11 +28,11 @@ public class ReportController {
   private final ExamPostService examPostService;
 
   @Authorize
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping("/evaluate")
   @ResponseStatus(OK)
   public Map<String, Boolean> reportEvaluate(
-    @Login Long reportingUserId,
+    @Authenticated Long reportingUserId,
     @Valid @RequestBody ReportRequest.Evaluate request
   ) {
     evaluatePostService.report(reportingUserId, request.getEvaluateIdx());
@@ -40,11 +40,11 @@ public class ReportController {
   }
 
   @Authorize
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping("/exam")
   @ResponseStatus(OK)
   public Map<String, Boolean> reportExam(
-    @Login Long reportingUserId,
+    @Authenticated Long reportingUserId,
     @Valid @RequestBody ReportRequest.Exam request
   ) {
     examPostService.report(reportingUserId, request.getExamIdx());

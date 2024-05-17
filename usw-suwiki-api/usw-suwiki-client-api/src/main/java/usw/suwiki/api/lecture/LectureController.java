@@ -15,7 +15,7 @@ import usw.suwiki.domain.lecture.dto.LectureSearchOption;
 import usw.suwiki.domain.lecture.schedule.service.LectureScheduleService;
 import usw.suwiki.domain.lecture.service.LectureService;
 import usw.suwiki.statistics.annotation.CacheStatics;
-import usw.suwiki.statistics.annotation.Monitoring;
+import usw.suwiki.statistics.annotation.Statistics;
 
 import static usw.suwiki.statistics.log.MonitorTarget.LECTURE;
 
@@ -39,7 +39,7 @@ public class LectureController {
     return ApiResponse.ok(response);
   }
 
-  @Monitoring(target = LECTURE)
+  @Statistics(target = LECTURE)
   @GetMapping("/search")
   @ResponseStatus(HttpStatus.OK)
   public LectureResponse.Simples search(
@@ -54,7 +54,7 @@ public class LectureController {
 
   @CacheStatics
   @Cacheable(cacheNames = "lecture")
-  @Monitoring(target = LECTURE)
+  @Statistics(target = LECTURE)
   @GetMapping("/all")
   @ResponseStatus(HttpStatus.OK)
   public LectureResponse.Simples getMainPageLectures(
@@ -67,7 +67,7 @@ public class LectureController {
   }
 
   @Authorize
-  @Monitoring(target = LECTURE)
+  @Statistics(target = LECTURE)
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public ApiResponse<LectureResponse.Detail> getDetail(@RequestParam Long lectureId) {

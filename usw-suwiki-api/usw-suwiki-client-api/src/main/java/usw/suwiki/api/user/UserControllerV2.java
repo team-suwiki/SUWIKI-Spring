@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
-import usw.suwiki.auth.core.annotation.Login;
 import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.user.service.UserBusinessService;
-import usw.suwiki.statistics.annotation.Monitoring;
+import usw.suwiki.statistics.annotation.Statistics;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +38,7 @@ import static usw.suwiki.statistics.log.MonitorTarget.USER;
 public class UserControllerV2 {
   private final UserBusinessService userBusinessService;
 
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping("/loginId/check")
   @ResponseStatus(OK)
   public ResponseForm overlapId(@Valid @RequestBody CheckLoginIdForm checkLoginIdForm) {
@@ -46,7 +46,7 @@ public class UserControllerV2 {
     return ResponseForm.success(response);
   }
 
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping("/email/check")
   @ResponseStatus(OK)
   public ResponseForm overlapEmail(@Valid @RequestBody CheckEmailForm checkEmailForm) {
@@ -54,7 +54,7 @@ public class UserControllerV2 {
     return ResponseForm.success(response);
   }
 
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping
   @ResponseStatus(OK)
   public ResponseForm join(@Valid @RequestBody JoinForm joinForm) {
@@ -62,7 +62,7 @@ public class UserControllerV2 {
     return ResponseForm.success(response);
   }
 
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping("inquiry-loginId")
   @ResponseStatus(OK)
   public ResponseForm findId(@Valid @RequestBody FindIdForm findIdForm) {
@@ -70,7 +70,7 @@ public class UserControllerV2 {
     return ResponseForm.success(response);
   }
 
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping("inquiry-password")
   @ResponseStatus(OK)
   public ResponseForm findPw(@Valid @RequestBody FindPasswordForm findPasswordForm) {
@@ -79,22 +79,22 @@ public class UserControllerV2 {
   }
 
   @Authorize
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PatchMapping("password")
   @ResponseStatus(OK)
-  public ResponseForm resetPw(@Login Long userId, @Valid @RequestBody EditMyPasswordForm request) {
+  public ResponseForm resetPw(@Authenticated Long userId, @Valid @RequestBody EditMyPasswordForm request) {
     var response = userBusinessService.editPassword(userId, request.prePassword(), request.newPassword());
     return ResponseForm.success(response);
   }
 
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping("mobile-login")
   @ResponseStatus(OK)
   public ResponseForm mobileLogin(@Valid @RequestBody LoginForm request) {
     return ResponseForm.success(userBusinessService.login(request.loginId(), request.password()));
   }
 
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping("web-login")
   @ResponseStatus(OK)
   public ResponseForm webLogin(
@@ -115,7 +115,7 @@ public class UserControllerV2 {
   }
 
   @Authorize
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @PostMapping("client-logout")
   @ResponseStatus(OK)
   public ResponseForm clientLogout(HttpServletResponse response) {
@@ -129,19 +129,19 @@ public class UserControllerV2 {
   }
 
   @Authorize
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @GetMapping
   @ResponseStatus(OK)
-  public ResponseForm myPage(@Login Long userId) {
+  public ResponseForm myPage(@Authenticated Long userId) {
     var response = userBusinessService.loadMyPage(userId);
     return ResponseForm.success(response);
   }
 
   @Authorize
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @DeleteMapping
   @ResponseStatus(OK)
-  public ResponseForm userQuit(@Login Long userId, @Valid @RequestBody UserQuitForm userQuitForm) {
+  public ResponseForm userQuit(@Authenticated Long userId, @Valid @RequestBody UserQuitForm userQuitForm) {
     return ResponseForm.success(userBusinessService.quit(userId, userQuitForm.password()));
   }
 }

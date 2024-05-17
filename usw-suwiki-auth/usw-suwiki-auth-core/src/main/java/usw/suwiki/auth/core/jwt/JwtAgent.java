@@ -5,9 +5,9 @@ import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import usw.suwiki.auth.core.common.CustomUserDetailsService;
 import usw.suwiki.auth.token.RefreshToken;
 import usw.suwiki.auth.token.service.RefreshTokenService;
 import usw.suwiki.core.exception.AccountException;
@@ -27,7 +27,7 @@ import static usw.suwiki.domain.user.Role.ADMIN;
 public class JwtAgent implements TokenAgent { // todo: public 이지만 외부로 노출을 감출 것.
   private final RefreshTokenService refreshTokenService;
 
-  private final CustomUserDetailsService userDetailsService;
+  private final UserDetailsService userDetailsService;
   private final JwtSecretProvider jwtSecretProvider;
   private final RawParser rawParser;
 

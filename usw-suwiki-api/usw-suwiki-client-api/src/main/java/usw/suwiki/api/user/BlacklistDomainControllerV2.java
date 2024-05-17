@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
-import usw.suwiki.auth.core.annotation.Login;
 import usw.suwiki.domain.user.service.UserBusinessService;
-import usw.suwiki.statistics.annotation.Monitoring;
+import usw.suwiki.statistics.annotation.Statistics;
 
 import java.util.List;
 
@@ -23,10 +23,10 @@ public class BlacklistDomainControllerV2 {
   private final UserBusinessService userBusinessService;
 
   @Authorize
-  @Monitoring(target = USER)
+  @Statistics(target = USER)
   @GetMapping("/logs")
   @ResponseStatus(OK)
-  public List<LoadMyBlackListReasonResponseForm> loadBlacklistReason(@Login Long userId) {
+  public List<LoadMyBlackListReasonResponseForm> loadBlacklistReason(@Authenticated Long userId) {
     return userBusinessService.executeLoadBlackListReason(userId);
   }
 }

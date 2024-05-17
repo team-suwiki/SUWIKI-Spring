@@ -8,8 +8,8 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
-import usw.suwiki.auth.core.annotation.Login;
 import usw.suwiki.core.exception.BaseException;
 import usw.suwiki.core.exception.ExceptionType;
 
@@ -21,7 +21,7 @@ public class AuthenticatedUserArgumentResolver implements HandlerMethodArgumentR
 
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
-    return parameter.getParameterType().equals(Long.class) && parameter.hasParameterAnnotation(Login.class);
+    return parameter.getParameterType().equals(Long.class) && parameter.hasParameterAnnotation(Authenticated.class);
   }
 
   @Override

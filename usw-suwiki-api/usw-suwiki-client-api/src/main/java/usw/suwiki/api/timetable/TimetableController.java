@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
-import usw.suwiki.auth.core.annotation.Login;
 import usw.suwiki.common.response.ApiResponse;
 import usw.suwiki.domain.lecture.timetable.dto.TimetableRequest;
 import usw.suwiki.domain.lecture.timetable.dto.TimetableResponse;
@@ -32,7 +32,7 @@ public class TimetableController {
   @Authorize
   @PostMapping
   @ResponseStatus(CREATED)
-  public ApiResponse<?> createTimetable(@Login Long userId, @Valid @RequestBody TimetableRequest.Description request) {
+  public ApiResponse<?> createTimetable(@Authenticated Long userId, @Valid @RequestBody TimetableRequest.Description request) {
     timetableService.create(userId, request);
     return ApiResponse.success();
   }
@@ -40,7 +40,7 @@ public class TimetableController {
   @Authorize
   @PostMapping("/bulk")
   @ResponseStatus(OK)
-  public ApiResponse<?> bulkInsert(@Login Long userId, @RequestBody List<TimetableRequest.Bulk> requests) {
+  public ApiResponse<?> bulkInsert(@Authenticated Long userId, @RequestBody List<TimetableRequest.Bulk> requests) {
     timetableService.bulkInsert(userId, requests);
     return ApiResponse.success();
   }
@@ -49,7 +49,7 @@ public class TimetableController {
   @PutMapping("/{timetableId}")
   @ResponseStatus(OK)
   public ApiResponse<?> updateTimetable(
-    @Login Long userId,
+    @Authenticated Long userId,
     @PathVariable Long timetableId,
     @Valid @RequestBody TimetableRequest.Description request
   ) {
@@ -60,7 +60,7 @@ public class TimetableController {
   @Authorize
   @DeleteMapping("/{timetableId}")
   @ResponseStatus(OK)
-  public ApiResponse<?> deleteTimetable(@Login Long userId, @PathVariable Long timetableId) {
+  public ApiResponse<?> deleteTimetable(@Authenticated Long userId, @PathVariable Long timetableId) {
     timetableService.delete(userId, timetableId);
     return ApiResponse.success();
   }
@@ -68,7 +68,7 @@ public class TimetableController {
   @Authorize
   @GetMapping
   @ResponseStatus(OK)
-  public ApiResponse<List<TimetableResponse.Simple>> getMyAllTimetables(@Login Long userId) {
+  public ApiResponse<List<TimetableResponse.Simple>> getMyAllTimetables(@Authenticated Long userId) {
     var response = timetableService.getMyAllTimetables(userId);
     return ApiResponse.ok(response);
   }
@@ -85,7 +85,7 @@ public class TimetableController {
   @PostMapping("/{timetableId}/cells")
   @ResponseStatus(CREATED)
   public ApiResponse<?> insertCell(
-    @Login Long userId,
+    @Authenticated Long userId,
     @PathVariable Long timetableId,
     @Valid @RequestBody TimetableRequest.Cell request
   ) {
@@ -97,7 +97,7 @@ public class TimetableController {
   @PutMapping("/{timetableId}/cells/{cellIdx}")
   @ResponseStatus(OK)
   public ApiResponse<?> updateCell(
-    @Login Long userId,
+    @Authenticated Long userId,
     @PathVariable Long timetableId,
     @PathVariable int cellIdx,
     @Valid @RequestBody TimetableRequest.UpdateCell request
@@ -110,7 +110,7 @@ public class TimetableController {
   @DeleteMapping("/{timetableId}/cells/{cellIdx}")
   @ResponseStatus(OK)
   public ApiResponse<?> deleteCell(
-    @Login Long userId,
+    @Authenticated Long userId,
     @PathVariable Long timetableId,
     @PathVariable int cellIdx
   ) {

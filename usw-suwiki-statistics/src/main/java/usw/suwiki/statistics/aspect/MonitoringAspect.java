@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import usw.suwiki.statistics.annotation.AppProfile;
-import usw.suwiki.statistics.annotation.Monitoring;
+import usw.suwiki.statistics.annotation.Statistics;
 import usw.suwiki.statistics.log.ApiLoggerService;
 
 import java.time.Duration;
@@ -25,8 +25,8 @@ import java.util.Objects;
 public class MonitoringAspect {
   private final ApiLoggerService apiLoggerService;
 
-  @Around("@annotation(usw.suwiki.statistics.annotation.Monitoring) && @annotation(monitoring)")
-  public Object monitor(ProceedingJoinPoint joinPoint, Monitoring monitoring) throws Throwable {
+  @Around("@annotation(usw.suwiki.statistics.annotation.Statistics) && @annotation(statistics)")
+  public Object monitor(ProceedingJoinPoint joinPoint, Statistics statistics) throws Throwable {
     LocalDateTime start = LocalDateTime.now();
 
     try {
@@ -37,7 +37,7 @@ public class MonitoringAspect {
       LocalDateTime end = LocalDateTime.now();
       log.info("{} Api Start = {}, End = {}", request.getRequestURI(), start, end);
 
-      apiLoggerService.logApi(monitoring.target(), Duration.between(start, end).toMillis());
+      apiLoggerService.logApi(statistics.target(), Duration.between(start, end).toMillis());
     }
   }
 

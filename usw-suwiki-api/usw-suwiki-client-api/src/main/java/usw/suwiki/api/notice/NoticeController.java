@@ -17,7 +17,7 @@ import usw.suwiki.common.response.ResponseForm;
 import usw.suwiki.domain.notice.dto.NoticeRequest;
 import usw.suwiki.domain.notice.dto.NoticeResponse;
 import usw.suwiki.domain.notice.service.NoticeService;
-import usw.suwiki.statistics.annotation.Monitoring;
+import usw.suwiki.statistics.annotation.Statistics;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +32,7 @@ import static usw.suwiki.statistics.log.MonitorTarget.NOTICE;
 public class NoticeController {
   private final NoticeService noticeService;
 
-  @Monitoring(target = NOTICE)
+  @Statistics(target = NOTICE)
   @GetMapping("/all")
   @ResponseStatus(OK)
   public ResponseForm getNotices(@RequestParam(required = false) Optional<Integer> page) {
@@ -40,7 +40,7 @@ public class NoticeController {
     return new ResponseForm(response);
   }
 
-  @Monitoring(target = NOTICE)
+  @Statistics(target = NOTICE)
   @GetMapping("/")
   @ResponseStatus(OK)
   public ResponseForm getNotice(@RequestParam Long noticeId) {
@@ -49,7 +49,7 @@ public class NoticeController {
   }
 
   @Authorize(ADMIN)
-  @Monitoring(target = NOTICE)
+  @Statistics(target = NOTICE)
   @PostMapping("/")
   @ResponseStatus(OK)
   public String write(@Valid @RequestBody NoticeRequest.Create request) { // todo : admin api
@@ -58,7 +58,7 @@ public class NoticeController {
   }
 
   @Authorize(ADMIN)
-  @Monitoring(target = NOTICE)
+  @Statistics(target = NOTICE)
   @PutMapping("/")
   @ResponseStatus(OK)
   public String updateNotice(@RequestParam Long noticeId, @Valid @RequestBody NoticeRequest.Update request) { // todo : admin api
@@ -67,7 +67,7 @@ public class NoticeController {
   }
 
   @Authorize(ADMIN)
-  @Monitoring(target = NOTICE)
+  @Statistics(target = NOTICE)
   @DeleteMapping("/")
   @ResponseStatus(OK)
   public String deleteNotice(@RequestParam Long noticeId) {
