@@ -3,17 +3,14 @@ package usw.suwiki.api.auth;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import usw.suwiki.common.response.ResponseForm;
+import org.springframework.web.bind.annotation.*;
+import usw.suwiki.common.response.CommonResponse;
+import usw.suwiki.core.secure.model.Tokens;
 import usw.suwiki.domain.user.service.AuthService;
 import usw.suwiki.statistics.annotation.Statistics;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.http.HttpStatus.OK;
 import static usw.suwiki.statistics.log.MonitorTarget.USER;
@@ -27,7 +24,7 @@ public class RefreshTokenControllerV2 {
   @Statistics(USER)
   @PostMapping("/web-client/refresh")
   @ResponseStatus(OK)
-  public ResponseForm clientTokenRefresh(
+  public CommonResponse<Map<String, String>> clientTokenRefresh(
     @CookieValue(value = "refreshToken") Cookie cookie,
     HttpServletResponse response
   ) {
@@ -39,7 +36,7 @@ public class RefreshTokenControllerV2 {
     refreshCookie.setHttpOnly(true);
     response.addCookie(refreshCookie);
 
-    return ResponseForm.success(new HashMap<>() {{
+    return CommonResponse.ok(new HashMap<>() {{
       put("AccessToken", token.getAccessToken());
     }});
   }
@@ -47,7 +44,7 @@ public class RefreshTokenControllerV2 {
   @Statistics(USER)
   @PostMapping("/mobile-client/refresh")
   @ResponseStatus(OK)
-  public ResponseForm tokenRefresh(@RequestHeader String Authorization) {
-    return ResponseForm.success(authService.reissue(Authorization));
+  public CommonResponse<Tokens> tokenRefresh(@RequestHeader String Authorization) {
+    return CommonResponse.ok(authService.reissue(Authorization));
   }
 }

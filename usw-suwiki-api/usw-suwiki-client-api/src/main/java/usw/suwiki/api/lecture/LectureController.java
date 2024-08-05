@@ -3,14 +3,9 @@ package usw.suwiki.api.lecture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import usw.suwiki.auth.core.annotation.Authorize;
-import usw.suwiki.common.response.ApiResponse;
+import usw.suwiki.common.response.CommonResponse;
 import usw.suwiki.domain.lecture.dto.LectureResponse;
 import usw.suwiki.domain.lecture.dto.LectureSearchOption;
 import usw.suwiki.domain.lecture.schedule.service.LectureScheduleService;
@@ -29,7 +24,7 @@ public class LectureController {
 
   @GetMapping("/current/cells/search") // (03.18) 이것만큼은 건들면 안된다.
   @ResponseStatus(HttpStatus.OK)
-  public ApiResponse<LectureResponse.ScheduledLecture> searchTimetableCells(
+  public CommonResponse<LectureResponse.ScheduledLecture> searchTimetableCells(
     @RequestParam(required = false) Long cursorId,
     @RequestParam(required = false, defaultValue = "20") Integer size,
     @RequestParam(required = false) String keyword,
@@ -37,17 +32,18 @@ public class LectureController {
     @RequestParam(required = false) Integer grade
   ) {
     var response = lectureScheduleService.findPagedLecturesBySchedule(cursorId, size, keyword, major, grade);
-    return ApiResponse.ok(response);
+    return CommonResponse.ok(response);
   }
 
   @Statistics(LECTURE)
   @GetMapping("/search")
   @ResponseStatus(HttpStatus.OK)
-  public LectureResponse.Simples search(
+  public CommonResponse<LectureResponse.Simples> search(
     @RequestParam String keyword,
     @ModelAttribute LectureSearchOption option
   ) {
-    return lectureService.loadAllLecturesByKeyword(keyword, option);
+    var response = lectureService.loadAllLecturesByKeyword(keyword, option);
+    return CommonResponse.ok(response);
   }
 
   @CacheStatics
@@ -55,16 +51,17 @@ public class LectureController {
   @Statistics(LECTURE)
   @GetMapping("/all")
   @ResponseStatus(HttpStatus.OK)
-  public LectureResponse.Simples getMainPageLectures(@ModelAttribute LectureSearchOption option) {
-    return lectureService.loadAllLectures(option);
+  public CommonResponse<LectureResponse.Simples> getMainPageLectures(@ModelAttribute LectureSearchOption option) {
+    var response = lectureService.loadAllLectures(option);
+    return CommonResponse.ok(response);
   }
 
   @Authorize
   @Statistics(LECTURE)
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public ApiResponse<LectureResponse.Detail> getDetail(@RequestParam Long lectureId) {
+  public CommonResponse<LectureResponse.Detail> getDetail(@RequestParam Long lectureId) {
     var response = lectureService.loadLectureDetail(lectureId);
-    return ApiResponse.ok(response);
+    return CommonResponse.ok(response);
   }
 }

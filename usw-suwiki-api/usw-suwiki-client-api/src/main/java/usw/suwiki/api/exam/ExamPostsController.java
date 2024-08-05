@@ -2,24 +2,18 @@ package usw.suwiki.api.exam;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
 import usw.suwiki.common.pagination.PageOption;
-import usw.suwiki.common.response.ResponseForm;
+import usw.suwiki.common.response.CommonResponse;
 import usw.suwiki.domain.exampost.dto.ExamPostRequest;
 import usw.suwiki.domain.exampost.dto.ExamPostResponse;
 import usw.suwiki.domain.exampost.service.ExamPostService;
+import usw.suwiki.domain.viewexam.dto.ViewExamResponse;
 import usw.suwiki.statistics.annotation.Statistics;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -35,72 +29,77 @@ public class ExamPostsController {
   @Statistics(EXAM_POSTS)
   @GetMapping
   @ResponseStatus(OK)
-  public ExamPostResponse.Details getAllExamPosts(
+  public CommonResponse<ExamPostResponse.Details> getAllExamPosts(
     @Authenticated Long userId,
     @RequestParam Long lectureId,
     @RequestParam(required = false) Optional<Integer> page
   ) {
-    return examPostService.loadAllExamPosts(userId, lectureId, PageOption.offset(page));
+    var response = examPostService.loadAllExamPosts(userId, lectureId, PageOption.offset(page));
+    return CommonResponse.ok(response);
   }
 
   @Authorize
   @Statistics(EXAM_POSTS)
   @GetMapping("/purchase")
   @ResponseStatus(OK)
-  public ResponseForm getPurchaseHistories(@Authenticated Long userId) {
+  public CommonResponse<List<ViewExamResponse.PurchaseHistory>> getPurchaseHistories(@Authenticated Long userId) {
     var response = examPostService.loadPurchasedHistories(userId);
-    return new ResponseForm(response);
+    return CommonResponse.ok(response);
   }
 
   @Authorize
   @Statistics(EXAM_POSTS)
   @GetMapping("/written")
   @ResponseStatus(OK)
-  public ResponseForm getWroteExamPosts(
+  public CommonResponse<List<ExamPostResponse.MyPost>> getWroteExamPosts(
     @Authenticated Long userId,
     @RequestParam(required = false) Optional<Integer> page
   ) {
     var response = examPostService.loadAllMyExamPosts(userId, PageOption.offset(page));
-    return new ResponseForm(response);
+    return CommonResponse.ok(response);
   }
 
   @Authorize
   @Statistics(EXAM_POSTS)
   @PostMapping("/purchase")
   @ResponseStatus(OK)
-  public void purchaseExamPost(@Authenticated Long userId, @RequestParam Long lectureId) {
+  public CommonResponse<?> purchaseExamPost(@Authenticated Long userId, @RequestParam Long lectureId) {
     examPostService.purchaseExamPost(userId, lectureId);
+    return CommonResponse.success();
   }
 
   @Authorize
   @Statistics(EXAM_POSTS)
   @PostMapping
   @ResponseStatus(OK)
-  public void writeExamPost(
+  public CommonResponse<?> writeExamPost(
     @Authenticated Long userId,
     @RequestParam Long lectureId,
     @Valid @RequestBody ExamPostRequest.Create request
   ) {
     examPostService.write(userId, lectureId, request);
+    return CommonResponse.success();
   }
 
   @Authorize
   @Statistics(EXAM_POSTS)
   @PutMapping
   @ResponseStatus(OK)
-  public void updateExamPost(
+  public CommonResponse<?> updateExamPost(
     @Authenticated Long userId,
     @RequestParam Long examIdx,
     @Valid @RequestBody ExamPostRequest.Update request
   ) {
     examPostService.update(userId, examIdx, request);
+    return CommonResponse.success();
   }
 
   @Authorize
   @Statistics(EXAM_POSTS)
   @DeleteMapping
   @ResponseStatus(OK)
-  public void deleteExamPosts(@Authenticated Long userId, @RequestParam Long examIdx) {
+  public CommonResponse<?> deleteExamPosts(@Authenticated Long userId, @RequestParam Long examIdx) {
     examPostService.deleteExamPost(userId, examIdx);
+    return CommonResponse.success();
   }
 }

@@ -2,18 +2,10 @@ package usw.suwiki.api.timetable;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
-import usw.suwiki.common.response.ApiResponse;
+import usw.suwiki.common.response.CommonResponse;
 import usw.suwiki.domain.lecture.timetable.dto.TimetableRequest;
 import usw.suwiki.domain.lecture.timetable.dto.TimetableResponse;
 import usw.suwiki.domain.lecture.timetable.service.TimetableService;
@@ -32,89 +24,89 @@ public class TimetableController {
   @Authorize
   @PostMapping
   @ResponseStatus(CREATED)
-  public ApiResponse<?> createTimetable(@Authenticated Long userId, @Valid @RequestBody TimetableRequest.Description request) {
+  public CommonResponse<?> createTimetable(@Authenticated Long userId, @Valid @RequestBody TimetableRequest.Description request) {
     timetableService.create(userId, request);
-    return ApiResponse.success();
+    return CommonResponse.success();
   }
 
   @Authorize
   @PostMapping("/bulk")
   @ResponseStatus(OK)
-  public ApiResponse<?> bulkInsert(@Authenticated Long userId, @RequestBody List<TimetableRequest.Bulk> requests) {
+  public CommonResponse<?> bulkInsert(@Authenticated Long userId, @RequestBody List<TimetableRequest.Bulk> requests) {
     timetableService.bulkInsert(userId, requests);
-    return ApiResponse.success();
+    return CommonResponse.success();
   }
 
   @Authorize
   @PutMapping("/{timetableId}")
   @ResponseStatus(OK)
-  public ApiResponse<?> updateTimetable(
+  public CommonResponse<?> updateTimetable(
     @Authenticated Long userId,
     @PathVariable Long timetableId,
     @Valid @RequestBody TimetableRequest.Description request
   ) {
     timetableService.update(userId, timetableId, request);
-    return ApiResponse.success();
+    return CommonResponse.success();
   }
 
   @Authorize
   @DeleteMapping("/{timetableId}")
   @ResponseStatus(OK)
-  public ApiResponse<?> deleteTimetable(@Authenticated Long userId, @PathVariable Long timetableId) {
+  public CommonResponse<?> deleteTimetable(@Authenticated Long userId, @PathVariable Long timetableId) {
     timetableService.delete(userId, timetableId);
-    return ApiResponse.success();
+    return CommonResponse.success();
   }
 
   @Authorize
   @GetMapping
   @ResponseStatus(OK)
-  public ApiResponse<List<TimetableResponse.Simple>> getMyAllTimetables(@Authenticated Long userId) {
+  public CommonResponse<List<TimetableResponse.Simple>> getMyAllTimetables(@Authenticated Long userId) {
     var response = timetableService.getMyAllTimetables(userId);
-    return ApiResponse.ok(response);
+    return CommonResponse.ok(response);
   }
 
   @Authorize
   @GetMapping("/{timetableId}")
   @ResponseStatus(OK)
-  public ApiResponse<TimetableResponse.Detail> getTimetable(@PathVariable Long timetableId) {
+  public CommonResponse<TimetableResponse.Detail> getTimetable(@PathVariable Long timetableId) {
     var response = timetableService.loadTimetable(timetableId);
-    return ApiResponse.ok(response);
+    return CommonResponse.ok(response);
   }
 
   @Authorize
   @PostMapping("/{timetableId}/cells")
   @ResponseStatus(CREATED)
-  public ApiResponse<?> addCell(
+  public CommonResponse<?> addCell(
     @Authenticated Long userId,
     @PathVariable Long timetableId,
     @Valid @RequestBody TimetableRequest.Cell request
   ) {
     timetableService.addCell(userId, timetableId, request);
-    return ApiResponse.success();
+    return CommonResponse.success();
   }
 
   @Authorize
   @PutMapping("/{timetableId}/cells/{cellIdx}")
   @ResponseStatus(OK)
-  public ApiResponse<?> updateCell(
+  public CommonResponse<?> updateCell(
     @Authenticated Long userId,
     @PathVariable Long timetableId,
     @PathVariable int cellIdx,
     @Valid @RequestBody TimetableRequest.UpdateCell request
   ) {
     timetableService.updateCell(userId, timetableId, cellIdx, request);
-    return ApiResponse.success();
+    return CommonResponse.success();
   }
 
   @Authorize
   @DeleteMapping("/{timetableId}/cells/{cellIdx}")
   @ResponseStatus(OK)
-  public ApiResponse<?> deleteCell(
+  public CommonResponse<?> deleteCell(
     @Authenticated Long userId,
     @PathVariable Long timetableId,
     @PathVariable int cellIdx
   ) {
     timetableService.deleteCell(userId, timetableId, cellIdx);
-    return ApiResponse.success();
+    return CommonResponse.success();
   }
 }

@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
-import usw.suwiki.common.response.ResponseForm;
+import usw.suwiki.common.response.CommonResponse;
+import usw.suwiki.domain.user.dto.UserResponse;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.statistics.annotation.Statistics;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 import static usw.suwiki.statistics.log.MonitorTarget.USER;
@@ -24,8 +27,8 @@ public class RestrictingUserControllerV2 {
   @Statistics(USER)
   @GetMapping
   @ResponseStatus(OK)
-  public ResponseForm loadRestrictedReasons(@Authenticated Long userId) {
+  public CommonResponse<List<UserResponse.RestrictedReason>> loadRestrictedReasons(@Authenticated Long userId) {
     var response = userService.loadRestrictedReason(userId);
-    return ResponseForm.success(response);
+    return CommonResponse.ok(response);
   }
 }

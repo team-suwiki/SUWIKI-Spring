@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import usw.suwiki.auth.core.annotation.Authenticated;
 import usw.suwiki.auth.core.annotation.Authorize;
+import usw.suwiki.common.response.CommonResponse;
 import usw.suwiki.domain.user.service.UserService;
 import usw.suwiki.statistics.annotation.Statistics;
 
@@ -26,7 +27,8 @@ public class BlacklistDomainControllerV2 {
   @Statistics(USER)
   @GetMapping("/logs")
   @ResponseStatus(OK)
-  public List<BlackedReason> loadBlacklistReason(@Authenticated Long userId) {
-    return userService.loadBlackListReason(userId);
+  public CommonResponse<List<BlackedReason>> loadBlacklistReason(@Authenticated Long userId) {
+    var response = userService.loadBlackListReason(userId);
+    return CommonResponse.ok(response);
   }
 }

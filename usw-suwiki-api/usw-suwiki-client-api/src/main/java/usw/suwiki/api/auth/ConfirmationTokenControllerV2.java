@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import usw.suwiki.common.response.CommonResponse;
 import usw.suwiki.domain.user.service.ConfirmationTokenService;
 import usw.suwiki.statistics.annotation.Statistics;
 
@@ -22,7 +23,7 @@ public class ConfirmationTokenControllerV2 {
   @Statistics(USER)
   @GetMapping(value = "verify", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
   @ResponseStatus(OK)
-  public String confirmEmail(@RequestParam("token") String token) {
-    return confirmationTokenService.confirm(token);
+  public CommonResponse<String> confirmEmail(@RequestParam("token") String token) {
+    return CommonResponse.ok(confirmationTokenService.confirm(token));
   }
 }

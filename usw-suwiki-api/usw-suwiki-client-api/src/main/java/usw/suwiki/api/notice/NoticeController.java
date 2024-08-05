@@ -2,18 +2,10 @@ package usw.suwiki.api.notice;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import usw.suwiki.auth.core.annotation.Authorize;
 import usw.suwiki.common.pagination.PageOption;
-import usw.suwiki.common.response.ResponseForm;
+import usw.suwiki.common.response.CommonResponse;
 import usw.suwiki.domain.notice.dto.NoticeRequest;
 import usw.suwiki.domain.notice.dto.NoticeResponse;
 import usw.suwiki.domain.notice.service.NoticeService;
@@ -35,41 +27,44 @@ public class NoticeController {
   @Statistics(NOTICE)
   @GetMapping("/all")
   @ResponseStatus(OK)
-  public ResponseForm getNotices(@RequestParam(required = false) Optional<Integer> page) {
-    List<NoticeResponse.Simple> response = noticeService.getAllNotices(PageOption.offset(page));
-    return new ResponseForm(response);
+  public CommonResponse<List<NoticeResponse.Simple>> getNotices(@RequestParam(required = false) Optional<Integer> page) {
+    var response = noticeService.getAllNotices(PageOption.offset(page));
+    return CommonResponse.ok(response);
   }
 
   @Statistics(NOTICE)
   @GetMapping("/")
   @ResponseStatus(OK)
-  public ResponseForm getNotice(@RequestParam Long noticeId) {
-    NoticeResponse.Detail response = noticeService.getNotice(noticeId);
-    return new ResponseForm(response);
+  public CommonResponse<NoticeResponse.Detail> getNotice(@RequestParam Long noticeId) {
+    var response = noticeService.getNotice(noticeId);
+    return CommonResponse.ok(response);
   }
 
   @Authorize(ADMIN)
   @Statistics(NOTICE)
   @PostMapping("/")
   @ResponseStatus(OK)
-  public void write(@Valid @RequestBody NoticeRequest.Create request) { // todo : admin api
+  public CommonResponse<?> write(@Valid @RequestBody NoticeRequest.Create request) { // todo : admin api
     noticeService.write(request.getTitle(), request.getContent());
+    return CommonResponse.success();
   }
 
   @Authorize(ADMIN)
   @Statistics(NOTICE)
   @PutMapping("/")
   @ResponseStatus(OK)
-  public void updateNotice(@RequestParam Long noticeId, @Valid @RequestBody NoticeRequest.Update request) { // todo : admin api
+  public CommonResponse<?> updateNotice(@RequestParam Long noticeId, @Valid @RequestBody NoticeRequest.Update request) { // todo : admin api
     noticeService.update(noticeId, request.getTitle(), request.getContent());
+    return CommonResponse.success();
   }
 
   @Authorize(ADMIN)
   @Statistics(NOTICE)
   @DeleteMapping("/")
   @ResponseStatus(OK)
-  public void deleteNotice(@RequestParam Long noticeId) {
+  public CommonResponse<?> deleteNotice(@RequestParam Long noticeId) {
     noticeService.delete(noticeId);
+    return CommonResponse.success();
   }
 }
 

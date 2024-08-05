@@ -2,15 +2,9 @@ package usw.suwiki.api.admin;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import usw.suwiki.auth.core.annotation.Authorize;
+import usw.suwiki.common.response.CommonResponse;
 import usw.suwiki.domain.report.EvaluatePostReport;
 import usw.suwiki.domain.report.ExamPostReport;
 import usw.suwiki.domain.user.Role;
@@ -36,85 +30,85 @@ public class AdminController {
   @Statistics(ADMIN)
   @GetMapping("/report/list")
   @ResponseStatus(OK)
-  public AdminResponse.LoadAllReportedPost loadReportedPost() {
-    return adminService.loadAllReportedPosts();
+  public CommonResponse<AdminResponse.LoadAllReportedPost> loadReportedPost() {
+    return CommonResponse.ok(adminService.loadAllReportedPosts());
   }
 
   @Authorize(Role.ADMIN)
   @Statistics(ADMIN)
   @GetMapping("/report/evaluate/")
   @ResponseStatus(OK)  // todo: domain dependency
-  public EvaluatePostReport loadDetailReportedEvaluatePost(@RequestParam Long target) {
-    return adminService.loadDetailReportedEvaluatePost(target);
+  public CommonResponse<EvaluatePostReport> loadDetailReportedEvaluatePost(@RequestParam Long target) {
+    return CommonResponse.ok(adminService.loadDetailReportedEvaluatePost(target));
   }
 
   @Authorize(Role.ADMIN)
   @Statistics(ADMIN)
   @GetMapping("/report/exam/")
   @ResponseStatus(OK)
-  public ExamPostReport loadDetailReportedExamPost(@RequestParam Long target) {
-    return adminService.loadDetailReportedExamPost(target);
+  public CommonResponse<ExamPostReport> loadDetailReportedExamPost(@RequestParam Long target) {
+    return CommonResponse.ok(adminService.loadDetailReportedExamPost(target));
   }
 
   @Statistics(ADMIN)
   @PostMapping("/login")
   @ResponseStatus(OK)
-  public AdminResponse.Login adminLogin(@Valid @RequestBody UserRequest.Login request) {
-    return adminService.adminLogin(request.loginId(), request.password());
+  public CommonResponse<AdminResponse.Login> adminLogin(@Valid @RequestBody UserRequest.Login request) {
+    return CommonResponse.ok(adminService.adminLogin(request.loginId(), request.password()));
   }
 
   @Authorize(Role.ADMIN)
   @Statistics(ADMIN)
   @PostMapping("/restrict/evaluate-posts")
   @ResponseStatus(OK)
-  public Map<String, Boolean> restrictEvaluatePost(@Valid @RequestBody AdminRequest.RestrictEvaluatePost request) {
+  public CommonResponse<Map<String, Boolean>> restrictEvaluatePost(@Valid @RequestBody AdminRequest.RestrictEvaluatePost request) {
     adminService.restrict(request);
-    return success();
+    return CommonResponse.ok(success());
   }
 
   @Authorize(Role.ADMIN)
   @Statistics(ADMIN)
   @PostMapping("/restrict/exam-post")
   @ResponseStatus(OK)
-  public Map<String, Boolean> restrictExamPost(@Valid @RequestBody AdminRequest.RestrictExamPost request) {
+  public CommonResponse<Map<String, Boolean>> restrictExamPost(@Valid @RequestBody AdminRequest.RestrictExamPost request) {
     adminService.restrict(request);
-    return success();
+    return CommonResponse.ok(success());
   }
 
   @Authorize(Role.ADMIN)
   @Statistics(ADMIN)
   @PostMapping("/blacklist/evaluate-post")
   @ResponseStatus(OK)
-  public Map<String, Boolean> banEvaluatePost(@Valid @RequestBody AdminRequest.EvaluatePostBlacklist request) {
+  public CommonResponse<Map<String, Boolean>> banEvaluatePost(@Valid @RequestBody AdminRequest.EvaluatePostBlacklist request) {
     adminService.black(request);
-    return success();
+    return CommonResponse.ok(success());
   }
 
   @Authorize(Role.ADMIN)
   @Statistics(ADMIN)
   @PostMapping("/blacklist/exam-post")
   @ResponseStatus(OK)
-  public Map<String, Boolean> banExamPost(@Valid @RequestBody AdminRequest.ExamPostBlacklist request) {
+  public CommonResponse<Map<String, Boolean>> banExamPost(@Valid @RequestBody AdminRequest.ExamPostBlacklist request) {
     adminService.black(request);
-    return success();
+    return CommonResponse.ok(success());
   }
 
   @Authorize(Role.ADMIN)
   @Statistics(ADMIN)
   @DeleteMapping("/no-problem/evaluate-post")
   @ResponseStatus(OK)
-  public Map<String, Boolean> noProblemEvaluatePost(@Valid @RequestBody AdminRequest.EvaluatePostNoProblem request) {
+  public CommonResponse<Map<String, Boolean>> noProblemEvaluatePost(@Valid @RequestBody AdminRequest.EvaluatePostNoProblem request) {
     adminService.dismissEvaluateReport(request.evaluateIdx());
-    return success();
+    return CommonResponse.ok(success());
   }
 
   @Authorize(Role.ADMIN)
   @Statistics(ADMIN)
   @DeleteMapping("/no-problem/exam-post")
   @ResponseStatus(OK)
-  public Map<String, Boolean> noProblemExamPost(@Valid @RequestBody AdminRequest.ExamPostNoProblem request) {
+  public CommonResponse<Map<String, Boolean>> noProblemExamPost(@Valid @RequestBody AdminRequest.ExamPostNoProblem request) {
     adminService.dismissExamReport(request.examIdx());
-    return success();
+    return CommonResponse.ok(success());
   }
 
   private Map<String, Boolean> success() { // legacy
